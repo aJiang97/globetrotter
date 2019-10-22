@@ -9,7 +9,7 @@ export class PureHome extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.home}>
+      <div>
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
         <div className={classes.center_container}>
