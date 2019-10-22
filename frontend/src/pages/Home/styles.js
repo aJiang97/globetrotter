@@ -8,7 +8,10 @@ export const styles = createStyles(theme => ({
   },
   bg: {
     maxWidth: "100%",
-    height: "auto"
+    height: "auto",
+    minHeight: "100%",
+    bottom: 0,
+    position: "absolute"
   },
   bg_layer: {
     zIndex: 1110,
@@ -18,7 +21,7 @@ export const styles = createStyles(theme => ({
     right: 0,
     bottom: 0,
     background: "black",
-    opacity: 0.7
+    opacity: 0.5
   },
   center_container: {
     zIndex: 1111,
