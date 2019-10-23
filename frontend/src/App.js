@@ -3,7 +3,7 @@ import { Redirect, Route, Router } from "react-router-dom";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import history from "./history";
-import { Home } from "./pages";
+import { Home, Trip } from "./pages";
 import { NavBar } from "./components";
 import "./App.css";
 
@@ -35,6 +35,7 @@ class App extends React.Component {
         <Router history={history}>
           <Redirect from="/" to="/home" />
           <Route path="/home" component={Home} />
+          <Route path="/trip" component={Trip} />
         </Router>
       </MuiThemeProvider>
     );
