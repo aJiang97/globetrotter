@@ -5,14 +5,15 @@ export const styles = createStyles(theme => ({
     position: "absolute",
     width: "100%",
     top: "20%",
+    marginLeft: 30,
     display: "flex",
     flexDirection: "column",
     alignItems: "left"
   },
   title: {
     color: "black",
+    top: "20%",
     padding: 10,
-    marginLeft: 30
   },
   plan_button: {
     marginTop: 100,
