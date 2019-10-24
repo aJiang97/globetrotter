@@ -4,7 +4,7 @@ export const styles = createStyles(theme => ({
   container: {
     position: "absolute",
     width: "100%",
-    top: "20%",
+    top: "15%",
     marginLeft: 30,
     display: "flex",
     flexDirection: "column",
