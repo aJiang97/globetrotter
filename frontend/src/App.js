@@ -1,9 +1,9 @@
 import React from "react";
-import { Redirect, Route, Router } from "react-router-dom";
+import { Redirect, Route, Router, Switch } from "react-router-dom";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import history from "./history";
-import { Home, Trip, Locations } from "./pages";
+import { Home, Trip, Locations, Preferences } from "./pages";
 import { NavBar } from "./components";
 import "./App.css";
 
@@ -33,10 +33,13 @@ class App extends React.Component {
       <MuiThemeProvider theme={theme}>
         <NavBar />
         <Router history={history}>
-          {/* <Redirect from="/" to="/home" /> */}
-          <Route path="/home" component={Home} />
-          <Route path="/trip" component={Trip} />
-          <Route path="/locations" component={Locations} />
+          <Switch>
+            <Redirect from="/" to="/home" />
+            <Route path="/home"         component={Home} />
+            <Route path="/trip"         component={Trip} />
+            <Route path="/preferences"  component={Preferences} />
+            <Route path="/locations"    component={Locations} />
+          </Switch>
         </Router>
       </MuiThemeProvider>
     );

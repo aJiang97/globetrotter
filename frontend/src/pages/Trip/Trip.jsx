@@ -72,6 +72,7 @@ export class PureTrip extends React.Component {
             color="primary"
             variant="contained"
             className={classes.nextButton}
+            href="/preferences"
           >
             Next
           </Button>
