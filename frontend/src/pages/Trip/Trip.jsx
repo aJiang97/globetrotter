@@ -4,7 +4,7 @@ import { Button, Paper, TextField, Typography } from "@material-ui/core";
 
 import { styles } from "./styles";
 import bg from "../../assets/trip-bg.jpg";
-
+import history from "../../history";
 export class PureTrip extends React.Component {
   constructor(props) {
     super(props);
@@ -73,6 +73,7 @@ export class PureTrip extends React.Component {
             variant="contained"
             className={classes.nextButton}
             href="/preferences"
+            onClick={() => history.push("/preferences")}
           >
             Next
           </Button>

@@ -34,11 +34,11 @@ class App extends React.Component {
         <NavBar />
         <Router history={history}>
           <Switch>
-            <Redirect from="/" to="/home" />
-            <Route path="/home"         component={Home} />
-            <Route path="/trip"         component={Trip} />
-            <Route path="/preferences"  component={Preferences} />
-            <Route path="/locations"    component={Locations} />
+            {/* <Redirect from="/" to="/home" /> */}
+            <Route path="/home" component={Home} />
+            <Route path="/trip" component={Trip} />
+            <Route path="/preferences" component={Preferences} />
+            <Route path="/locations" component={Locations} />
           </Switch>
         </Router>
       </MuiThemeProvider>
