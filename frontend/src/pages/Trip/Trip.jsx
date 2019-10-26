@@ -41,9 +41,7 @@ export class PureTrip extends React.Component {
             Where's your next adventure?
           </Typography>
           <TextField
-            id="location"
-            label="Destination"
-            value={this.state.location}
+            id="location" label="Destination" value={this.state.location}
             InputLabelProps={{
               className: classes.inputLabel,
               shrink: true 
@@ -56,10 +54,7 @@ export class PureTrip extends React.Component {
           />
           <div className={classes.dates}>
             <TextField
-              id="start_date"
-              label="Start date"
-              type="date"
-              value={this.state.start_date}
+              id="start_date" label="Start date" type="date" value={this.state.start_date}
               InputLabelProps={{
                 className: classes.inputLabel,
                 shrink: true
@@ -71,10 +66,7 @@ export class PureTrip extends React.Component {
               onChange={this.handleStartDateChange}
             />
             <TextField
-              id="end_date"
-              label="End date"
-              type="date"
-              value={this.state.end_date}
+              id="end_date" label="End date" type="date" value={this.state.end_date}
               InputLabelProps={{
                 className: classes.inputLabel,
                 shrink: true
@@ -87,9 +79,7 @@ export class PureTrip extends React.Component {
             />
           </div>
           <Button
-            type="submit"
-            color="primary"
-            variant="contained"
+            type="submit" color="primary" variant="contained"
             className={classes.nextButton}
             href="/preferences"
             onClick={() => history.push("/preferences")}
