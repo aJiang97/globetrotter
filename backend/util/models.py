@@ -21,5 +21,11 @@ location_coordinate = api.model('location_coordinate',{
 location = api.model('location',{
     "location_types": fields.Nested(location_types),
     "venue_name": fields.String(),
-    "coordinate": fields.Nested(location_coordinate)
+    "coordinate": fields.Nested(location_coordinate),
+    "pictures": fields.List(fields.String())
+})
+
+locations = api.model('locations',{
+    "city": fields.String(),
+    "locations": fields.List(fields.Nested(location))
 })

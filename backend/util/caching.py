@@ -16,6 +16,20 @@ def expired(path):
     else:
         return True
 
+def check_cache(filename):
+    path = os.getcwd() + config.DIR_NAME
+
+    if not os.path.exists(path):
+        return False
+
+    for root, dirs, files in os.walk(path):
+        if filename in files:
+            fpath = os.path.join(path, filename)
+            if expired(fpath) == False:
+                # File is relatively new, use it
+                return True
+    return False
+
 def retrieve_cache(filename):
     path = os.getcwd() + config.DIR_NAME
 

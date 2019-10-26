@@ -1,6 +1,6 @@
 def category(header, categories):
     try:
-        cats = categories.split(',')
+        cats = categories.lower().split(',')
         categoryId = categorization(cats)
         header['categoryId'] = ','.join(categoryId)
     except (TypeError):
@@ -24,7 +24,8 @@ switch = {
     "cultural": None,
     "family": None,
     "beaches": beaches,
-    "food": food
+    "food": food,
+    "buildings": buildings
 }
 
 def shopping():
@@ -51,3 +52,6 @@ def historical():
 
 def food():
     return ["4d4b7105d754a06374d81259"] # Food
+
+def buildings():
+    return ["4d4b7104d754a06370d81259"]
