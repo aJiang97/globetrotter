@@ -2,23 +2,22 @@ import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
     preferenceCard: {
-        backgroundColor: "red",
         display: "inline-block",
-        position: "relative"
+        position: "relative",
+        margin: "10px",
+        color: "white",
+        backgroundColor: theme.palette.secondary.main
     },
     actionArea: {
         display: "block",
         position: "relative",
         width: "220px",
-        height: "100px"
+        height: "115px"
     },
     checkIcon: {
         position: "absolute",
         top: 5,
-        right: 5,
-        "&$selected": {
-            color: "red"
-        }
+        right: 5
     },
     cardTitle: {
         fontFamily: "Raleway",
