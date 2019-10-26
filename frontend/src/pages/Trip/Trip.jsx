@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, Paper, TextField, Typography } from "@material-ui/core";
 
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { styles } from "./styles";
 import bg from "../../assets/trip-bg.jpg";
 import history from "../../history";
@@ -35,15 +36,21 @@ export class PureTrip extends React.Component {
       <div className={classes.home}>
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
-        <Paper className={classes.modal_container}>
+        <div className={classes.modal_container}>
           <Typography variant="h4" className={classes.title}>
-            Trip details
+            Where's your next adventure?
           </Typography>
           <TextField
             id="location"
             label="Destination"
             value={this.state.location}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{
+              className: classes.inputLabel,
+              shrink: true 
+            }}
+            InputProps={{
+              className: classes.input
+            }}
             className={classes.textfield}
             onChange={this.handleInputChange}
           />
@@ -53,7 +60,13 @@ export class PureTrip extends React.Component {
               label="Start date"
               type="date"
               value={this.state.start_date}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{
+                className: classes.inputLabel,
+                shrink: true
+              }}
+              InputProps={{
+                className: classes.input
+              }}
               className={classes.dateTextField}
               onChange={this.handleStartDateChange}
             />
@@ -62,7 +75,13 @@ export class PureTrip extends React.Component {
               label="End date"
               type="date"
               value={this.state.end_date}
-              InputLabelProps={{ shrink: true }}
+              InputLabelProps={{
+                className: classes.inputLabel,
+                shrink: true
+              }}
+              InputProps={{
+                className: classes.input
+              }}
               className={classes.dateTextField}
               onChange={this.handleEndDateChange}
             />
@@ -75,9 +94,9 @@ export class PureTrip extends React.Component {
             href="/preferences"
             onClick={() => history.push("/preferences")}
           >
-            Next
+            <ArrowForwardIcon />
           </Button>
-        </Paper>
+        </div>
       </div>
     );
   }

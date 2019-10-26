@@ -9,6 +9,9 @@ export const styles = createStyles(theme => ({
     [theme.breakpoints.up("sm")]: {
       display: "block"
     },
-    color: "white"
+    color: "white",
+    textTransform: "none",
+    fontWeight: "bold",
+    fontSize: "1.5rem"
   }
 }));

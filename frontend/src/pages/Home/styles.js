@@ -3,8 +3,16 @@ import { createStyles } from "@material-ui/core/styles";
 export const styles = createStyles(theme => ({
   title: {
     textAlign: "center",
+    color: "white",
     paddingTop: 20,
-    paddingBottom: 20
+    paddingBottom: 30,
+    fontSize: 60,
+    fontWeight: "bold"
+  },
+  description: {
+    fontSize: 30,
+    color: "white",
+    padding: 5
   },
   bg: {
     maxWidth: "100%",
@@ -32,15 +40,11 @@ export const styles = createStyles(theme => ({
     flexDirection: "column",
     alignItems: "center"
   },
-  description: {
-    color: "white",
-    padding: 5
-  },
   start_button: {
     marginTop: 40
   },
   start_text: {
     color: "white",
-    fontStyle: "inherit"
+    fontFamily: theme.typography.fontFamily
   }
 }));

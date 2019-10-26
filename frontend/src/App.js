@@ -10,13 +10,13 @@ import "./App.css";
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#00072D"
+      main: "#276DF0"
     },
     secondary: {
-      main: "#0052CC"
+      main: "#5C5C5C"
     },
     tertiary: {
-      main: "#92140C"
+      main: "#466282"
     },
     white: {
       main: "#FFF8F0"
@@ -24,6 +24,9 @@ const theme = createMuiTheme({
     black: {
       main: "#1E1E24"
     }
+  },
+  typography: {
+    fontFamily: "Raleway"
   }
 });
 

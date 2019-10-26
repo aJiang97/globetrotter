@@ -16,12 +16,10 @@ export const styles = createStyles(theme => ({
     right: 0,
     bottom: 0,
     background: "black",
-    opacity: 0.5
+    opacity: 0.6
   },
   modal_container: {
     zIndex: 1111,
-    width: 350,
-    height: 230,
     position: "fixed",
     top: "50%",
     left: "50%",
@@ -30,22 +28,33 @@ export const styles = createStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    opacity: 0.7
+    color: "white"
   },
   title: {
-    paddingBottom: 15
+    paddingBottom: 20,
+    fontWeight: "bold"
+  },
+  inputLabel: {
+    color: "white",
+    shrink: true
   },
   textfield: {
-    width: 300,
-    padding: 10
+    width: "90%",
+    padding: 10,
+    marginBottom: 15
   },
   dates: {
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    marginBottom: 30
+  },
+  input: {
+    color: "white"
   },
   dateTextField: {
-    width: 150,
-    padding: 5
+    width: "50%",
+    paddingRight: 25,
+    paddingLeft: 25
   },
   nextButton: {
     marginTop: "auto"
