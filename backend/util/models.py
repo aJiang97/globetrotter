@@ -22,7 +22,8 @@ location = api.model('location',{
     "location_types": fields.Nested(location_types),
     "venue_name": fields.String(),
     "coordinate": fields.Nested(location_coordinate),
-    "pictures": fields.List(fields.String())
+    "pictures": fields.List(fields.String()),
+    "location_id": fields.String()
 })
 
 locations = api.model('locations',{

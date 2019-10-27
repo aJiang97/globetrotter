@@ -1,4 +1,6 @@
-def category(header, categories):
+def category(header, categories=None):
+    if categories == None:
+        return
     try:
         cats = categories.lower().split(',')
         categoryId = categorization(cats)

@@ -22,7 +22,6 @@ class Suggest(Resource):
     @suggest.response(200, 'Success')
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
-    @suggest.response(412, 'Precondition was not fulfilled')
     @suggest.expect(locations)
     def get(self):
         location = request.args.get('city')
@@ -138,7 +137,8 @@ class Suggest(Resource):
                 "venue_name": dictres['response']['venue']['name'],
                 "location_types": locs,
                 "coordinate": coords,
-                "pictures": pics
+                "pictures": pics,
+                "location_id": dictres['response']['venue']['id']
             })
 
         for future in futures:
@@ -179,7 +179,8 @@ class Suggest(Resource):
                 "venue_name": parsed['response']['venue']['name'],
                 "location_types": locs,
                 "coordinate": coords,
-                "pictures": pics
+                "pictures": pics,
+                "location_id": parsed['response']['venue']['id']
             })
 
         return listres
