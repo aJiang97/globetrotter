@@ -1,8 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Paper, TextField, Typography } from "@material-ui/core";
+import { IconButton, TextField, Typography } from "@material-ui/core";
 
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import { styles } from "./styles";
 import bg from "../../assets/trip-bg.jpg";
 import history from "../../history";
@@ -41,51 +41,68 @@ export class PureTrip extends React.Component {
             Where's your next adventure?
           </Typography>
           <TextField
-            id="location" label="Destination" value={this.state.location}
+            id="location"
+            label="Destination"
+            value={this.state.location}
             InputLabelProps={{
-              className: classes.inputLabel,
-              shrink: true 
+              className: classes.label,
+              shrink: true
             }}
             InputProps={{
-              className: classes.input
+              className: classes.input,
+              classes: {
+                root: classes.underline
+              }
             }}
             className={classes.textfield}
             onChange={this.handleInputChange}
           />
           <div className={classes.dates}>
             <TextField
-              id="start_date" label="Start date" type="date" value={this.state.start_date}
+              id="start_date"
+              label="Start date"
+              type="date"
+              value={this.state.start_date}
               InputLabelProps={{
-                className: classes.inputLabel,
+                className: classes.label,
                 shrink: true
               }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
+                classes: {
+                  root: classes.underline
+                }
               }}
-              className={classes.dateTextField}
               onChange={this.handleStartDateChange}
             />
+            <div />
             <TextField
-              id="end_date" label="End date" type="date" value={this.state.end_date}
+              id="end_date"
+              label="End date"
+              type="date"
+              value={this.state.end_date}
               InputLabelProps={{
-                className: classes.inputLabel,
+                className: classes.label,
                 shrink: true
               }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
+                classes: {
+                  root: classes.underline
+                }
               }}
-              className={classes.dateTextField}
               onChange={this.handleEndDateChange}
             />
           </div>
-          <Button
-            type="submit" color="primary" variant="contained"
+          <IconButton
+            type="submit"
+            color="primary"
+            variant="contained"
             className={classes.nextButton}
-            href="/preferences"
             onClick={() => history.push("/preferences")}
           >
             <ArrowForwardIcon />
-          </Button>
+          </IconButton>
         </div>
       </div>
     );

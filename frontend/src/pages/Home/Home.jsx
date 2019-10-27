@@ -26,7 +26,7 @@ export class PureHome extends React.Component {
           </Typography>
           <Fab
             variant="extended"
-            color="secondary"
+            color="primary"
             className={classes.start_button}
           >
             <Typography

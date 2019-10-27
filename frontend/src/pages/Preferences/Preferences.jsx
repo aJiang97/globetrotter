@@ -1,12 +1,12 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
+import { IconButton, Typography } from "@material-ui/core";
 import { PreferenceCard } from "../../components/PreferenceCard";
 import { styles } from "./styles";
 import history from "../../history";
 
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import bg from "../../assets/trip-bg.jpg";
 
 export class PurePreferences extends React.Component {
@@ -22,22 +22,26 @@ export class PurePreferences extends React.Component {
           </Typography>
           <PreferenceCardList />
           <div className={classes.buttonRow}>
-            <Button
-              type="button" color="primary" variant="contained"
+            <IconButton
+              type="button"
+              color="primary"
+              variant="contained"
               className={classes.navButton}
               href="/trip"
               onClick={() => history.push("/preferences")}
             >
               <ArrowBackIcon />
-            </Button>
-            <Button
-              type="submit" color="primary" variant="contained"
+            </IconButton>
+            <IconButton
+              type="submit"
+              color="primary"
+              variant="contained"
               className={classes.navButton}
               href="/locations"
               onClick={() => history.push("/preferences")}
             >
               <ArrowForwardIcon />
-            </Button>
+            </IconButton>
           </div>
         </div>
       </div>
@@ -84,7 +88,10 @@ class PreferenceCardList extends React.Component {
 
   render() {
     return (
-      <div onClick={this.getSelected}>
+      <div
+        onClick={this.getSelected}
+        style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}
+      >
         {Object.keys(this.state.locationTypes).map((value, index) => {
           return (
             <PreferenceCard

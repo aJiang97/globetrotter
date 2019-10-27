@@ -1,6 +1,11 @@
 import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
+  appBar: {
+    zIndex: 5000,
+    backgroundColor: "transparent",
+    boxShadow: "0px 0px"
+  },
   logo: {
     width: 50
   },
