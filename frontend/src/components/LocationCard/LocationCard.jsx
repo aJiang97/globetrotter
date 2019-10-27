@@ -44,6 +44,11 @@ class PureLocationCard extends React.Component {
             {this.props.duration}
           </Typography>
         </CardContent>
+        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography paragraph>{this.props.description}</Typography>
+          </CardContent>
+        </Collapse>
         <CardActions disableSpacing>
           <IconButton
             className={clsx(classes.expand, {
@@ -56,11 +61,6 @@ class PureLocationCard extends React.Component {
             <ExpandMoreIcon />
           </IconButton>
         </CardActions>
-        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography paragraph>{this.props.description}</Typography>
-          </CardContent>
-        </Collapse>
       </Card>
     );
   }
