@@ -55,9 +55,9 @@ class Suggest(Resource):
 
     # Returns string from Foursquare API
     def getExplore(self, location):
-        cacheresult = retrieve_cache('explore_' + location + '.json')
-        if cacheresult is not None:
-            return cacheresult
+        cacheresult = check_cache('explore_' + location + '.json')
+        if cacheresult == True:
+            return retrieve_cache('explore_' + location + '.json')
 
         url = 'https://api.foursquare.com/v2/venues/explore'
 
@@ -101,14 +101,14 @@ class Suggest(Resource):
         cached = []
 
         for venueId in venueIds:
-            if check_cache('venue_' + venueId + '.json'):
+            if check_cache('venue_' + venueId + '.json', False):
                 cached.append(venueId)
             else:
                 futures.append(session.get(
                     'https://api.foursquare.com/v2/venues/' + venueId, params=params))
 
         for venueId in cached:
-            cache = retrieve_cache('venue_' + venueId + '.json')
+            cache = retrieve_cache('venue_' + venueId + '.json', False)
             dictres = json.loads(cache)
 
             locs = {
@@ -128,11 +128,17 @@ class Suggest(Resource):
                 "longitude": dictres['response']['venue']['location']['lng']
             }
 
+            pics = []
+
+            # Add best photo
+            bp = dictres['response']['venue']['bestPhoto']
+            pics.append(bp['prefix'] + str(bp['width']) + 'x' + str(bp['height']) + bp['suffix'])
+
             listres.append({
                 "venue_name": dictres['response']['venue']['name'],
                 "location_types": locs,
                 "coordinate": coords,
-                "pictures": []
+                "pictures": pics
             })
 
         for future in futures:
@@ -158,6 +164,12 @@ class Suggest(Resource):
                 "food": False
             }
 
+            pics = []
+
+            # Add best photo
+            bp = parsed['response']['venue']['bestPhoto']
+            pics.append(bp['prefix'] + str(bp['width']) + 'x' + str(bp['height']) + bp['suffix'])
+
             coords = {
                 "latitude": parsed['response']['venue']['location']['lat'],
                 "longitude": parsed['response']['venue']['location']['lng']
@@ -167,7 +179,7 @@ class Suggest(Resource):
                 "venue_name": parsed['response']['venue']['name'],
                 "location_types": locs,
                 "coordinate": coords,
-                "pictures": []
+                "pictures": pics
             })
 
         return listres
