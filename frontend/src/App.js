@@ -3,7 +3,7 @@ import { Route, Router, Switch } from "react-router-dom";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import history from "./history";
-import { Home, Trip, Locations, Preferences } from "./pages";
+import { Home, Trip, Locations, Preferences, TripView } from "./pages";
 import { NavBar } from "./components";
 import "./App.css";
 
@@ -42,6 +42,7 @@ class App extends React.Component {
             <Route path="/trip" component={Trip} />
             <Route path="/preferences" component={Preferences} />
             <Route path="/locations" component={Locations} />
+            <Route path="/tripview" component={TripView} />
           </Switch>
         </Router>
       </MuiThemeProvider>
