@@ -5,18 +5,22 @@ export const styles = createStyles(theme => ({
     marginTop: 100,
     marginLeft: 50,
     display: "flex",
-    width: "65%"
+    width: "70%",
+    height: "200px"
   },
   timeDetails: {
     display: "flex",
     flexDirection: "column"
   },
   media: {
-      width: "300px",
-      height: "180px"
+      // width: "200px"
+      height: "100%"
   },
   venueName: {
-      fontSize: "36px",
+      fontSize: "30px",
       fontWeight: "bold"
+  },
+  rating: {
+    color: "#FFA534"
   }
 }));
