@@ -9,6 +9,14 @@ const arrowButton = {
   transition: "right 0.5s"
 };
 
+const viewButton = {
+  position: "fixed",
+  width: 400,
+  bottom: 0,
+  zIndex: 5000,
+  transition: "right 0.5s"
+};
+
 export const styles = createStyles(theme => ({
   container: {
     width: "100vw",
@@ -38,7 +46,12 @@ export const styles = createStyles(theme => ({
     transform: "scale(1.5)",
     right: 400
   },
-  arrow: {
-    color: "white"
+  viewButtonIn: {
+    ...viewButton,
+    right: -400
+  },
+  viewButtonOut: {
+    ...viewButton,
+    right: 0
   }
 }));

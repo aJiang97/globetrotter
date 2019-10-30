@@ -1,7 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography } from "@material-ui/core";
-import { Add, Cancel, DoubleArrow } from "@material-ui/icons";
+import { Add, Close, DoubleArrow } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow } from "../../components";
 import { styles } from "./styles";
@@ -20,6 +20,38 @@ const locations = [
   {
     title: "Manly Beach",
     type: "Beaches, Family",
+    duration: "Recommended duration: 2 hours",
+    media: manly,
+    description:
+      "Manly Beach is a beach situated among the Northern Beaches of Sydney, Australia in Manly, New South Wales. From north to south, the three main sections are Queenscliff, North Steyne, and South Steyne."
+  },
+  {
+    title: "Coogee Beach",
+    type: "Beaches, Family",
+    duration: "Recommended duration: 2 hours",
+    media: bondi,
+    description:
+      "The sweeping white-sand crescent of Bondi is one of Australia’s most iconic beaches. Reliable waves draw surfers while, nearby, hardy locals swim in the Icebergs ocean pool year-round. Trendy, health-conscious Sydneysiders head to laid-back cafes around Hall Street, while hip backpackers frequent the area's casual pubs. Walkers and joggers use the clifftop Bondi to Coogee Coastal Walk, with its dramatic scenery."
+  },
+  {
+    title: "Sydney Opera House",
+    type: "Performances, Family",
+    duration: "Recommended duration: 2 hours",
+    media: manly,
+    description:
+      "Manly Beach is a beach situated among the Northern Beaches of Sydney, Australia in Manly, New South Wales. From north to south, the three main sections are Queenscliff, North Steyne, and South Steyne."
+  },
+  {
+    title: "Darling Square",
+    type: "Mall",
+    duration: "Recommended duration: 2 hours",
+    media: bondi,
+    description:
+      "The sweeping white-sand crescent of Bondi is one of Australia’s most iconic beaches. Reliable waves draw surfers while, nearby, hardy locals swim in the Icebergs ocean pool year-round. Trendy, health-conscious Sydneysiders head to laid-back cafes around Hall Street, while hip backpackers frequent the area's casual pubs. Walkers and joggers use the clifftop Bondi to Coogee Coastal Walk, with its dramatic scenery."
+  },
+  {
+    title: "UNSW",
+    type: "Education",
     duration: "Recommended duration: 2 hours",
     media: manly,
     description:
@@ -46,7 +78,17 @@ export class PureLocations extends React.Component {
     });
   };
 
-  handleRemoveLocation = key => {};
+  handleRemoveLocation = key => {
+    this.setState(state => {
+      const addedLocations = state.addedLocations.filter(
+        (locationKey, i) => locationKey !== key
+      );
+      return {
+        ...state,
+        addedLocations
+      };
+    });
+  };
 
   handleOpenListWindow = () => {
     this.setState({
@@ -77,7 +119,7 @@ export class PureLocations extends React.Component {
                     this.handleRemoveLocation(key);
                   }}
                 >
-                  <Cancel />
+                  <Close />
                 </Fab>
               ) : (
                 <Fab
@@ -102,7 +144,7 @@ export class PureLocations extends React.Component {
         </div>
         <Button
           variant="contained"
-          color="tertiary"
+          color="primary"
           className={
             this.state.isOpenListWindow
               ? classes.arrowButtonOut
@@ -110,12 +152,24 @@ export class PureLocations extends React.Component {
           }
           onClick={this.handleOpenListWindow}
         >
-          <DoubleArrow className={classes.arrow} />
+          <DoubleArrow />
         </Button>
         <LocationListWindow
           isOpen={this.state.isOpenListWindow}
           locations={this.getAddedLocations()}
+          onRemove={this.handleRemoveLocation}
         />
+        <Button
+          variant="contained"
+          color="secondary"
+          className={
+            this.state.isOpenListWindow
+              ? classes.viewButtonOut
+              : classes.viewButtonIn
+          }
+        >
+          View Plan
+        </Button>
       </div>
     );
   }
