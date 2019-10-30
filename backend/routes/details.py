@@ -19,7 +19,7 @@ details_url = "https://maps.googleapis.com/maps/api/place/details/json?"
 search_url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?"
 api_key = "AIzaSyDgQH-38jDOyQjMs8YmIA1lc8W2qhj1ros"
 
-details = api.namespace('details', description='get the details of a location')
+details = api.namespace('details', description='Details of a location')
 
 
 @details.route('/fs', strict_slashes=False)
@@ -233,12 +233,18 @@ class GoogleDetails(Resource):
         # Kevin:
         # This endpoint doesn't return photos, but the other endpoint returns photos. It is probably advisable for frontend to call the fs_google endpoint if they want a detailed result
 
+        coords = {
+            'latitude': dets['result']['geometry']['location']['lat'],
+            'longitude': dets['result']['geometry']['location']['lng']
+        }
+
         return {
             'location_name': name,
             'reviews': user_reviews,
             'rating': rating,
             'maps_url': url,
-            'place_id': place_id
+            'place_id': place_id,
+            'coordinate': coords
         }
 
     # get googlemaps location idenitfier
