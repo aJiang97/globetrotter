@@ -6,21 +6,74 @@ export const styles = createStyles(theme => ({
     marginLeft: 50,
     display: "flex",
     width: "70%",
-    height: "200px"
+    borderRadius: "15px"
+  },
+
+  // Time Section
+  timeColumn: {
+    backgroundColor: "#007EFC",
+    height: "100%",
+    textAlign: "center",
+    color: "white",
+    position: "relative"
   },
   timeDetails: {
-    display: "flex",
-    flexDirection: "column"
+    fontSize: "40px"
   },
+  time: {
+    fontSize: "16px"
+  },
+  verticalLine: {
+    borderRight: "3px solid white",
+    height: "20px",
+    width: "50%"
+  },
+  suggestion: {
+    position: "absolute",
+    width: "100%",
+    left: 0,
+    bottom: 55,
+    color: "white"
+  },
+  suggested: {
+    fontSize: "12px"
+  },
+  suggestedTime: {
+    fontWeight: "bold",
+    fontSize: "20px"
+  },
+
+  // Media Section
   media: {
-      // width: "200px"
-      height: "100%"
+    height: "100%"
+  },
+
+  // Content Section
+  cardContent: {
+    marginLeft: "10px",
+    position: "relative"
+  },
+  moreButton: {
+    position: "absolute",
+    top: 5,
+    right: 5
   },
   venueName: {
-      fontSize: "30px",
-      fontWeight: "bold"
+    fontSize: "30px",
+    fontWeight: "bold",
+    marginBottom: "10px",
+    marginTop: "5px",
+    maxWidth: "90%"
   },
-  rating: {
-    color: "#FFA534"
+  venueType: {
+    fontStyle: "italic",
+    fontSize: "15px",
+    maxWidth: "90%"
+  },
+  venueDescription: {
+    marginBottom: 0,
+    marginTop: "5px",
+    overflow: "hidden",
+    height: "80px"
   }
 }));
