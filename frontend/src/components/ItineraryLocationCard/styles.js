@@ -2,8 +2,6 @@ import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
   card: {
-    marginTop: 100,
-    marginLeft: 50,
     display: "flex",
     width: "70%",
     borderRadius: "15px"

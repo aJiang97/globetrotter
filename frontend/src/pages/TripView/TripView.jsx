@@ -5,6 +5,7 @@ import { styles } from "./styles";
 import history from "../../history";
 
 import { ItineraryLocationCard } from "../../components/ItineraryLocationCard";
+import { TravelSeparator } from "../../components/TravelSeparator";
 import operaHouse from "../../assets/opera-house.jpg";
 
 
@@ -23,6 +24,12 @@ export class PureTripView extends React.Component {
             media: operaHouse,
             description: "The Sydney Opera House is a multi-venue performing arts centre at Sydney Harbour in Sydney, New South Wales, Australia. It is one of the 20th century's most famous and distinctive buildings."
           }} 
+        />
+
+        <TravelSeparator 
+          walkTime="15 min"
+          driveTime="4 min"
+          publicTime="10 min"
         />
 
         <ItineraryLocationCard 
