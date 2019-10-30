@@ -1,7 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Fab, Typography } from "@material-ui/core";
-import { LocationCard } from "../../components";
+import { Button, Fab, Typography } from "@material-ui/core";
+import { Add, Cancel, DoubleArrow } from "@material-ui/icons";
+
+import { LocationCard, LocationListWindow } from "../../components";
 import { styles } from "./styles";
 import bondi from "../../assets/bondi.jpg";
 import manly from "../../assets/manly.jpg";
@@ -29,14 +31,33 @@ export class PureLocations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: null
+      isOpenListWindow: false,
+      addedLocations: []
     };
   }
 
-  handleExpandClick = () => {
-    this.setState(state => ({
-      expanded: !state.expanded
-    }));
+  handleAddLocation = key => {
+    this.setState(state => {
+      const addedLocations = state.addedLocations.concat(key);
+      return {
+        ...state,
+        addedLocations
+      };
+    });
+  };
+
+  handleRemoveLocation = key => {};
+
+  handleOpenListWindow = () => {
+    this.setState({
+      isOpenListWindow: !this.state.isOpenListWindow
+    });
+  };
+
+  getAddedLocations = () => {
+    return locations.filter(
+      (value, key) => this.state.addedLocations.indexOf(key) !== -1
+    );
   };
 
   render() {
@@ -47,30 +68,54 @@ export class PureLocations extends React.Component {
           <Typography variant="h5" className={classes.title}>
             Recommended Locations
           </Typography>
-          {locations.map(loc => (
-            <LocationCard
-              className={classes.card}
-              title={loc.title}
-              type={loc.type}
-              duration={loc.duration}
-              media={loc.media}
-              description={loc.description}
-            />
+          {locations.map((loc, key) => (
+            <div key={key} className={classes.locationCardContainer}>
+              {this.state.addedLocations.indexOf(key) !== -1 ? (
+                <Fab
+                  color="primary"
+                  onClick={() => {
+                    this.handleRemoveLocation(key);
+                  }}
+                >
+                  <Cancel />
+                </Fab>
+              ) : (
+                <Fab
+                  color="primary"
+                  onClick={() => {
+                    this.handleAddLocation(key);
+                  }}
+                >
+                  <Add />
+                </Fab>
+              )}
+              <LocationCard
+                className={classes.card}
+                title={loc.title}
+                type={loc.type}
+                duration={loc.duration}
+                media={loc.media}
+                description={loc.description}
+              />
+            </div>
           ))}
         </div>
-        <Fab
-          variant="extended"
-          color="secondary"
-          className={classes.plan_button}
+        <Button
+          variant="contained"
+          color="tertiary"
+          className={
+            this.state.isOpenListWindow
+              ? classes.arrowButtonOut
+              : classes.arrowButtonIn
+          }
+          onClick={this.handleOpenListWindow}
         >
-          <Typography
-            variant="body2"
-            className={classes.button_text}
-            /* onClick={this.handleSubmit} */
-          >
-            View Plan
-          </Typography>
-        </Fab>
+          <DoubleArrow className={classes.arrow} />
+        </Button>
+        <LocationListWindow
+          isOpen={this.state.isOpenListWindow}
+          locations={this.getAddedLocations()}
+        />
       </div>
     );
   }
