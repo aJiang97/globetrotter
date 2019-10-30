@@ -1,7 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography } from "@material-ui/core";
-import { Add, Cancel, DoubleArrow } from "@material-ui/icons";
+import { Add, Close, DoubleArrow } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow } from "../../components";
 import { styles } from "./styles";
@@ -46,7 +46,17 @@ export class PureLocations extends React.Component {
     });
   };
 
-  handleRemoveLocation = key => {};
+  handleRemoveLocation = key => {
+    this.setState(state => {
+      const addedLocations = state.addedLocations.filter(
+        (locationKey, i) => locationKey !== key
+      );
+      return {
+        ...state,
+        addedLocations
+      };
+    });
+  };
 
   handleOpenListWindow = () => {
     this.setState({
@@ -77,7 +87,7 @@ export class PureLocations extends React.Component {
                     this.handleRemoveLocation(key);
                   }}
                 >
-                  <Cancel />
+                  <Close />
                 </Fab>
               ) : (
                 <Fab
@@ -102,7 +112,7 @@ export class PureLocations extends React.Component {
         </div>
         <Button
           variant="contained"
-          color="tertiary"
+          color="primary"
           className={
             this.state.isOpenListWindow
               ? classes.arrowButtonOut
@@ -115,6 +125,7 @@ export class PureLocations extends React.Component {
         <LocationListWindow
           isOpen={this.state.isOpenListWindow}
           locations={this.getAddedLocations()}
+          onRemove={this.handleRemoveLocation}
         />
       </div>
     );

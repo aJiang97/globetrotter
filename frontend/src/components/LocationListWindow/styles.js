@@ -20,15 +20,23 @@ export const styles = createStyles(theme => ({
     background: theme.palette.tertiary.main,
     right: -400
   },
-  card: {
-    display: "flex",
-    flexDirection: "row",
-    margin: "10px 40px 10px 40px"
-  },
   title: {
     padding: "24px 40px 24px 40px"
   },
+  card: {
+    display: "flex",
+    flexDirection: "row",
+    margin: "10px 40px 10px 40px",
+    position: "relative"
+  },
   media: {
     width: "40%"
+  },
+  closeButton: {
+    position: "absolute",
+    top: 2,
+    right: 2,
+    padding: 0,
+    borderRadius: 4
   }
 }));

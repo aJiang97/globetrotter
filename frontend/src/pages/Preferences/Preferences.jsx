@@ -83,7 +83,6 @@ class PreferenceCardList extends React.Component {
         result.push(value);
       }
     }
-    console.log(result);
   };
 
   render() {
