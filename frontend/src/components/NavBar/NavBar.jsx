@@ -11,7 +11,14 @@ class PureNavBar extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <AppBar position="fixed" className={classes.appBar}>
+      <AppBar
+        position="fixed"
+        className={
+          window.location.pathname === "/locations"
+            ? classes.appBarLocations
+            : classes.appBarHome
+        }
+      >
         <Toolbar>
           <img src={logo} alt="logo" className={classes.logo} />
           <Button onClick={() => history.push("/home")}>
