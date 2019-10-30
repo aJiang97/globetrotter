@@ -16,7 +16,7 @@ const theme = createMuiTheme({
       main: "#5C5C5C"
     },
     tertiary: {
-      main: "#466282"
+      main: "#eff0f1"
     },
     white: {
       main: "#FFF8F0"
@@ -37,7 +37,6 @@ class App extends React.Component {
         <NavBar />
         <Router history={history}>
           <Switch>
-            {/* <Redirect from="/" to="/home" /> */}
             <Route path="/home" component={Home} />
             <Route path="/trip" component={Trip} />
             <Route path="/preferences" component={Preferences} />
