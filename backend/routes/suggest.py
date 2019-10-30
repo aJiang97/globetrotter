@@ -18,11 +18,13 @@ suggest = api.namespace('suggest', description='Suggest list of places')
 
 @suggest.route('/', strict_slashes=False)
 class Suggest(Resource):
-    @suggest.param('city', 'City that the user wants to check')
-    @suggest.response(200, 'Success')
+    @suggest.param('city', 'City that the user wants to check', required=True)
+    @suggest.response(200, description='Success', model=locations_short)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
-    @suggest.expect(locations)
+    @suggest.doc(description='''
+        Suggests 50 locations. Gets coordinate information and FourSquare venue ID for each suggested items.
+    ''')
     def get(self):
         location = request.args.get('city')
 
@@ -45,7 +47,7 @@ class Suggest(Resource):
         for target in item['items']:
             locationIds.append(target['venue']['id'])
         
-        listres = self.getVenues(locationIds)
+        listres = self.getVenues(item['items'])
 
         return {
             'city': explore['response']['geocode']['displayString'],
@@ -82,7 +84,97 @@ class Suggest(Resource):
 
         return resp.text
 
-    # Returns string
+    def getVenues(self, items):
+        listres = []
+
+        for item in items:
+            coords = {
+                "latitude": item['venue']['location']['lat'],
+                "longitude": item['venue']['location']['lng']
+            }
+
+            listres.append({
+                "venue_name": item['venue']['name'],
+                "coordinate": coords,
+                "location_id": item['venue']['id']
+            })
+
+        return listres
+
+
+@suggest.route('/detailed', strict_slashes=False)
+class DetailedSuggest(Resource):
+    @suggest.param('city', 'City that the user wants to check', required=True)
+    @suggest.response(200, description='Success', model=locations)
+    @suggest.response(400, 'Malformed request input on user side')
+    @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
+    @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
+    @suggest.doc(description='''
+        Suggests 50 locations. Gets detailed information (based on Foursquare) for each suggested items, including pictures. This is the expanded version of `/suggest` endpoint
+    ''')
+    def get(self):
+        location = request.args.get('city')
+
+        if location is None:
+            abort('400', 'Invalid query')
+
+        # First request on all venues on a city/location
+        getresult = self.getExplore(location)
+
+        if getresult is None:
+            abort('403', 'FS API can\'t handle request')
+
+        explore = json.loads(getresult)
+        locationIds = []
+        resp = explore['response']
+        gps = resp['groups']
+        item = gps[0]
+
+        i = 0
+        for target in item['items']:
+            locationIds.append(target['venue']['id'])
+        
+        listres = self.getVenues(locationIds)
+
+        if len(listres) == 0:
+            abort('404', 'Maximum query on FS API is reached')
+
+        return {
+            'city': explore['response']['geocode']['displayString'],
+            'locations': listres
+        }
+
+    # Returns string from Foursquare API
+    def getExplore(self, location):
+        cacheresult = check_cache('explore_' + location + '.json')
+        if cacheresult == True:
+            return retrieve_cache('explore_' + location + '.json')
+
+        url = 'https://api.foursquare.com/v2/venues/explore'
+
+        rawtime = date.today() - timedelta(days=1)
+        parsedtime = rawtime.strftime('%Y%m%d')
+
+        params = dict(
+            near=location,
+            client_id=config.FOURSQUARE_CLIENT_ID,
+            client_secret=config.FOURSQUARE_CLIENT_SECRET,
+            v=parsedtime,
+            limit=50,
+            offset=50,
+            sortByPopularity=1
+        )
+
+        resp = requests.get(url=url, params=params)
+
+        if resp.status_code != 200:
+            return None
+
+        store_cache(resp.text, 'explore_' + location + '.json')
+
+        return resp.text
+
+    # Returns a list of locations
     def getVenues(self, venueIds):
         listres = []
 

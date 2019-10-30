@@ -30,3 +30,29 @@ locations = api.model('locations',{
     "city": fields.String(),
     "locations": fields.List(fields.Nested(location))
 })
+
+location_short = api.model('location_short',{
+    "venue_name": fields.String(),
+    "coordinate": fields.Nested(location_coordinate),
+    "location_id": fields.String()
+})
+
+locations_short = api.model('locations_short',{
+    "city": fields.String(),
+    "locations": fields.List(fields.Nested(location_short))
+})
+
+user_reviews = api.model('user_reviews', {
+    "name": fields.String(),
+    "review": fields.String(),
+    "time": fields.String()
+})
+
+g_location = api.model('g_location', {
+    "location": fields.String(),
+    "reviews": fields.Nested(user_reviews),
+    "rating": fields.Float(min=1.0, max=5.0),
+    "url": fields.String(),
+    "place_id": fields.String()
+})
+

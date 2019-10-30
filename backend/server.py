@@ -33,6 +33,7 @@ def run_flask(host, port):
     from app import app
     
     import routes.suggest
+    import routes.details
 
     # Set environment
     os.environ['HOST'] = host
