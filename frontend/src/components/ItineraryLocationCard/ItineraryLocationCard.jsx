@@ -14,15 +14,17 @@ import { StarRating } from "../../components/StarRating";
 
 /**
  * Class for a Location Card in the Itinerary View
- * @prop {string} startTime Start Time for Visiting that location
- * @prop {string} endTime End Time for Visiting that location
- * @prop {number} suggestedTime Suggested Stay Time for in minutes
- * @prop {Venue} venue Venue Object that should have the following properties:
- * Venue: {
- *    name (string): Name of the Location,
- *    type ([string]): Type of the Location,
- *    media (string): src of Image of the Location,
- *    description (string): Description of the Location
+ * @prop {ItineraryItem} itineraryItem Object containing details of a location
+ * interface ItineraryItem {
+ *    startTime (Start Time for Visiting that location): string,
+ *    endTime (End Time for Visiting that Location): string,
+ *    suggestedTime (Suggested Stay Time): string,
+ *    venue: {
+ *      name (Name of Location): string
+ *      type (Type(s) of Locations): [string]
+ *      media (src of Image of Location): string
+ *      description (Description of Location): string
+ *    }
  * }
  */
 class PureItineraryLocationCard extends React.Component {
@@ -40,7 +42,7 @@ class PureItineraryLocationCard extends React.Component {
   };
 
   render() {
-    const { startTime, endTime, suggestedTime, venue, classes } = this.props;
+    const { itineraryItem, classes } = this.props;
     return (
       <Card className={classes.card} raised>
         <Grid container>
@@ -49,13 +51,13 @@ class PureItineraryLocationCard extends React.Component {
           <Grid item md={2}>
             <CardContent className={classes.timeColumn}>
               <div className={classes.timeDetails}>
-                <Typography className={classes.time}>{startTime}</Typography>
+                <Typography className={classes.time}>{itineraryItem.startTime}</Typography>
                 <div className={classes.verticalLine}></div>
-                <Typography className={classes.time}>{endTime}</Typography>
+                <Typography className={classes.time}>{itineraryItem.endTime}</Typography>
               </div>
               <div className={classes.suggestion}>
                 <Typography className={classes.suggested}>Suggested:</Typography>
-                <Typography className={classes.suggestedTime}>{suggestedTime} min</Typography>
+                <Typography className={classes.suggestedTime}>{itineraryItem.suggestedTime}</Typography>
               </div>
             </CardContent>
           </Grid>
@@ -64,7 +66,7 @@ class PureItineraryLocationCard extends React.Component {
           <Grid item md={4}>
             <CardMedia
               className={classes.media}
-              image={venue.media} 
+              image={itineraryItem.venue.media} 
             />
           </Grid>
 
@@ -75,7 +77,7 @@ class PureItineraryLocationCard extends React.Component {
                 <MoreVertIcon />
               </IconButton>
               <Typography variant="h3" className={classes.venueName}>
-                {venue.name}
+                {itineraryItem.venue.name}
               </Typography>
 
               <Grid item container spacing={2} >
@@ -84,13 +86,13 @@ class PureItineraryLocationCard extends React.Component {
                 </Grid>
                 <Grid item md={8}>
                   <Typography className={classes.venueType} variant="subtitle1" color="textSecondary" component="p" noWrap>
-                    {venue.type.join(', ')}
+                    {itineraryItem.venue.type.join(', ')}
                   </Typography>
                 </Grid>
               </Grid>
 
               <Typography variant="subtitle1" paragraph className={classes.venueDescription}>
-                {venue.description}
+                {itineraryItem.venue.description}
               </Typography>
             </CardContent>
           </Grid>
