@@ -111,11 +111,14 @@ class FoursquareDetails(Resource):
 class DepthDetails(Resource):
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.')
     @details.param('venuename', 'Location the user wants details on, using venue name. If param venueID is not empty, venuename will be ignored.')
-    @details.response(200, 'Success', g_location)
+    @details.response(200, 'Success', fg_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter is geocodable (refer to Geocoding API on Google Maps)')
     @details.response(404, 'Places API could not process or fulfill user request, assuming unavailable resource.')
     def get(self):
+        # Merge both location and g_location (read docs)
+        # Into fg_location type object
+        # Method here should be similar to the method below
         pass
 
 @details.route('/google', strict_slashes=False)
@@ -231,10 +234,10 @@ class GoogleDetails(Resource):
         # This endpoint doesn't return photos, but the other endpoint returns photos. It is probably advisable for frontend to call the fs_google endpoint if they want a detailed result
 
         return {
-            'location': name,
+            'location_name': name,
             'reviews': user_reviews,
             'rating': rating,
-            'url': url,
+            'maps_url': url,
             'place_id': place_id
         }
 

@@ -49,10 +49,14 @@ user_reviews = api.model('user_reviews', {
 })
 
 g_location = api.model('g_location', {
-    "location": fields.String(),
-    "reviews": fields.Nested(user_reviews),
+    "location_name": fields.String(),
+    "reviews": fields.List(fields.Nested(user_reviews)),
     "rating": fields.Float(min=1.0, max=5.0),
-    "url": fields.String(),
+    "maps_url": fields.String(),
     "place_id": fields.String()
 })
 
+fg_location = api.model('fg_location', {
+    "foursquare": fields.Nested(location),
+    "google": fields.Nested(g_location)
+})

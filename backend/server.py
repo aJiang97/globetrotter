@@ -59,4 +59,7 @@ if __name__ == "__main__":
             usage()
     except:
         print("Something bad happened. Try debugging.")
+        print("This happened to me before. Possible causes:")
+        print(" - unfinished util/models.py file")
+        print(" - just saved a file (server doesn't support hotload)")
         usage()
