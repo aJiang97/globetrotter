@@ -260,6 +260,6 @@ class GoogleDetails(Resource):
         if response.status_code != 200:
             return None
 
-        id = json.loads(response)
+        id = json.loads(response.text)
 
-        return id['candidates']['place_id']
+        return id['candidates'][0]['place_id']
