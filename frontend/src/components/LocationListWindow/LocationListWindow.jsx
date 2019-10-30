@@ -32,15 +32,9 @@ class PureLocationListWindow extends React.Component {
                 <Close />
               </IconButton>
             </CardActions>
-            <CardContent>
-              <Typography component="h2" variant="h5">
-                {location.title}
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                color="textSecondary"
-                component="p"
-              >
+            <CardContent className={classes.content}>
+              <Typography variant="h6">{location.title}</Typography>
+              <Typography variant="caption" color="textSecondary" component="p">
                 {location.type}
               </Typography>
             </CardContent>

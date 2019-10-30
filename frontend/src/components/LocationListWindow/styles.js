@@ -5,8 +5,10 @@ const drawerBase = {
   top: 64,
   bottom: 0,
   width: 400,
+  paddingBottom: 50,
   position: "fixed",
-  transition: "right 0.5s"
+  transition: "right 0.5s",
+  overflowY: "auto"
 };
 
 export const styles = createStyles(theme => ({
@@ -31,6 +33,9 @@ export const styles = createStyles(theme => ({
   },
   media: {
     width: "40%"
+  },
+  content: {
+    width: "50%"
   },
   closeButton: {
     position: "absolute",
