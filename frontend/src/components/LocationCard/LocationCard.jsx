@@ -10,6 +10,7 @@ import {
   Typography
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import Grid from '@material-ui/core/Grid';
 import MapContainer from "../../components/MapContainer/MapContainer";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
@@ -33,14 +34,18 @@ class PureLocationCard extends React.Component {
     const { classes } = this.props;
     return (
       <Card className={classes.card}>
-        <div className={classes.header}>
-          <CardMedia className={classes.media} image={this.props.media} />
-          <MapContainer
-            lat={this.props.lat}
-            lng={this.props.lng}
-          />
-        </div>
-        <CardContent>
+        <Grid container>
+          <Grid container item xs={6}>
+            <CardMedia className={classes.media} image={this.props.media} />
+          </Grid>
+          <Grid container item xs={6}>
+            <MapContainer
+              lat={this.props.lat}
+              lng={this.props.lng}
+            />
+          </Grid>
+        </Grid>
+        <CardContent className={classes.content}>
           <Typography component="h2" variant="h5">
             {this.props.title}
           </Typography>
@@ -56,7 +61,7 @@ class PureLocationCard extends React.Component {
             <Typography paragraph>{this.props.description}</Typography>
           </CardContent>
         </Collapse>
-        <CardActions disableSpacing>
+        <CardActions disableSpacing className={classes.action}>
           <IconButton
             className={clsx(classes.expand, {
               [classes.expandOpen]: this.state.expanded
