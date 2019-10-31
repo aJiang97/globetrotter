@@ -1,5 +1,6 @@
-export * from "./NavBar";
 export * from "./LocationCard";
+export * from "./LocationListWindow";
+export * from "./NavBar";
 export * from "./PreferenceCard";
 export * from "./ItineraryLocationCard";
 export * from "./StarRating";

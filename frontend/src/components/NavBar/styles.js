@@ -1,11 +1,18 @@
 import { createStyles } from "@material-ui/core/styles";
 
+const appBar = {
+  zIndex: 5000,
+  boxShadow: "0px 0px"
+};
+
 export const styles = createStyles(theme => ({
-  appBar: {
-    zIndex: 5000,
-    // backgroundColor: "transparent",
-    backgroundColor: theme.palette.primary.main,
-    boxShadow: "0px 0px"
+  appBarHome: {
+    ...appBar,
+    backgroundColor: "transparent"
+  },
+  appBarLocations: {
+    ...appBar,
+    backgroundColor: theme.palette.primary.main
   },
   logo: {
     width: 50
