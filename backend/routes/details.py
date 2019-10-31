@@ -14,11 +14,8 @@ from requests_futures.sessions import FuturesSession
 from util.models import *
 from util.caching import *
 
-
-details_url = "https://maps.googleapis.com/maps/api/place/details/json?"
-search_url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?"
-api_key = "AIzaSyDgQH-38jDOyQjMs8YmIA1lc8W2qhj1ros"
-
+details_url = 'https://maps.googleapis.com/maps/api/place/details/json'
+search_url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
 details = api.namespace('details', description='Details of a location')
 
 
@@ -32,12 +29,12 @@ class FoursquareDetails(Resource):
         venueId = request.args.get('venueID')
 
         if venueId is None:
-            abort('400', 'Invalid query')
+            abort(400, 'Invalid query')
 
         result = self.getVenue(venueId)
 
         if result is None:
-            abort('403', 'API can\'t handle request')
+            abort(403, 'API can\'t handle request')
 
         return result
 
@@ -123,17 +120,17 @@ class DepthDetails(Resource):
         # just copied the functions over and did a hatch job
         venueId = request.args.get('venueID')
         if venueId is None:
-            abort('400', 'Invalid query')
+            abort(400, 'Invalid query')
         #foursquare requests
         fs_results = self.getVenue(venueId)
         if fs_results is None:
-            abort('403', 'API can\'t handle request')
+            abort(403, 'API can\'t handle request')
 
         name = fs_results['venue_name']
         #googlemaps results
         gm_results = self.get_details(name)
         if gm_results is None:
-            abort('404', 'Places API can\'t handle request')
+            abort(404, 'Places API can\'t handle request')
 
         final_results = {
             'foursquare':fs_results,
@@ -214,11 +211,11 @@ class DepthDetails(Resource):
         else:
             payload = {
                 'place_id': place_id,
-                'key': api_key,
+                'key': config.GOOGLE_WS_API_KEY,
                 'fields': 'photo,url,rating,review,price_level'
             }
 
-            response = requests.get(details_url, params=payload)
+            response = requests.get(url=details_url, params=payload)
 
             if response.status_code != 200:
                 return None
@@ -265,11 +262,11 @@ class DepthDetails(Resource):
     def get_placeid(self, name):
         params = {
             'input': name,
-            'key': api_key,
+            'key': config.GOOGLE_WS_API_KEY,
             'inputtype': 'textquery'
         }
 
-        response = requests.get(search_url, params=params)
+        response = requests.get(url=search_url, params=params)
 
         if response.status_code != 200:
             return None
@@ -280,9 +277,6 @@ class DepthDetails(Resource):
             return id['candidates'][0]['place_id']
         return None
         
-
-
-
 
 @details.route('/google', strict_slashes=False)
 class GoogleDetails(Resource):
@@ -297,9 +291,11 @@ class GoogleDetails(Resource):
         venuename = request.args.get('venuename')
 
         if venueId is None and venuename is None:
-            abort('400', 'Invalid query')
+            abort(400, 'Invalid query')
 
         result = None
+
+        # print("start " + str(time.time()))
 
         if venueId is not None:
             # FS venueID is not empty
@@ -307,18 +303,23 @@ class GoogleDetails(Resource):
             # If not possible, check if venuename field exists
             # If none, abort
             retrieved_venuename = self.getVenueNameFromFS(venueId)
+            # print("retrieve venuename. " + str(time.time()))
             if retrieved_venuename is None:
                 if venuename is None:
-                    abort('403', 'FS API can\'t handle request')
+                    abort(403, 'FS API can\'t handle request')
                 else:
                     # Request for venuename directly
-                    result = self.get_details(retrieved_venuename)
+                    result = self.get_details(venuename)
+                    # print("getdetails from venuename. " + str(time.time()))
+            else:
+                result = self.get_details(retrieved_venuename)
+                # print("getdetails from retrieved. " + str(time.time()))
         else:
-            # FS venueID is empty, request for venuename directly
             result = self.get_details(venuename)
+            # print("getdetails from venuename direct. " + str(time.time()))
 
         if result is None:
-            abort('404', 'Places API can\'t handle request')
+            abort(404, 'Places API can\'t handle request')
 
         return result
 
@@ -339,8 +340,8 @@ class GoogleDetails(Resource):
                 client_secret=config.FOURSQUARE_CLIENT_SECRET,
                 v=parsedtime
             )
-            futures.append(session.get(
-                'https://api.foursquare.com/v2/venues/' + venueId, params=params))
+            future = session.get(
+                'https://api.foursquare.com/v2/venues/' + venueId, params=params)
             response = future.result()
 
             if response.status_code != 200:
@@ -352,7 +353,7 @@ class GoogleDetails(Resource):
             store_cache(content, 'venue_' + vid + '.json')
 
         # Name of the venue might be unclear, hence returns a lengthy response
-        return dictres['response']['venue']['name'] + ' ' + dictres['response']['venue']['location']['neighborhood'] + ' ' + dictres['response']['venue']['location']['city'] + ' ' + dictres['response']['venue']['location']['country']
+        return dictres['response']['venue']['name'] + ' ' + dictres['response']['venue']['location']['city'] + ' ' + dictres['response']['venue']['location']['country']
 
     # return dets from either API or cache
     def get_details(self, name):
@@ -364,11 +365,11 @@ class GoogleDetails(Resource):
         else:
             payload = {
                 'place_id': place_id,
-                'key': api_key,
+                'key': config.GOOGLE_WS_API_KEY,
                 'fields': 'photo,url,rating,review,price_level'
             }
 
-            response = requests.get(details_url, params=payload)
+            response = requests.get(url=details_url, params=payload)
 
             if response.status_code != 200:
                 return None
@@ -391,8 +392,6 @@ class GoogleDetails(Resource):
                     "review": dets['result']['reviews'][i]['text'],
                     "time": dets['result']['reviews'][i]['relative_time_description']
                 })
-
-        
 
         # links to googlemaps of location
         url = dets['result']['url']
@@ -416,11 +415,11 @@ class GoogleDetails(Resource):
     def get_placeid(self, name):
         params = {
             'input': name,
-            'key': api_key,
+            'key': config.GOOGLE_WS_API_KEY,
             'inputtype': 'textquery'
         }
 
-        response = requests.get(search_url, params=params)
+        response = requests.get(url=search_url, params=params)
 
         if response.status_code != 200:
             return None
