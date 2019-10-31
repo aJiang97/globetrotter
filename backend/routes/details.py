@@ -156,8 +156,8 @@ class DepthDetails(Resource):
                 client_secret=config.FOURSQUARE_CLIENT_SECRET,
                 v=parsedtime
             )
-            futures.append(session.get(
-                'https://api.foursquare.com/v2/venues/' + venueId, params=params))
+            future = session.get(
+                'https://api.foursquare.com/v2/venues/' + venueId, params=params)
             response = future.result()
 
             if response.status_code != 200:
