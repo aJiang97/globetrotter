@@ -3,7 +3,7 @@ import { createStyles } from "@material-ui/core/styles";
 export const styles = createStyles(theme => ({
   card: {
     display: "flex",
-    width: "70%",
+    // width: "65vw",
     borderRadius: "15px"
   },
 

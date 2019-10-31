@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Typography, Grid, ButtonBase } from "@material-ui/core";
+import { Typography, Grid } from "@material-ui/core";
 import { styles } from "./styles";
 
 import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';

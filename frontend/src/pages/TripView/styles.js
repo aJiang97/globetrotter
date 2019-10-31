@@ -1,44 +1,18 @@
 import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
-    bg: {
-        maxWidth: "100%",
-        height: "auto",
-        minHeight: "100%",
-        bottom: 0,
-        position: "absolute"
-      },
-      bg_layer: {
-        zIndex: 1110,
-        position: "fixed",
-        top: 64,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "black",
-        opacity: 0.6
-      },
-      title: {
-        textAlign: "center",
-        marginTop: "180px",
-        marginBottom: "25px",
-        fontFamily: "Raleway",
-        fontWeight: "bold",
-        color: "white"
+    title: {
+        fontFamily: "Roboto",
+        marginBottom: "20px"
     },
     container: {
-        zIndex: 1111,
-        position: "fixed",
-        top: "38%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
+        margin: "100px 10%"
     },
-    buttonRow: {
-        textAlign: "center",
-        marginTop: 40
+    dateTabs: {
+        marginTop: "500px"
     },
-    navButton: {
-        marginLeft: 100,
-        marginRight: 100
+    itinerary: {
+        // backgroundColor: "green",
+        paddingTop: "30px"
     }
 }))
