@@ -19,16 +19,23 @@ def categorization(cats):
 
 switch = {
     "romance": None,
-    "nature": None,
-    "wildlife": None,
+    "nature": wildlife,
+    "wildlife": wildlife,
     "shopping": shopping,
-    "historical": None,
-    "cultural": None,
+    "historical": historical,
+    "cultural": cultural,
     "family": None,
     "beaches": beaches,
     "food": food,
-    "buildings": buildings
+    "buildings": buildings,
+    "arts_entertainment": arts_entertainment
 }
+
+def arts_entertainment():
+    ret = []
+    ret.append("4d4b7104d754a06370d81259")
+    ret.append("52e81612bcbc57f1066b7a26") # Recreation center
+    return ret
 
 def shopping():
     ret = []
@@ -44,6 +51,10 @@ def wildlife():
     ret = []
     ret.append("4bf58dd8d48988d17b941735") # Zoo
     ret.append("4fceea171983d5d06c3e9823") # Aquarium
+    ret.append("52e81612bcbc57f1066b7a21") # National Park
+    ret.append("52e81612bcbc57f1066b7a13") # Nature Preserve
+    ret.append("52e81612bcbc57f1066b7a22") # Botanical Garden
+    ret.append("52e81612bcbc57f1066b7a23") # Forest
     return ret
 
 def historical():
@@ -56,4 +67,8 @@ def food():
     return ["4d4b7105d754a06374d81259"] # Food
 
 def buildings():
-    return ["4d4b7104d754a06370d81259"]
+    return ["4bf58dd8d48988d12d941735"]
+
+def cultural():
+    return ["4bf58dd8d48988d131941735"]
+

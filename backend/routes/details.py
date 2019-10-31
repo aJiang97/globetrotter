@@ -22,7 +22,7 @@ details = api.namespace('details', description='Details of a location')
 @details.route('/fs', strict_slashes=False)
 class FoursquareDetails(Resource):
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.')
-    @details.response(200, 'Success', location)
+    @details.response(200, 'Success', f_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     def get(self):
