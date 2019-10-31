@@ -29,13 +29,13 @@ class Suggest(Resource):
         location = request.args.get('city')
 
         if location is None:
-            abort('400', 'Invalid query')
+            abort(400, 'Invalid query')
 
         # First request on all venues on a city/location
         getresult = self.getExplore(location)
 
         if getresult is None:
-            abort('403', 'FS API can\'t handle request')
+            abort(403, 'FS API can\'t handle request')
 
         explore = json.loads(getresult)
         locationIds = []
@@ -116,13 +116,13 @@ class DetailedSuggest(Resource):
         location = request.args.get('city')
 
         if location is None:
-            abort('400', 'Invalid query')
+            abort(400, 'Invalid query')
 
         # First request on all venues on a city/location
         getresult = self.getExplore(location)
 
         if getresult is None:
-            abort('403', 'FS API can\'t handle request')
+            abort(403, 'FS API can\'t handle request')
 
         explore = json.loads(getresult)
         locationIds = []
@@ -137,7 +137,7 @@ class DetailedSuggest(Resource):
         listres = self.getVenues(locationIds)
 
         if len(listres) == 0:
-            abort('404', 'Maximum query on FS API is reached')
+            abort(404, 'Maximum query on FS API is reached')
 
         return {
             'city': explore['response']['geocode']['displayString'],
