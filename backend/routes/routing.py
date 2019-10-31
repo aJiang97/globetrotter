@@ -18,7 +18,7 @@ routing = api.namespace('routing', description='Routing of places')
 
 @routing.route('/itinerary', strict_slashes=False)
 class ItineraryAlgorithm(Resource):
-    @routing.response(200, 'Success')
+    @routing.response(200, 'Success', route_result)
     @routing.expect(route_array)
     def post(self):
         received_item = request.json

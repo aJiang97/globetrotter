@@ -71,3 +71,11 @@ route_array = api.model('route_array', {
     "array": fields.List(fields.Nested(route_item), required=True),
     "starting_point": fields.Nested(route_item, required=False)
 })
+
+route_day = api.model('route_day', {
+    "array": fields.List(fields.Nested(route_item))
+})
+
+route_result = api.model('route_result', {
+    "array": fields.List(fields.Nested(route_day))
+})
