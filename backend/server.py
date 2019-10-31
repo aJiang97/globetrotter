@@ -34,6 +34,7 @@ def run_flask(host, port):
     
     import routes.suggest
     import routes.details
+    import routes.routing
 
     # Set environment
     os.environ['HOST'] = host
