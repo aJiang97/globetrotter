@@ -149,7 +149,7 @@ class GoogleDetails(Resource):
                     abort('403', 'FS API can\'t handle request')
                 else:
                     # Request for venuename directly
-                    result = self.get_details(venuename)
+                    result = self.get_details(retrieved_venuename)
         else:
             # FS venueID is empty, request for venuename directly
             result = self.get_details(venuename)
@@ -193,14 +193,14 @@ class GoogleDetails(Resource):
 
     # return dets from either API or cache
     def get_details(self, name):
-        place_id = get_placeid(name)
+        place_id = self.get_placeid(name)
 
         if check_cache('place_' + place_id + '.json', False):
             cache = retrieve_cache('place_' + place_id + '.json', False)
             dets = json.loads(cache)
         else:
             payload = {
-                'place_id': pid,
+                'place_id': place_id,
                 'key': api_key,
                 'fields': 'photo,url,rating,review,price_level'
             }
@@ -234,8 +234,8 @@ class GoogleDetails(Resource):
         # This endpoint doesn't return photos, but the other endpoint returns photos. It is probably advisable for frontend to call the fs_google endpoint if they want a detailed result
 
         coords = {
-            'latitude': dets['result']['geometry']['location']['lat'],
-            'longitude': dets['result']['geometry']['location']['lng']
+            'latitude': 0,# dets['result']['geometry']['location']['lat'],
+            'longitude':0 # dets['result']['geometry']['location']['lng']
         }
 
         return {
@@ -262,4 +262,6 @@ class GoogleDetails(Resource):
 
         id = json.loads(response.text)
 
-        return id['candidates'][0]['place_id']
+        if id['status'] == 'OK':
+            return id['candidates'][0]['place_id']
+        return None
