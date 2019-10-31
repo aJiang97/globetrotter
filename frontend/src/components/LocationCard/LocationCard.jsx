@@ -10,6 +10,7 @@ import {
   Typography
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
+import MapContainer from "../../components/MapContainer/MapContainer";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { styles } from "./styles";
@@ -32,7 +33,13 @@ class PureLocationCard extends React.Component {
     const { classes } = this.props;
     return (
       <Card className={classes.card}>
-        <CardMedia className={classes.media} image={this.props.media} />
+        <div className={classes.header}>
+          <CardMedia className={classes.media} image={this.props.media} />
+          <MapContainer
+            lat={this.props.lat}
+            lng={this.props.lng}
+          />
+        </div>
         <CardContent>
           <Typography component="h2" variant="h5">
             {this.props.title}

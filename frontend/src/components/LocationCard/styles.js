@@ -3,11 +3,16 @@ import { createStyles } from "@material-ui/core/styles";
 export const styles = createStyles(theme => ({
   card: {
     width: "70%",
-    margin: 20
+    margin: 20,
   },
   media: {
     height: 30,
-    paddingTop: "20%"
+    paddingTop: "20%",
+    width:"50%",
+    display: "inline"
+  },
+  header: {
+    display:"grid",
   },
   expand: {
     transform: "rotate(0deg)",
