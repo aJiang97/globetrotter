@@ -129,10 +129,10 @@ class DepthDetails(Resource):
         if fs_results is None:
             abort('403', 'API can\'t handle request')
 
-        name = result['venue_name']
+        name = fs_results['venue_name']
         #googlemaps results
         gm_results = self.get_details(name)
-        if gm_result is None:
+        if gm_results is None:
             abort('404', 'Places API can\'t handle request')
 
         final_results = {
@@ -396,14 +396,6 @@ class GoogleDetails(Resource):
 
         # links to googlemaps of location
         url = dets['result']['url']
-        
-        # Alex:
-        # photo todo, however if i saw photo options with FS already done?
-        # FS might be better as each photo reference requires api request
-
-        # Kevin:
-        # This endpoint doesn't return photos, but the other endpoint returns photos. It is probably advisable for frontend to call the fs_google endpoint if they want a detailed result
-        
 
         #not sure this is needed in the google endpoint as it already exists in fs endpoint
         coords = {
