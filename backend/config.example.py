@@ -7,3 +7,4 @@ CACHETIME = 24
 # Just, don't modify this...
 DIR_NAME = "/.api_cache"
 
+GOOGLE_WS_API_KEY = ''

@@ -8,6 +8,8 @@ CORS(app)
 
 api = Api(app)
 
+import pdb
+
 if 'HOST' in os.environ:
     print()
     print('***')
