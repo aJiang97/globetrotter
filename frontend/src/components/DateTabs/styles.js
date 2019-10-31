@@ -4,7 +4,7 @@ export const styles = createStyles(theme => ({
     transparentTabs: {
         position: "-webkit-sticky",
         position: "sticky",
-        top: 64,
+        top: 0,
         zIndex: 999,
         transition: "background-color 0.3s ease 0s",
         borderBottom: "1px solid black",
@@ -13,7 +13,7 @@ export const styles = createStyles(theme => ({
     colouredTabs: {
         position: "-webkit-sticky",
         position: "sticky",
-        top: 64,
+        top: 0,
         zIndex: 999,
         transition: "background-color 0.3s ease 0s",
         backgroundColor: "#FF8D77"
