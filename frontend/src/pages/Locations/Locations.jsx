@@ -124,7 +124,7 @@ export class PureLocations extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <Grid container>
+        <Grid className={classes.section}>
           <Grid container item xs={6} className={classes.flexScroll}>
             <Typography variant="h5" className={classes.title}>
               Recommended Locations
