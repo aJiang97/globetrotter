@@ -157,8 +157,6 @@ export class PureLocations extends React.Component {
                   duration={loc.duration}
                   media={loc.media}
                   description={loc.description}
-                  lat={loc.lat}
-                  lng={loc.lng}
                 />
               </div>
             ))}
@@ -193,8 +191,7 @@ export class PureLocations extends React.Component {
           </Grid>
           <Grid container item xs={6}>
             <MapContainer
-              lat={-33.8915}
-              lng={151.2767}
+              locations={locations}
             />
           </Grid>
         </Grid>
