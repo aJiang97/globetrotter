@@ -230,7 +230,9 @@ class DetailedSuggest(Resource):
                 "location_types": locs,
                 "coordinate": coords,
                 "pictures": pics,
-                "location_id": dictres['response']['venue']['id']
+                "location_id": dictres['response']['venue']['id'],
+                "url": dictres['response']['venue'].get('url'),
+                "description": dictres['response']['venue'].get('description')
             })
 
         for future in futures:
@@ -272,7 +274,9 @@ class DetailedSuggest(Resource):
                 "location_types": locs,
                 "coordinate": coords,
                 "pictures": pics,
-                "location_id": parsed['response']['venue']['id']
+                "location_id": parsed['response']['venue']['id'],
+                "url": parsed['response']['venue'].get('url'),
+                "description": parsed['response']['venue'].get('description')
             })
 
         return listres

@@ -23,7 +23,9 @@ f_location = api.model('foursquare_location',{
     "venue_name": fields.String(),
     "coordinate": fields.Nested(location_coordinate),
     "pictures": fields.List(fields.String()),
-    "location_id": fields.String()
+    "location_id": fields.String(),
+    "url": fields.String(description='Can be null'),
+    "description": fields.String(description='Can be null')
 })
 
 locations = api.model('locations',{
