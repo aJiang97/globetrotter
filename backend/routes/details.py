@@ -98,7 +98,9 @@ class FoursquareDetails(Resource):
             "location_types": locs,
             "coordinate": coords,
             "pictures": pics,
-            "location_id": dictres['response']['venue']['id']
+            "location_id": dictres['response']['venue']['id'],
+            "url": dictres['response']['venue'].get('url'),
+            "description": dictres['response']['venue'].get('description')
         }
 
         return retval
@@ -197,7 +199,9 @@ class DepthDetails(Resource):
             "location_types": locs,
             "coordinate": coords,
             "pictures": pics,
-            "location_id": dictres['response']['venue']['id']
+            "location_id": dictres['response']['venue']['id'],
+            "url": dictres['response']['venue'].get('url'),
+            "description": dictres['response']['venue'].get('description')
         }
 
         return retval
