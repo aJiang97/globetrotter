@@ -3,3 +3,7 @@ export * from "./LocationListWindow";
 export * from "./NavBar";
 export * from "./PreferenceCard";
 export * from "./MapContainer";
+export * from "./ItineraryLocationCard";
+export * from "./StarRating";
+export * from "./TravelSeparator";
+export * from "./DateTabs";
