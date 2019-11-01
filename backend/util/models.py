@@ -56,14 +56,19 @@ fg_location = api.model('detailed_location', {
     "google": fields.Nested(g_location)
 })
 
-locations = api.model('locations',{
+f_locations = api.model('foursquare_locations',{
     "city": fields.String(),
     "locations": fields.List(fields.Nested(f_location))
 })
 
-locations_short = api.model('locations_short',{
+f_locations_short = api.model('foursquare_locations_short',{
     "city": fields.String(),
     "locations": fields.List(fields.Nested(f_location_short))
+})
+
+locations = api.model('locations',{
+    "city": fields.String(),
+    "locations": fields.List(fields.Nested(fg_location))
 })
 
 # /routing
