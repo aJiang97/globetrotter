@@ -24,13 +24,15 @@ export const styles = createStyles(theme => ({
     flexDirection: 'column',
     flexWrap: 'wrap',
     boxSizing: 'border-box',
-    height: '100vw',
+    height: '100vh',
     width: '100%'
   },
   flexScroll: {
     flexGrow: 1,
     overflow: "auto",
-    minHeight: "100%"
+    maxHeight: "100%",
+    paddingLeft: "30px",
+    marginTop: "75px"
   },
   locationCardContainer: {
     display: "flex",
@@ -46,12 +48,14 @@ export const styles = createStyles(theme => ({
   arrowButtonIn: {
     ...arrowButton,
     transform: "scale(-1.5)",
-    right: 0
+    right: 0,
+    zIndex: 2
   },
   arrowButtonOut: {
     ...arrowButton,
     transform: "scale(1.5)",
-    right: 400
+    right: 400,
+    zIndex: 2
   },
   viewButtonIn: {
     ...viewButton,
