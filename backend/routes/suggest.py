@@ -18,6 +18,7 @@ suggest = api.namespace('suggest', description='Suggest list of places')
 
 @suggest.route('/', strict_slashes=False)
 class Suggest(Resource):
+    @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.response(200, description='Success', model=locations_short)
     @suggest.response(400, 'Malformed request input on user side')
