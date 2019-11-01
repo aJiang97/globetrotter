@@ -105,9 +105,9 @@ route_item_result = api.model('route_item_result', {
 })
 
 route_day = api.model('route_day', {
-    "array": fields.List(fields.Nested(route_item_result))
+    "venues": fields.List(fields.Nested(route_item_result))
 })
 
 route_result = api.model('route_result', {
-    "array": fields.List(fields.Nested(route_day))
+    "days": fields.List(fields.Nested(route_day))
 })

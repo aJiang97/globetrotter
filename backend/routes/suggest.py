@@ -3,6 +3,8 @@ import json
 import config
 from datetime import date, timedelta
 
+import asyncio
+
 from concurrent.futures import ThreadPoolExecutor
 
 from app import api
@@ -113,6 +115,7 @@ class FS_Suggest(Resource):
 
 @suggest.route('/fs_detailed', strict_slashes=False)
 class FSDetailedSuggest(Resource):
+    @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request', required=False)
     @suggest.response(200, description='Success', model=f_locations)
@@ -120,7 +123,7 @@ class FSDetailedSuggest(Resource):
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
     @suggest.doc(description='''
-        Suggests 50 locations. Gets detailed information (based on Foursquare) for each suggested items, including pictures. This is the expanded version of `/suggest` endpoint
+        Suggests 50 locations. Gets detailed information (based on Foursquare) for each suggested items, including pictures. This is the expanded version of `/suggest` endpoint with FS venue details (from `/details/fs`).
     ''')
     def get(self):
         location = request.args.get('city')
@@ -300,7 +303,6 @@ class FSDetailedSuggest(Resource):
 
 @suggest.route('/detailed', strict_slashes=False)
 class DetailedSuggest(Resource):
-    @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request', required=False)
     @suggest.response(200, description='Success', model=locations)
@@ -308,8 +310,7 @@ class DetailedSuggest(Resource):
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
     @suggest.doc(description='''
-        DO NOT USE THIS. CURRENTLY REWORKED. \n
-        Suggests 50 locations. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs_detailed` endpoint with `/details/fs_google`
+        Suggests 50 locations. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs_detailed` endpoint with `/details/fs_google`.
     ''')
     def get(self):
         location = request.args.get('city')
@@ -486,3 +487,47 @@ class DetailedSuggest(Resource):
             })
 
         return listres
+
+    async def getFSVenues(self, venueIds):
+        pass
+
+    async def getGoogleVenues():
+        pass
+
+
+class Detailed:
+    def __init__(self, venueid):
+        self.__venueid = venueid
+        self.__fsvenue = None
+        self.__placeid = None
+        self.__googlevenue = None
+
+    def get_venueid(self):
+        return self.__venueid
+
+    def set_fslocation(self, fsvenueobj):
+        self.__fsvenue = fsvenueobj
+
+    def set_placeid(self, placeid):
+        self.__placeid = placeid
+    
+    def get_placeid(self):
+        return self.__placeid
+    
+    def set_googlelocation(self, googlevenueobj):
+        self.__googlevenue = googlevenueobj
+    
+    def get_fslocation(self):
+        return self.__fsvenue
+
+    def get_googlelocation(self):
+        return self.__googlevenue
+
+    def get_location(self):
+        if self.__fsvenue is None or self.__googlevenue is None:
+            return None
+
+        return {
+            'foursquare': self.__fsvenue,
+            'google': self.__googlevenue
+        }
