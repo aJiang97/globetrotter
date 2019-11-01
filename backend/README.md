@@ -12,7 +12,7 @@ virtualenv -p /usr/bin/python3 env
 source env/bin/activate
 
 # set up sandbox
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
 ```
 
 
