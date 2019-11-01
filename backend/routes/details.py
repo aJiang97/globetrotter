@@ -13,6 +13,8 @@ from requests_futures.sessions import FuturesSession
 
 from util.models import *
 from util.caching import *
+from util.model_interpret import ModelProc
+
 
 details_url = 'https://maps.googleapis.com/maps/api/place/details/json'
 search_url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
@@ -70,41 +72,10 @@ class FoursquareDetails(Resource):
             vid = dictres['response']['venue']['id']
             store_cache(content, 'venue_' + vid + '.json')
 
-        locs = {
-            "romance": False,
-            "nature": False,
-            "wildlife": False,
-            "shopping": False,
-            "historical": False,
-            "cultural": False,
-            "family": False,
-            "beaches": False,
-            "food": False
-        }
+        if dictres is None:
+            return None
 
-        coords = {
-            "latitude": dictres['response']['venue']['location']['lat'],
-            "longitude": dictres['response']['venue']['location']['lng']
-        }
-
-        pics = []
-
-        # Add best photo
-        bp = dictres['response']['venue']['bestPhoto']
-        pics.append(bp['prefix'] + str(bp['width']) +
-                    'x' + str(bp['height']) + bp['suffix'])
-
-        retval = {
-            "venue_name": dictres['response']['venue']['name'],
-            "location_types": locs,
-            "coordinate": coords,
-            "pictures": pics,
-            "location_id": dictres['response']['venue']['id'],
-            "url": dictres['response']['venue'].get('url'),
-            "description": dictres['response']['venue'].get('description')
-        }
-
-        return retval       
+        return ModelProc().f_location(dictres)      
 
 @details.route('/google', strict_slashes=False)
 class GoogleDetails(Resource):
@@ -191,6 +162,8 @@ class GoogleDetails(Resource):
         if place_id is None:
             return None
 
+        dets = None
+
         if check_cache('place_' + place_id + '.json', False):
             cache = retrieve_cache('place_' + place_id + '.json', False)
             dets = json.loads(cache)
@@ -209,39 +182,10 @@ class GoogleDetails(Resource):
             dets = json.loads(response.text)
             store_cache(response.text, 'place_' + place_id + '.json')
 
-        #get location rating
-        if dets['result'].get('rating') != None:
-            rating = dets['result']['rating']
-        else:
-            rating = None
+        if dets is None:
+            return None
 
-        #get user reviews
-        user_reviews = []
-        if dets['result'].get('reviews') != None: 
-            for i in range(len(dets['result']['reviews'])-1):
-                user_reviews.append({
-                    "name": dets['result']['reviews'][i]['author_name'],
-                    "review": dets['result']['reviews'][i]['text'],
-                    "time": dets['result']['reviews'][i]['relative_time_description']
-                })
-
-        # links to googlemaps of location
-        url = dets['result']['url']
-
-        #not sure this is needed in the google endpoint as it already exists in fs endpoint
-        coords = {
-            'latitude': 0,# dets['result']['geometry']['location']['lat'],
-            'longitude':0 # dets['result']['geometry']['location']['lng']
-        }
-
-        return {
-            'location_name': name,
-            'reviews': user_reviews,
-            'rating': rating,
-            'maps_url': url,
-            'place_id': place_id,
-            'coordinate': coords
-        }
+        return ModelProc().g_location(dets)
 
     # get googlemaps location idenitfier
     def get_placeid(self, name):
@@ -327,41 +271,10 @@ class DepthDetails(Resource):
             vid = dictres['response']['venue']['id']
             store_cache(content, 'venue_' + vid + '.json')
 
-        locs = {
-            "romance": False,
-            "nature": False,
-            "wildlife": False,
-            "shopping": False,
-            "historical": False,
-            "cultural": False,
-            "family": False,
-            "beaches": False,
-            "food": False
-        }
+        if dictres is None:
+            return None
 
-        coords = {
-            "latitude": dictres['response']['venue']['location']['lat'],
-            "longitude": dictres['response']['venue']['location']['lng']
-        }
-
-        pics = []
-
-        # Add best photo
-        bp = dictres['response']['venue']['bestPhoto']
-        pics.append(bp['prefix'] + str(bp['width']) +
-                    'x' + str(bp['height']) + bp['suffix'])
-
-        retval = {
-            "venue_name": dictres['response']['venue']['name'],
-            "location_types": locs,
-            "coordinate": coords,
-            "pictures": pics,
-            "location_id": dictres['response']['venue']['id'],
-            "url": dictres['response']['venue'].get('url'),
-            "description": dictres['response']['venue'].get('description')
-        }
-
-        return retval
+        return ModelProc().f_location(dictres)
 
     def get_details(self, name):
         place_id = self.get_placeid(name)
@@ -369,6 +282,8 @@ class DepthDetails(Resource):
         if place_id is None:
             return None
         
+        dets = None
+
         if check_cache('place_' + place_id + '.json', False):
             cache = retrieve_cache('place_' + place_id + '.json', False)
             dets = json.loads(cache)
@@ -387,41 +302,10 @@ class DepthDetails(Resource):
             dets = json.loads(response.text)
             store_cache(response.text, 'place_' + place_id + '.json')
 
-        #get location rating
-        if dets['result'].get('rating') != None:
-            rating = dets['result']['rating']
-        else:
-            rating = None
+        if dets is None:
+            return None
 
-        #get user reviews
-        user_reviews = []
-        if dets['result'].get('reviews') != None: 
-            for i in range(len(dets['result']['reviews'])-1):
-                user_reviews.append({
-                    "name": dets['result']['reviews'][i]['author_name'],
-                    "review": dets['result']['reviews'][i]['text'],
-                    "time": dets['result']['reviews'][i]['relative_time_description']
-                })
-
-        
-
-        # links to googlemaps of location
-        url = dets['result']['url']
-
-        #not sure this is needed in the google endpoint as it already exists in fs endpoint
-        coords = {
-            'latitude': 0,# dets['result']['geometry']['location']['lat'],
-            'longitude':0 # dets['result']['geometry']['location']['lng']
-        }
-
-        return {
-            'location_name': name,
-            'reviews': user_reviews,
-            'rating': rating,
-            'maps_url': url,
-            'place_id': place_id,
-            'coordinate': coords
-        }
+        return ModelProc().g_location(dets)
 
     def get_placeid(self, name):
         params = {
