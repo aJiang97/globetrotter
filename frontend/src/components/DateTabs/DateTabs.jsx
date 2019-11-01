@@ -56,7 +56,7 @@ class PureDateTabs extends React.Component {
                 <Tabs
                     value={this.state.activeDate}
                     onChange={this.handleChange}
-                    indicatorColor="primary"
+                    indicatorColor="tertiary"
                     textColor="primary"
                     variant="scrollable"
                     scrollButtons="auto"

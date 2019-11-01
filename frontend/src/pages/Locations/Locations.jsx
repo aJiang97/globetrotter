@@ -7,6 +7,7 @@ import { LocationCard, LocationListWindow } from "../../components";
 import { styles } from "./styles";
 import bondi from "../../assets/bondi.jpg";
 import manly from "../../assets/manly.jpg";
+import history from "../../history.js";
 
 const locations = [
   {
@@ -167,6 +168,7 @@ export class PureLocations extends React.Component {
               ? classes.viewButtonOut
               : classes.viewButtonIn
           }
+          onClick={() => {history.push("/tripview")}}
         >
           View Plan
         </Button>
