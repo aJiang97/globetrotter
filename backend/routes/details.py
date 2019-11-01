@@ -205,6 +205,9 @@ class DepthDetails(Resource):
     def get_details(self, name):
         place_id = self.get_placeid(name)
 
+        if place_id is None:
+            return None
+        
         if check_cache('place_' + place_id + '.json', False):
             cache = retrieve_cache('place_' + place_id + '.json', False)
             dets = json.loads(cache)
@@ -358,6 +361,9 @@ class GoogleDetails(Resource):
     # return dets from either API or cache
     def get_details(self, name):
         place_id = self.get_placeid(name)
+
+        if place_id is None:
+            return None
 
         if check_cache('place_' + place_id + '.json', False):
             cache = retrieve_cache('place_' + place_id + '.json', False)
