@@ -113,7 +113,6 @@ class FS_Suggest(Resource):
 
 @suggest.route('/fs_detailed', strict_slashes=False)
 class FSDetailedSuggest(Resource):
-    @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request', required=False)
     @suggest.response(200, description='Success', model=f_locations)
@@ -301,6 +300,7 @@ class FSDetailedSuggest(Resource):
 
 @suggest.route('/detailed', strict_slashes=False)
 class DetailedSuggest(Resource):
+    @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request', required=False)
     @suggest.response(200, description='Success', model=locations)
@@ -308,6 +308,7 @@ class DetailedSuggest(Resource):
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
     @suggest.doc(description='''
+        DO NOT USE THIS. CURRENTLY REWORKED. \n
         Suggests 50 locations. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs_detailed` endpoint with `/details/fs_google`
     ''')
     def get(self):
