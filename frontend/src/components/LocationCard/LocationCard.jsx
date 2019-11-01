@@ -34,7 +34,8 @@ class PureLocationCard extends React.Component {
     const { classes } = this.props;
     return (
       <Card className={classes.card}>
-        <Grid container>
+        <CardMedia className={classes.media} image={this.props.media} />
+        {/* <Grid container>
           <Grid container item xs={6}>
             <CardMedia className={classes.media} image={this.props.media} />
           </Grid>
@@ -44,8 +45,8 @@ class PureLocationCard extends React.Component {
               lng={this.props.lng}
             />
           </Grid>
-        </Grid>
-        <CardContent className={classes.content}>
+        </Grid> */}
+        <CardContent>
           <Typography component="h2" variant="h5">
             {this.props.title}
           </Typography>

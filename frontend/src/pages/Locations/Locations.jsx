@@ -5,6 +5,8 @@ import { Add, Close, DoubleArrow } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow } from "../../components";
 import { styles } from "./styles";
+import Grid from '@material-ui/core/Grid';
+import MapContainer from "../../components/MapContainer/MapContainer";
 import bondi from "../../assets/bondi.jpg";
 import manly from "../../assets/manly.jpg";
 import unsw from "../../assets/unsw.jpeg";
@@ -122,73 +124,81 @@ export class PureLocations extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <div className={classes.container}>
-          <Typography variant="h5" className={classes.title}>
-            Recommended Locations
-          </Typography>
-          {locations.map((loc, key) => (
-            <div key={key} className={classes.locationCardContainer}>
-              {this.state.addedLocations.indexOf(key) !== -1 ? (
-                <Fab
-                  color="primary"
-                  onClick={() => {
-                    this.handleRemoveLocation(key);
-                  }}
-                >
-                  <Close />
-                </Fab>
-              ) : (
-                <Fab
-                  color="primary"
-                  onClick={() => {
-                    this.handleAddLocation(key);
-                  }}
-                >
-                  <Add />
-                </Fab>
-              )}
-              <LocationCard
-                className={classes.card}
-                title={loc.title}
-                type={loc.type}
-                duration={loc.duration}
-                media={loc.media}
-                description={loc.description}
-                lat={loc.lat}
-                lng={loc.lng}
-              />
-            </div>
-          ))}
-        </div>
-        <Button
-          variant="contained"
-          color="primary"
-          className={
-            this.state.isOpenListWindow
-              ? classes.arrowButtonOut
-              : classes.arrowButtonIn
-          }
-          onClick={this.handleOpenListWindow}
-        >
-          <DoubleArrow />
-        </Button>
-        <LocationListWindow
-          isOpen={this.state.isOpenListWindow}
-          locations={this.getAddedLocations()}
-          onRemove={this.handleRemoveLocation}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          className={
-            this.state.isOpenListWindow
-              ? classes.viewButtonOut
-              : classes.viewButtonIn
-          }
-        >
-          View Plan
-        </Button>
-      </div>
+        <Grid container>
+          <Grid container item xs={6} className={classes.flexScroll}>
+            <Typography variant="h5" className={classes.title}>
+              Recommended Locations
+            </Typography>
+            {locations.map((loc, key) => (
+              <div key={key} className={classes.locationCardContainer}>
+                {this.state.addedLocations.indexOf(key) !== -1 ? (
+                  <Fab
+                    color="primary"
+                    onClick={() => {
+                      this.handleRemoveLocation(key);
+                    }}
+                  >
+                    <Close />
+                  </Fab>
+                ) : (
+                  <Fab
+                    color="primary"
+                    onClick={() => {
+                      this.handleAddLocation(key);
+                    }}
+                  >
+                    <Add />
+                  </Fab>
+                )}
+                <LocationCard
+                  className={classes.card}
+                  title={loc.title}
+                  type={loc.type}
+                  duration={loc.duration}
+                  media={loc.media}
+                  description={loc.description}
+                  lat={loc.lat}
+                  lng={loc.lng}
+                />
+              </div>
+            ))}
+            <Button
+              variant="contained"
+              color="primary"
+              className={
+                this.state.isOpenListWindow
+                  ? classes.arrowButtonOut
+                  : classes.arrowButtonIn
+              }
+              onClick={this.handleOpenListWindow}
+            >
+            <DoubleArrow />
+            </Button>
+            <LocationListWindow
+              isOpen={this.state.isOpenListWindow}
+              locations={this.getAddedLocations()}
+              onRemove={this.handleRemoveLocation}
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              className={
+                this.state.isOpenListWindow
+                  ? classes.viewButtonOut
+                  : classes.viewButtonIn
+              }
+            >
+              View Plan
+            </Button>  
+          </Grid>
+          <Grid container item xs={6}>
+            <MapContainer
+              lat={-33.8915}
+              lng={151.2767}
+            />
+          </Grid>
+        </Grid>
+      </div>  
     );
   }
 }

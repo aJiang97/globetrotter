@@ -5,12 +5,9 @@ export const styles = createStyles(theme => ({
     padding: '0'
   },
   card: {
-    width: "70%",
+    width: "80%",
     margin: 20,
-    display: "block"
-  },
-  content: {
-    marginTop: '100px'
+    // display: "block"
   },
   expand: {
     transform: "rotate(0deg)",
@@ -23,10 +20,10 @@ export const styles = createStyles(theme => ({
     transform: "rotate(180deg)"
   },
   media: {
-    height: "84%",
-    paddingTop: "20%",
+    height: "50",
+    paddingTop: "33%",
     width:"100%",
-    display: "inline"
+    // display: "inline"
   },
   root: {
     flexGrow: 1,

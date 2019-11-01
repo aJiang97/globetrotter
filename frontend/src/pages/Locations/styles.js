@@ -18,9 +18,20 @@ const viewButton = {
 };
 
 export const styles = createStyles(theme => ({
-  container: {
-    width: "100vw",
-    marginTop: 150,
+  mapContainer: {
+    width: "50%",
+    marginTop: 100,
+    display: "flex",
+    alignItems: "right"
+  },
+  flexScroll: {
+    flexGrow: 1,
+    overflow: "auto",
+    minHeight: "100%"
+  },
+  locContainer: {
+    width: "50%",
+    marginTop: 100,
     marginLeft: 30,
     display: "flex",
     flexDirection: "column",
@@ -29,7 +40,8 @@ export const styles = createStyles(theme => ({
   locationCardContainer: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    width: "100%"
   },
   title: {
     color: "black",
