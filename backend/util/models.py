@@ -3,6 +3,12 @@ from flask_restplus import fields
 
 # /suggest
 # /details
+user_reviews = api.model('user_reviews', {
+    "name": fields.String(),
+    "review": fields.String(),
+    "time": fields.String()
+})
+
 location_types = api.model('location_types',{
     "romance": fields.Boolean(),
     "nature": fields.Boolean(),
@@ -58,12 +64,6 @@ locations = api.model('locations',{
 locations_short = api.model('locations_short',{
     "city": fields.String(),
     "locations": fields.List(fields.Nested(f_location_short))
-})
-
-user_reviews = api.model('user_reviews', {
-    "name": fields.String(),
-    "review": fields.String(),
-    "time": fields.String()
 })
 
 # /routing
