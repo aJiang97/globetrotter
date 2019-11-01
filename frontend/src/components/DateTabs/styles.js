@@ -2,7 +2,6 @@ import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
   transparentTabs: {
-    position: "-webkit-sticky",
     position: "sticky",
     top: 0,
     zIndex: 999,
@@ -11,7 +10,6 @@ export const styles = createStyles(theme => ({
     backgroundColor: "transparent"
   },
   colouredTabs: {
-    position: "-webkit-sticky",
     position: "sticky",
     top: 64,
     zIndex: 999,
