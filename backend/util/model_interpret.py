@@ -36,7 +36,13 @@ class ModelProc:
             "description": jsonobject['response']['venue'].get('description')
         }
 
-    def g_location(self, jsonobject):
+    def fs_venuename(self, venue):
+        name = venue['name']
+        addr = ', '.join(venue['location']['formattedAddress'])
+
+        return name + ' ' + addr
+
+    def g_location(self, jsonobject, place_id, name=None):
         #get location rating
         if jsonobject['result'].get('rating') != None:
             rating = jsonobject['result']['rating']

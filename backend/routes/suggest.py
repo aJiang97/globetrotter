@@ -287,10 +287,13 @@ class DetailedSuggest(Resource):
 
         detailedItems = dict()
 
+        # i = 0                   # debug
         for target in item['items']:
+            # if i > 10:          # debug
+            #     break           # debug
+            # i = i + 1           # debug
             id = target['venue']['id']
-            print(target)
-            name = target['venue']['name'] + ' ' + target['venue']['location']['city'] + ' ' + target['venue']['location']['country']
+            name = ModelProc().fs_venuename(target['venue'])
             detail = Detailed(id, name)
             detailedItems[id] = detail
 
@@ -309,7 +312,7 @@ class DetailedSuggest(Resource):
         listres = []
 
         for key in detailedItems.keys():
-            loc = detailedItems[key].get_fslocation()
+            loc = detailedItems[key].get_location()
             if loc is not None:
                 listres.append(loc)
 
@@ -354,12 +357,12 @@ class DetailedSuggest(Resource):
 
             content = response.text
             parsed = json.loads(content)
-            vid = parsed['response']['venue']['id']
-            store_cache(content, 'venue_' + vid + '.json')
+            venueId = parsed['response']['venue']['id']
+            store_cache(content, 'venue_' + venueId + '.json')
 
             fsvenueobj = self.procfsvenue(parsed)
 
-            detailedItems[vid].set_fslocation(fsvenueobj)
+            detailedItems[venueId].set_fslocation(fsvenueobj)
 
     def procfsvenue(self, parsed):
         return ModelProc().f_location(parsed)
@@ -369,26 +372,34 @@ class DetailedSuggest(Resource):
         self.getGooglePlaceID(detailedItems, session)
 
         futuredict = dict()
-        cached = []
+        cached = dict()
         
         for key in detailedItems.keys():
             place_id = detailedItems[key].get_placeid()
-            if check_cache('venue_' + key + '.json', False):
-                cached.append(place_id)
+            if place_id is None:
+                continue
+
+            # print(place_id)
+            if check_cache('place_' + place_id + '.json', False):
+                cached[key] = place_id
+                # print("Found in cache: " + place_id)
             else:
-                futures[key] = session.get(url=google_details_url, params= {
+                futuredict[key] = session.get(url=google_details_url, params= {
                     'place_id': place_id,
                     'key': config.GOOGLE_WS_API_KEY,
                     'fields': 'photo,url,rating,review,price_level'
                 })
+                # print("Futured: " + place_id)
 
-        for place_id in cached:
+        for key in cached.keys():
+            place_id = cached[key]
             cache = retrieve_cache('place_' + place_id + '.json', False)
+            # print('place_' + place_id)
             dets = json.loads(cache)
 
-            googlelocationobj = self.procgooglevenue(dets)
+            googlelocationobj = self.procgooglevenue(dets, place_id)
 
-            detailedItems[place_id].set_googlelocation(googlelocationobj)
+            detailedItems[key].set_googlelocation(googlelocationobj)
 
         for place_id in futuredict.keys():
             response = futuredict[place_id].result()
@@ -400,20 +411,20 @@ class DetailedSuggest(Resource):
             dets = json.loads(content)
             store_cache(content, 'place_' + place_id + '.json')
 
-            googlelocationobj = self.procgooglevenue(dets)
+            googlelocationobj = self.procgooglevenue(dets, place_id)
 
             detailedItems[place_id].set_googlelocation(googlelocationobj)
 
-    def procgooglevenue(self, dets):
+    def procgooglevenue(self, dets, place_id):
         #get location rating
-        return ModelProc().g_location(dets)
+        return ModelProc().g_location(dets, place_id)
 
     def getGooglePlaceID(self, detailedItems, session):
         futuredict = dict()
 
         for key in detailedItems.keys():
             futuredict[key] = session.get(url=google_search_url, params= {
-                'input': detailedItems[key].get_venuename,
+                'input': detailedItems[key].get_venuename(),
                 'key': config.GOOGLE_WS_API_KEY,
                 'inputtype': 'textquery'
             })
@@ -425,6 +436,8 @@ class DetailedSuggest(Resource):
                 continue
 
             id = json.loads(response.text)
+            # print(id)
+            # print("===========")
             if id['status'] == 'OK':
                 detailedItems[key].set_placeid(id['candidates'][0]['place_id'])
 
