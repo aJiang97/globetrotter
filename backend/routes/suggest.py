@@ -384,6 +384,8 @@ class DetailedSuggest(Resource):
                 cached[key] = place_id
                 # print("Found in cache: " + place_id)
             else:
+                # print("Not found in cache: " + place_id)
+                # continue
                 futuredict[key] = session.get(url=google_details_url, params= {
                     'place_id': place_id,
                     'key': config.GOOGLE_WS_API_KEY,
@@ -401,8 +403,9 @@ class DetailedSuggest(Resource):
 
             detailedItems[key].set_googlelocation(googlelocationobj)
 
-        for place_id in futuredict.keys():
-            response = futuredict[place_id].result()
+        for key in futuredict.keys():
+            response = futuredict[key].result()
+            place_id = detailedItems[key].get_placeid()
 
             if response.status_code != 200:
                 continue
@@ -413,7 +416,7 @@ class DetailedSuggest(Resource):
 
             googlelocationobj = self.procgooglevenue(dets, place_id)
 
-            detailedItems[place_id].set_googlelocation(googlelocationobj)
+            detailedItems[key].set_googlelocation(googlelocationobj)
 
     def procgooglevenue(self, dets, place_id):
         #get location rating
