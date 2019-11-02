@@ -31,6 +31,10 @@ source env/bin/activate
 python3 server.py
 ```
 
+## PostgreSQL Database for stuff
+
+I will add further details here soon
+
 
 ## About Postman
 
