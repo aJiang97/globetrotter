@@ -25,7 +25,7 @@ details = api.namespace('details', description='Details of a location')
 class FoursquareDetails(Resource):
     @details.deprecated
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.')
-    @details.response(200, 'Success', f_location)
+    @details.response(200, 'Success', model=MODEL_f_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     def get(self):
@@ -82,7 +82,7 @@ class GoogleDetails(Resource):
     @details.deprecated
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.')
     @details.param('venuename', 'Location the user wants details on, using venue name. If param venueID is not empty, venuename will be ignored.')
-    @details.response(200, 'Success', g_location)
+    @details.response(200, 'Success', model=MODEL_g_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter is geocodable (refer to Geocoding API on Google Maps)')
     @details.response(404, 'Places API could not process or fulfill user request, assuming unavailable resource.')
@@ -211,7 +211,7 @@ class GoogleDetails(Resource):
 class DepthDetails(Resource):
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.', required=True)
     #@details.param('venuename', 'Location the user wants details on, using venue name. If param venueID is not empty, venuename will be ignored.')
-    @details.response(200, 'Success', fg_location)
+    @details.response(200, 'Success', model=MODEL_fg_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter is geocodable (refer to Geocoding API on Google Maps)')
     @details.response(404, 'Places API could not process or fulfill user request, assuming unavailable resource.')
@@ -324,4 +324,9 @@ class DepthDetails(Resource):
         if id['status'] == 'OK':
             return id['candidates'][0]['place_id']
         return None
-        
+
+@details.route('/google_photo', strict_slashes=False)
+class GooglePhoto(Resource):
+    @details.expect(MODEL_photorefs)
+    def post(self):
+        pass

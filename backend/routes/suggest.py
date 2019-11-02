@@ -30,7 +30,7 @@ class FSSuggest(Resource):
     @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request in integer. Range: [10-50]', required=False)
-    @suggest.response(200, description='Success', model=f_locations_short)
+    @suggest.response(200, description='Success', model=MODEL_f_locations_short)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.doc(description='''
@@ -135,7 +135,7 @@ class FSPrefSuggest(Resource):
                         religious_sites
                         shopping
         ''',required=True)
-    @suggest.response(200, description = 'Success', model = f_locations_short)
+    @suggest.response(200, description = 'Success', model=MODEL_f_locations_short)
     @suggest.doc(description = 'Suggests locations based on city and types of locations, giving basic details and location name')
     def get(self):
         location = request.args.get('city')
@@ -189,7 +189,7 @@ class FSDetailedSuggest(Resource):
     @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request', required=False)
-    @suggest.response(200, description='Success', model=f_locations)
+    @suggest.response(200, description='Success', model=MODEL_f_locations)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
@@ -319,7 +319,7 @@ class FSDetailedSuggest(Resource):
 class DetailedSuggest(Resource):
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request, between 10 to 50', required=False)
-    @suggest.response(200, description='Success', model=locations)
+    @suggest.response(200, description='Success', model=MODEL_locations)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
@@ -557,7 +557,7 @@ class DetailedPrefSuggest(Resource):
                         religious_sites
                         shopping
         ''',required=True)
-    @suggest.response(200, description='Success', model=locations)
+    @suggest.response(200, description='Success', model=MODEL_locations)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')

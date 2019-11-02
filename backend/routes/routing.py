@@ -18,8 +18,8 @@ routing = api.namespace('routing', description='Routing of places')
 
 @routing.route('/itinerary', strict_slashes=False)
 class ItineraryAlgorithm(Resource):
-    @routing.response(200, 'Success', route_result)
-    @routing.expect(route_input)
+    @routing.response(200, 'Success', model=MODEL_route_result)
+    @routing.expect(MODEL_route_input)
     def post(self):
         received_item = request.json
         pass
