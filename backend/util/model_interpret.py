@@ -1,18 +1,29 @@
 # Move the details proc to this part, to uniform all endpoints
 
+from util.categories import categoryIDReference, categoryIDReverse
+
 class ModelProc:
+    def parseCategory(self, FScategories):
+        # Avoid hardcoding
+        locs = dict()
+        for key in categoryIDReference.keys():
+            locs[key] = self.checkdict(key, FScategories)
+
+        return locs
+
+    def checkdict(self, category, FScategories):
+        for item in FScategories:
+            id = item['id']
+            cats = categoryIDReverse.get(id)
+            if cats is None:
+                continue
+            if category in cats:
+                return True
+        return False
+
+    # Receives direct response or direct cache of FSVenue response JSONObject dictionary
     def f_location(self, jsonobject):
-        locs = {
-            "romance": False,
-            "nature": False,
-            "wildlife": False,
-            "shopping": False,
-            "historical": False,
-            "cultural": False,
-            "family": False,
-            "beaches": False,
-            "food": False
-        }
+        locs = self.parseCategory(jsonobject['response']['venue']['categories'])
 
         pics = []
 
