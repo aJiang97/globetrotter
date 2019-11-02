@@ -10,15 +10,20 @@ user_reviews = api.model('user_reviews', {
 })
 
 location_types = api.model('location_types',{
-    "romance": fields.Boolean(),
-    "nature": fields.Boolean(),
-    "wildlife": fields.Boolean(),
+    "night_life": fields.Boolean(),
+    "restaurants": fields.Boolean(),
+    "national_monument": fields.Boolean(),
+    "religious_sites": fields.Boolean(),
+    "museums": fields.Boolean(),
+    "themeparks": fields.Boolean(),
     "shopping": fields.Boolean(),
-    "historical": fields.Boolean(),
-    "cultural": fields.Boolean(),
-    "family": fields.Boolean(),
-    "beaches": fields.Boolean(),
-    "food": fields.Boolean()
+    "markets": fields.Boolean(),
+    "nature": fields.Boolean()
+
+    # Hidden fields:
+    # "wildlife"
+    # "historical"
+    # "beaches"
 })
 
 location_coordinate = api.model('location_coordinate',{
@@ -37,6 +42,7 @@ f_location = api.model('foursquare_location',{
 })
 
 f_location_short = api.model('foursquare_location_short',{
+    "location_types": fields.Nested(location_types, description="Might not be complete"),
     "venue_name": fields.String(),
     "coordinate": fields.Nested(location_coordinate),
     "location_id": fields.String()
@@ -105,9 +111,9 @@ route_item_result = api.model('route_item_result', {
 })
 
 route_day = api.model('route_day', {
-    "array": fields.List(fields.Nested(route_item_result))
+    "venues": fields.List(fields.Nested(route_item_result))
 })
 
 route_result = api.model('route_result', {
-    "array": fields.List(fields.Nested(route_day))
+    "days": fields.List(fields.Nested(route_day))
 })
