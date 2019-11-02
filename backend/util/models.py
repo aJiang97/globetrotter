@@ -42,6 +42,7 @@ f_location = api.model('foursquare_location',{
 })
 
 f_location_short = api.model('foursquare_location_short',{
+    "location_types": fields.Nested(location_types, description="Might not be complete"),
     "venue_name": fields.String(),
     "coordinate": fields.Nested(location_coordinate),
     "location_id": fields.String()
