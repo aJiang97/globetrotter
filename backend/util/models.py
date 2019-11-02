@@ -10,15 +10,20 @@ user_reviews = api.model('user_reviews', {
 })
 
 location_types = api.model('location_types',{
-    "romance": fields.Boolean(),
-    "nature": fields.Boolean(),
-    "wildlife": fields.Boolean(),
+    "night_life": fields.Boolean(),
+    "restaurants": fields.Boolean(),
+    "national_monument": fields.Boolean(),
+    "religious_sites": fields.Boolean(),
+    "museums": fields.Boolean(),
+    "themeparks": fields.Boolean(),
     "shopping": fields.Boolean(),
-    "historical": fields.Boolean(),
-    "cultural": fields.Boolean(),
-    "family": fields.Boolean(),
-    "beaches": fields.Boolean(),
-    "food": fields.Boolean()
+    "markets": fields.Boolean(),
+    "nature": fields.Boolean()
+
+    # Hidden fields:
+    # "wildlife"
+    # "historical"
+    # "beaches"
 })
 
 location_coordinate = api.model('location_coordinate',{
