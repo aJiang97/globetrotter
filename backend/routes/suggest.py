@@ -18,6 +18,80 @@ from util.model_interpret import ModelProc
 
 suggest = api.namespace('suggest', description='Suggest list of places')
 
+#categoryIDs from FourSquare that link with our location types
+categoryID = {
+    'night_life':'4d4b7105d754a06376d81259',
+    'restaurants':'4d4b7105d754a06374d81259',
+    'national_monument':'4bf58dd8d48988d12d941735',
+    'religious_sites':'4bf58dd8d48988d131941735',
+    'museums':'4bf58dd8d48988d181941735',
+    'themeparks':'4bf58dd8d48988d182941735,4bf58dd8d48988d193941735',
+    'shopping':'4bf58dd8d48988d1fd941735,5744ccdfe4b0c0459246b4dc',
+    'markets':'4bf58dd8d48988d1fa941735,4bf58dd8d48988d10e951735,4bf58dd8d48988d1f7941735,53e510b7498ebcb1801b55d4',
+    'nature':'4bf58dd8d48988d1e2941735,4bf58dd8d48988d159941735,4bf58dd8d48988d165941735,52e81612bcbc57f1066b7a22,52e81612bcbc57f1066b7a21,52e81612bcbc57f1066b7a13'
+}
+
+@suggest.route('/preferences',strict_slashes=False)
+class pref_suggest(Resource):
+    @suggest.param('city','City that the user wants to explore',requried=True)
+    @suggest.param('types','''
+        Types of locations the users want to visit. 
+        Options include(case sensitive,comma to seperate multiple preferences): 
+                        night_life
+                        nature 
+                        markets 
+                        restaurants
+                        museums
+                        themeparks
+                        national_monument
+                        religious_sites
+                        shopping
+        ''',required=True)
+    @suggest.response(200, description = 'Success', model = f_locations_short)
+    @suggest.doc(description = 'Suggests locations based on city and types of locations, giving basic details and location name')
+    def get(self):
+        location = request.args.get('city')
+        pref = request.args.get('types')
+
+        prefs = pref.split(",")
+        categoryIDs = ""
+        for p in prefs:
+            if p not in categoryID:
+                abort(400, "Invalid type")
+            categoryIDs = categoryIDs + "," + categoryID[p]
+        categoryIDs = categoryIDs[1:]
+
+        payload = {
+            'v':'20191101',
+            'client_id':config.FOURSQUARE_CLIENT_ID,
+            'client_secret':config.FOURSQUARE_CLIENT_SECRET,
+            'near':location,
+            'categoryId':categoryIDs
+        }
+        
+        query = requests.get(url="https://api.foursquare.com/v2/venues/search", params=payload)
+        if query.status_code != 200:
+            abort(403,'FS API can\'t handle request')
+
+        response = json.loads(query.text)
+        venues = response['response']['venues']
+        location_list = []
+        for venue in venues:
+            coords = {
+                "latitude": venue['location']['lat'],
+                "longitude": venue['location']['lng']
+            }
+            location_list.append({
+                "venue_name": venue['name'],
+                "coordinate": coords,
+                "location_id": venue['id']
+            })
+
+        return {
+            'city': response['response']['geocode']['feature']['name'],
+            'locations': location_list
+        }
+
 google_details_url = 'https://maps.googleapis.com/maps/api/place/details/json'
 google_search_url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
 
@@ -53,13 +127,13 @@ class FSSuggest(Resource):
             abort(403, 'FS API can\'t handle request')
 
         explore = json.loads(getresult)
-        locationIds = []
-        resp = explore['response']
-        gps = resp['groups']
-        item = gps[0]
-
-        for target in item['items']:
-            locationIds.append(target['venue']['id'])
+        
+        item = explore['response']['groups'][0]
+        
+        # THIS CODE IS NOT USED
+        # locationIds = []
+        # for target in item['items']:
+        #     locationIds.append(target['venue']['id'])
 
         listres = self.getVenues(item['items'])
 
@@ -115,6 +189,9 @@ class FSSuggest(Resource):
         return listres
 
 
+
+
+
 @suggest.route('/fs_detailed', strict_slashes=False)
 class FSDetailedSuggest(Resource):
     @suggest.deprecated
@@ -125,7 +202,8 @@ class FSDetailedSuggest(Resource):
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
     @suggest.doc(description='''
-        Suggests 50 locations. Gets detailed information (based on Foursquare) for each suggested items, including pictures. This is the expanded version of `/suggest` endpoint with FS venue details (from `/details/fs`).
+        Suggests 50 locations. Gets detailed information (based on Foursquare) for each suggested items, including pictures. 
+        This is the expanded version of `/suggest` endpoint with FS venue details (from `/details/fs`).
     ''')
     def get(self):
         location = request.args.get('city')
@@ -148,10 +226,9 @@ class FSDetailedSuggest(Resource):
             abort(403, 'FS API can\'t handle request')
 
         explore = json.loads(getresult)
+
         locationIds = []
-        resp = explore['response']
-        gps = resp['groups']
-        item = gps[0]
+        item = explore['response']['groups'][0]
 
         for target in item['items']:
             locationIds.append(target['venue']['id'])
@@ -216,8 +293,7 @@ class FSDetailedSuggest(Resource):
             if check_cache('venue_' + venueId + '.json', False):
                 cached.append(venueId)
             else:
-                futures.append(session.get(
-                    'https://api.foursquare.com/v2/venues/' + venueId, params=params))
+                futures.append(session.get('https://api.foursquare.com/v2/venues/' + venueId, params=params))
 
         for venueId in cached:
             cache = retrieve_cache('venue_' + venueId + '.json', False)
@@ -456,6 +532,7 @@ class DetailedSuggest(Resource):
         store_cache(resp.text, 'explore_' + location + '.json')
 
         return resp.text
+
 
 class Detailed:
     def __init__(self, venueid, venuename):
