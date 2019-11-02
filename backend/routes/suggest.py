@@ -22,74 +22,10 @@ suggest = api.namespace('suggest', description='Suggest list of places')
 #categoryIDs from FourSquare that link with our location types
 categoryID = categoryIDReference
 
-@suggest.route('/preferences',strict_slashes=False)
-class FSPrefSuggest(Resource):
-    @suggest.param('city','City that the user wants to explore',requried=True)
-    @suggest.param('types','''
-        Types of locations the users want to visit. 
-        Options include(case sensitive,comma to seperate multiple preferences): 
-                        night_life
-                        nature 
-                        markets 
-                        restaurants
-                        museums
-                        themeparks
-                        national_monument
-                        religious_sites
-                        shopping
-        ''',required=True)
-    @suggest.response(200, description = 'Success', model = f_locations_short)
-    @suggest.doc(description = 'Suggests locations based on city and types of locations, giving basic details and location name')
-    def get(self):
-        location = request.args.get('city')
-        pref = request.args.get('types')
-
-        prefs = pref.split(",")
-        categoryIDs = ""
-        for p in prefs:
-            if p not in categoryID:
-                abort(400, "Invalid type")
-            categoryIDs = categoryIDs + "," + categoryID[p]
-        categoryIDs = categoryIDs[1:]
-
-        rawtime = date.today() - timedelta(days=1)
-        parsedtime = rawtime.strftime('%Y%m%d')
-
-        payload = {
-            'v':parsedtime,
-            'client_id':config.FOURSQUARE_CLIENT_ID,
-            'client_secret':config.FOURSQUARE_CLIENT_SECRET,
-            'near':location,
-            'categoryId':categoryIDs
-        }
-        
-        query = requests.get(url="https://api.foursquare.com/v2/venues/search", params=payload)
-        if query.status_code != 200:
-            abort(403,'FS API can\'t handle request')
-
-        response = json.loads(query.text)
-        venues = response['response']['venues']
-        location_list = []
-        for venue in venues:
-            coords = {
-                "latitude": venue['location']['lat'],
-                "longitude": venue['location']['lng']
-            }
-            location_list.append({
-                "venue_name": venue['name'],
-                "coordinate": coords,
-                "location_id": venue['id']
-            })
-
-        return {
-            'city': response['response']['geocode']['feature']['name'],
-            'locations': location_list
-        }
-
 google_details_url = 'https://maps.googleapis.com/maps/api/place/details/json'
 google_search_url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json'
 
-@suggest.route('/', strict_slashes=False)
+@suggest.route('/fs_short', strict_slashes=False)
 class FSSuggest(Resource):
     @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
@@ -177,16 +113,78 @@ class FSSuggest(Resource):
             listres.append({
                 "venue_name": item['venue']['name'],
                 "coordinate": coords,
-                "location_id": item['venue']['id']
+                "location_id": item['venue']['id'],
+                "location_types": ModelProc().parseCategory(item['venue']['categories'])
             })
 
         return listres
 
+@suggest.route('/fs_short/prefs',strict_slashes=False)
+class FSPrefSuggest(Resource):
+    @suggest.param('city','City that the user wants to explore',requried=True)
+    @suggest.param('types','''
+        Types of locations the users want to visit. 
+        Options include(case sensitive,comma to seperate multiple preferences): 
+                        night_life
+                        nature 
+                        markets 
+                        restaurants
+                        museums
+                        themeparks
+                        national_monument
+                        religious_sites
+                        shopping
+        ''',required=True)
+    @suggest.response(200, description = 'Success', model = f_locations_short)
+    @suggest.doc(description = 'Suggests locations based on city and types of locations, giving basic details and location name')
+    def get(self):
+        location = request.args.get('city')
+        pref = request.args.get('types')
 
+        prefs = pref.split(",")
+        categoryIDs = ""
+        for p in prefs:
+            if p not in categoryID:
+                abort(400, "Invalid type")
+            categoryIDs = categoryIDs + "," + categoryID[p]
+        categoryIDs = categoryIDs[1:]
 
+        rawtime = date.today() - timedelta(days=1)
+        parsedtime = rawtime.strftime('%Y%m%d')
 
+        payload = {
+            'v':parsedtime,
+            'client_id':config.FOURSQUARE_CLIENT_ID,
+            'client_secret':config.FOURSQUARE_CLIENT_SECRET,
+            'near':location,
+            'categoryId':categoryIDs
+        }
+        
+        query = requests.get(url="https://api.foursquare.com/v2/venues/search", params=payload)
+        if query.status_code != 200:
+            abort(403,'FS API can\'t handle request')
 
-@suggest.route('/fs_detailed', strict_slashes=False)
+        response = json.loads(query.text)
+        venues = response['response']['venues']
+        location_list = []
+        for venue in venues:
+            coords = {
+                "latitude": venue['location']['lat'],
+                "longitude": venue['location']['lng']
+            }
+            location_list.append({
+                "venue_name": venue['name'],
+                "coordinate": coords,
+                "location_id": venue['id'],
+                "location_types": ModelProc().parseCategory(item['venue']['categories'])
+            })
+
+        return {
+            'city': response['response']['geocode']['feature']['name'],
+            'locations': location_list
+        }
+
+@suggest.route('/fs', strict_slashes=False)
 class FSDetailedSuggest(Resource):
     @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
@@ -317,8 +315,7 @@ class FSDetailedSuggest(Resource):
     def procfsvenue(self, parsed):
         return ModelProc().f_location(parsed)
 
-
-@suggest.route('/detailed', strict_slashes=False)
+@suggest.route('/fs_google', strict_slashes=False)
 class DetailedSuggest(Resource):
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request, between 10 to 50', required=False)
@@ -327,7 +324,7 @@ class DetailedSuggest(Resource):
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
     @suggest.doc(description='''
-        Suggests 50 (or count) locations. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs_detailed` endpoint with `/details/fs_google`.
+        Suggests 50 (or count) locations. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs` endpoint with `/details/fs_google`.
     ''')
     def get(self):
         location = request.args.get('city')
@@ -543,7 +540,7 @@ class DetailedSuggest(Resource):
 
         return resp.text
 
-@suggest.route('/detailed/preferences', strict_slashes=False)
+@suggest.route('/fs_google/prefs', strict_slashes=False)
 class DetailedPrefSuggest(Resource):
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request, between 10 to 50', required=False)
@@ -565,7 +562,7 @@ class DetailedPrefSuggest(Resource):
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
     @suggest.doc(description='''
-        Suggests 50 (or count) locations based on type of locations. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs_detailed` endpoint with `/details/fs_google`.
+        Suggests 50 (or count) locations **based on type of locations**. Gets detailed information (based on Foursquare and Google Web Services) for each suggested items, including pictures. This is the mixed version of `/suggest/fs`, `/details/fs_google`, and `/suggest/fs_short/prefs`.
     ''')
     def get(self):
         location = request.args.get('city')
