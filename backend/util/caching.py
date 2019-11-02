@@ -62,9 +62,9 @@ def store_cache(content, filename):
     if not os.path.exists(path):
         os.makedirs(path, 777)
 
-    print("filename: " + filename)
-    print("content:")
-    print(content)
+    # print("filename: " + filename)
+    # print("content:")
+    # print(content)
 
     f = open(os.path.join(path, filename), "w")
     f.write(content)
