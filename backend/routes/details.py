@@ -153,7 +153,7 @@ class GoogleDetails(Resource):
             store_cache(content, 'venue_' + vid + '.json')
 
         # Name of the venue might be unclear, hence returns a lengthy response
-        return dictres['response']['venue']['name'] + ' ' + dictres['response']['venue']['location']['city'] + ' ' + dictres['response']['venue']['location']['country']
+        return ModelProc().fs_venuename(dictres['response']['venue'])
 
     # return dets from either API or cache
     def get_details(self, name):
@@ -185,7 +185,7 @@ class GoogleDetails(Resource):
         if dets is None:
             return None
 
-        return ModelProc().g_location(dets)
+        return ModelProc().g_location(dets, place_id, name)
 
     # get googlemaps location idenitfier
     def get_placeid(self, name):
@@ -305,7 +305,7 @@ class DepthDetails(Resource):
         if dets is None:
             return None
 
-        return ModelProc().g_location(dets)
+        return ModelProc().g_location(dets, place_id, name)
 
     def get_placeid(self, name):
         params = {
