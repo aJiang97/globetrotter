@@ -5,65 +5,14 @@ import { Add, Close, DoubleArrow } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow } from "../../components";
 import { styles } from "./styles";
-import bondi from "../../assets/bondi.jpg";
-import manly from "../../assets/manly.jpg";
 import history from "../../history.js";
-
-const locations = [
-  {
-    title: "Bondi Beach",
-    type: "Beaches, Family",
-    duration: "Recommended duration: 2 hours",
-    media: bondi,
-    description:
-      "The sweeping white-sand crescent of Bondi is one of Australia’s most iconic beaches. Reliable waves draw surfers while, nearby, hardy locals swim in the Icebergs ocean pool year-round. Trendy, health-conscious Sydneysiders head to laid-back cafes around Hall Street, while hip backpackers frequent the area's casual pubs. Walkers and joggers use the clifftop Bondi to Coogee Coastal Walk, with its dramatic scenery."
-  },
-  {
-    title: "Manly Beach",
-    type: "Beaches, Family",
-    duration: "Recommended duration: 2 hours",
-    media: manly,
-    description:
-      "Manly Beach is a beach situated among the Northern Beaches of Sydney, Australia in Manly, New South Wales. From north to south, the three main sections are Queenscliff, North Steyne, and South Steyne."
-  },
-  {
-    title: "Coogee Beach",
-    type: "Beaches, Family",
-    duration: "Recommended duration: 2 hours",
-    media: bondi,
-    description:
-      "The sweeping white-sand crescent of Bondi is one of Australia’s most iconic beaches. Reliable waves draw surfers while, nearby, hardy locals swim in the Icebergs ocean pool year-round. Trendy, health-conscious Sydneysiders head to laid-back cafes around Hall Street, while hip backpackers frequent the area's casual pubs. Walkers and joggers use the clifftop Bondi to Coogee Coastal Walk, with its dramatic scenery."
-  },
-  {
-    title: "Sydney Opera House",
-    type: "Performances, Family",
-    duration: "Recommended duration: 2 hours",
-    media: manly,
-    description:
-      "Manly Beach is a beach situated among the Northern Beaches of Sydney, Australia in Manly, New South Wales. From north to south, the three main sections are Queenscliff, North Steyne, and South Steyne."
-  },
-  {
-    title: "Darling Square",
-    type: "Mall",
-    duration: "Recommended duration: 2 hours",
-    media: bondi,
-    description:
-      "The sweeping white-sand crescent of Bondi is one of Australia’s most iconic beaches. Reliable waves draw surfers while, nearby, hardy locals swim in the Icebergs ocean pool year-round. Trendy, health-conscious Sydneysiders head to laid-back cafes around Hall Street, while hip backpackers frequent the area's casual pubs. Walkers and joggers use the clifftop Bondi to Coogee Coastal Walk, with its dramatic scenery."
-  },
-  {
-    title: "UNSW",
-    type: "Education",
-    duration: "Recommended duration: 2 hours",
-    media: manly,
-    description:
-      "Manly Beach is a beach situated among the Northern Beaches of Sydney, Australia in Manly, New South Wales. From north to south, the three main sections are Queenscliff, North Steyne, and South Steyne."
-  }
-];
+import APIClient from "../../api/apiClient";
 
 export class PureLocations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      places: [],
       isOpenListWindow: false,
       addedLocations: []
     };
@@ -98,9 +47,31 @@ export class PureLocations extends React.Component {
   };
 
   getAddedLocations = () => {
-    return locations.filter(
+    return this.state.places.filter(
       (value, key) => this.state.addedLocations.indexOf(key) !== -1
     );
+  };
+
+  getTypes = types => {
+    return Object.keys(types).filter(type => type === true);
+  };
+
+  UNSAFE_componentWillMount = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const city = urlParams.get("location");
+    const preferences = urlParams
+      .get("preferences")
+      .toLowerCase()
+      .replace(" ", "_");
+    this.apiClient = new APIClient();
+    this.apiClient.getLocations(city, preferences).then(places => {
+      places.locations.sort(
+        (a, b) => parseFloat(b.google.rating) - parseFloat(a.google.rating)
+      );
+      this.setState({
+        places: places.locations
+      });
+    });
   };
 
   render() {
@@ -111,37 +82,38 @@ export class PureLocations extends React.Component {
           <Typography variant="h5" className={classes.title}>
             Recommended Locations
           </Typography>
-          {locations.map((loc, key) => (
-            <div key={key} className={classes.locationCardContainer}>
-              {this.state.addedLocations.indexOf(key) !== -1 ? (
-                <Fab
-                  color="primary"
-                  onClick={() => {
-                    this.handleRemoveLocation(key);
-                  }}
-                >
-                  <Close />
-                </Fab>
-              ) : (
-                <Fab
-                  color="primary"
-                  onClick={() => {
-                    this.handleAddLocation(key);
-                  }}
-                >
-                  <Add />
-                </Fab>
-              )}
-              <LocationCard
-                className={classes.card}
-                title={loc.title}
-                type={loc.type}
-                duration={loc.duration}
-                media={loc.media}
-                description={loc.description}
-              />
-            </div>
-          ))}
+          {this.state.places.length !== 0 &&
+            this.state.places.map((loc, key) => (
+              <div key={key} className={classes.locationCardContainer}>
+                {this.state.addedLocations.indexOf(key) !== -1 ? (
+                  <Fab
+                    color="primary"
+                    onClick={() => {
+                      this.handleRemoveLocation(key);
+                    }}
+                  >
+                    <Close />
+                  </Fab>
+                ) : (
+                  <Fab
+                    color="primary"
+                    onClick={() => {
+                      this.handleAddLocation(key);
+                    }}
+                  >
+                    <Add />
+                  </Fab>
+                )}
+                <LocationCard
+                  className={classes.card}
+                  title={loc.foursquare.venue_name}
+                  type={this.getTypes(loc.foursquare.location_types)}
+                  rating={loc.google.rating}
+                  media={loc.foursquare.pictures[0]}
+                  description={loc.foursquare.description}
+                />
+              </div>
+            ))}
         </div>
         <Button
           variant="contained"
@@ -159,6 +131,7 @@ export class PureLocations extends React.Component {
           isOpen={this.state.isOpenListWindow}
           locations={this.getAddedLocations()}
           onRemove={this.handleRemoveLocation}
+          getTypes={this.getTypes}
         />
         <Button
           variant="contained"
@@ -168,7 +141,9 @@ export class PureLocations extends React.Component {
               ? classes.viewButtonOut
               : classes.viewButtonIn
           }
-          onClick={() => {history.push("/tripview")}}
+          onClick={() => {
+            history.push("/tripview");
+          }}
         >
           View Plan
         </Button>
