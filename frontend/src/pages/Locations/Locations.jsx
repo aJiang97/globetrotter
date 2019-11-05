@@ -126,7 +126,7 @@ export class PureLocations extends React.Component {
       <div>
         <Grid className={classes.section}>
           <Grid container item xs={6} className={classes.flexScroll}>
-            <Typography variant="h5" className={classes.title}>
+            <Typography variant="h4" className={classes.title}>
               Recommended Locations
             </Typography>
             {locations.map((loc, key) => (

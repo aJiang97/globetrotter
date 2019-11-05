@@ -33,29 +33,6 @@ export class MapContainer extends React.Component {
     }
   };
 
-  // renderMarkers() {
-  //   return this.props.locations.map((loc,key) => {
-  //       <Marker
-  //         key={key}
-  //         onClick={this.onMarkerClick}
-  //         position={{
-  //           lat: loc.lat,
-  //           lng: loc.lng
-  //         }}
-  //         name={loc.title} 
-  //       />
-  //       <InfoWindow
-  //         marker={this.state.activeMarker}
-  //         visible={this.state.showingInfoWindow}
-  //       >
-  //         <div>
-  //           <h1>HELLO</h1>
-  //         </div>
-  //       </InfoWindow>
-  //     );
-  //   })
-  // }
-
   render() {
     return (
       <Map
@@ -85,7 +62,7 @@ export class MapContainer extends React.Component {
               visible={this.state.showingInfoWindow}
             >
               <div>
-                <h1>HELLO</h1>
+                <h1>{this.state.selectedPlace.name}</h1>
               </div>
             </InfoWindow>
           </Marker>

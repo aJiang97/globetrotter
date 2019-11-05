@@ -23,7 +23,16 @@ export const styles = createStyles(theme => ({
     height: "50",
     paddingTop: "33%",
     width:"100%",
-    // display: "inline"
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: "30px",
+    marginBottom: "10px"
+  },
+  venueType: {
+    fontStyle: "italic",
+    fontSize: "15px",
+    paddingLeft: "65px"
   },
   root: {
     flexGrow: 1,
