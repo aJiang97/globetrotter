@@ -14,7 +14,8 @@ class PureNavBar extends React.Component {
       <AppBar
         position="fixed"
         className={
-          window.location.pathname === "/locations"
+          window.location.pathname === "/locations" ||
+          window.location.pathname === "/tripview"
             ? classes.appBarLocations
             : classes.appBarHome
         }

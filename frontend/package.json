@@ -16,6 +16,7 @@
     "history": "^4.9.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-google-maps": "^9.4.5",
     "react-rating": "^2.0.0",
     "react-router-dom": "^5.0.1"
   },

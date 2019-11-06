@@ -1,4 +1,4 @@
-import os
+import os,io
 import time
 import config
 
@@ -43,13 +43,13 @@ def retrieve_cache(filename, expiryCheck=True):
             fpath = os.path.join(path, filename)
             if expiryCheck == False:
                 # No expiry needed, use it
-                f = open(fpath, 'r')
+                f = open(fpath, 'r',encoding="utf-8")
                 content = f.read()
                 f.close()
                 return content
             elif expired(fpath) == False:
                 # File is relatively new, use it
-                f = open(fpath, 'r')
+                f = open(fpath, 'r',encoding="utf-8")
                 content = f.read()
                 f.close()
                 return content
@@ -62,6 +62,10 @@ def store_cache(content, filename):
     if not os.path.exists(path):
         os.makedirs(path, 777)
 
-    f = open(os.path.join(path, filename), "w")
+    # print("filename: " + filename)
+    # print("content:")
+    # print(content)
+
+    f = open(os.path.join(path, filename), "w",encoding="utf-8")
     f.write(content)
     f.close()

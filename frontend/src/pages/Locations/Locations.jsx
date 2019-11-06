@@ -13,6 +13,7 @@ import unsw from "../../assets/unsw.jpeg";
 import coogee from "../../assets/coogee.jpeg";
 import darling from "../../assets/darling.jpeg";
 import opera from "../../assets/opera.jpeg";
+import history from "../../history.js";
 
 const locations = [
   {
