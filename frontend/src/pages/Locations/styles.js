@@ -18,18 +18,27 @@ const viewButton = {
 };
 
 export const styles = createStyles(theme => ({
-  container: {
-    width: "100vw",
-    marginTop: 150,
-    marginLeft: 30,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "left"
+  section: {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    boxSizing: 'border-box',
+    height: '100vh',
+    width: '100%'
+  },
+  flexScroll: {
+    flexGrow: 1,
+    overflow: "auto",
+    maxHeight: "100%",
+    paddingLeft: "30px",
+    marginTop: "75px"
   },
   locationCardContainer: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    width: "100%"
   },
   title: {
     color: "black",
@@ -39,12 +48,14 @@ export const styles = createStyles(theme => ({
   arrowButtonIn: {
     ...arrowButton,
     transform: "scale(-1.5)",
-    right: 0
+    right: 0,
+    zIndex: 2
   },
   arrowButtonOut: {
     ...arrowButton,
     transform: "scale(1.5)",
-    right: 400
+    right: 400,
+    zIndex: 2
   },
   viewButtonIn: {
     ...viewButton,
