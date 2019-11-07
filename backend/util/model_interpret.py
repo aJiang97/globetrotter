@@ -1,8 +1,54 @@
 # Move the details proc to this part, to uniform all endpoints
+import os
+import json
 
 from util.categories import categoryIDReference, categoryIDReverse
+import config
 
 class ModelProc:
+    def __init__(self):
+        self.__nestedDict = self.__procfile(config.CATEGORIES_FILE)
+
+    def __procfile(self, filepath):
+        path = os.getcwd() + filepath
+        
+        # categories file doesn't exist, return none and ignore config
+        if not os.path.exists(path):
+            return None
+
+        fh = open(path, 'r', encoding="utf-8")
+        fc = fh.read()
+        fh.close()
+
+        it = json.loads(fc)
+
+        # Key=child, Value=parent
+        selfdict = dict()
+
+        array = it['response']['categories']
+        self.__insertparent(array, None, selfdict)
+
+        return selfdict
+
+    def __insertparent(self, array, parentId, selfdict):
+        for item in array:
+            selfdict[item['id']] = parentId
+            self.__insertparent(item['categories'], item['id'], selfdict)
+
+    def __checkparent(self, id, categoryname):
+        cats = categoryIDReverse.get(id)
+        if cats is None:
+            if self.__nestedDict is None:
+                return False
+            parentId = self.__nestedDict.get(id)
+            if parentId is None:
+                return False
+            return self.__checkparent(parentId, categoryname)
+        if categoryname in cats:
+            return True
+        return False
+
+
     def parseCategory(self, FScategories):
         # Avoid hardcoding
         locs = dict()
@@ -14,10 +60,12 @@ class ModelProc:
     def checkdict(self, category, FScategories):
         for item in FScategories:
             id = item['id']
-            cats = categoryIDReverse.get(id)
-            if cats is None:
-                continue
-            if category in cats:
+            # cats = categoryIDReverse.get(id)
+            # if cats is None:
+            #     continue
+            # if category in cats:
+            #     return True
+            if self.__checkparent(id, category) == True:
                 return True
         return False
 

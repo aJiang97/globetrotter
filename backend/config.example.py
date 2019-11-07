@@ -6,6 +6,7 @@ CACHETIME = 24
 
 # Just, don't modify this...
 DIR_NAME = "/.api_cache"
+CATEGORIES_FILE = "/categories.json"
 
 GOOGLE_WS_API_KEY = ''
 
@@ -13,7 +14,7 @@ BINGMAPS_API_KEY = ''
 
 SUGGEST_COUNT_DEFAULT = 10
 
-PGDBNAME = ''
-PGUSER = ''
-PGHOST = ''
+PGDBNAME = 'globetrotter'
+PGUSER = 'postgres'
+PGHOST = 'localhost:5432'
 PGPASSWORD = ''
