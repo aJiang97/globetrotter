@@ -43,5 +43,10 @@ export const styles = createStyles(theme => ({
     right: 2,
     padding: 0,
     borderRadius: 4
+  },
+  errorMessage: {
+    position: "fixed",
+    bottom: 40,
+    right: 110
   }
 }));

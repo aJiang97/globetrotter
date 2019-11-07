@@ -23,7 +23,10 @@ class PureLocationListWindow extends React.Component {
         </Typography>
         {locations.map((location, key) => (
           <Card key={key} className={classes.card}>
-            <CardMedia className={classes.media} image={location.media} />
+            <CardMedia
+              className={classes.media}
+              image={location.foursquare.pictures[0]}
+            />
             <CardActions disableSpacing>
               <IconButton
                 className={classes.closeButton}
@@ -33,13 +36,24 @@ class PureLocationListWindow extends React.Component {
               </IconButton>
             </CardActions>
             <CardContent className={classes.content}>
-              <Typography variant="h6">{location.title}</Typography>
+              <Typography variant="h6">
+                {location.foursquare.venue_name}
+              </Typography>
               <Typography variant="caption" color="textSecondary" component="p">
-                {location.type}
+                {this.props.getTypes(location.foursquare.location_types)}
               </Typography>
             </CardContent>
           </Card>
         ))}
+        {this.props.displayError && (
+          <Typography
+            variant="caption"
+            color="error"
+            className={classes.errorMessage}
+          >
+            Please choose at least 1 place
+          </Typography>
+        )}
       </Paper>
     );
   }
