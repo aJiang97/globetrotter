@@ -2,7 +2,7 @@ import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
   card: {
-    width: "70%",
+    width: "55%",
     margin: 20
   },
   media: {
