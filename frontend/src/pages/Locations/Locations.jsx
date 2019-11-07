@@ -59,10 +59,11 @@ export class PureLocations extends React.Component {
       });
     } else {
       var placesToIndex = {};
-      this.state.addedLocations.map(
-        (location, i) => (placesToIndex[location.foursquare.venue_name] = i)
+      const locations = this.getAddedLocations();
+      locations.map(
+        (location, i) => (placesToIndex[location.google.place_id] = i)
       );
-      this.props.setPlaces(this.getAddedLocations());
+      this.props.setPlaces(locations, placesToIndex);
       history.push(`/tripview?start_date=${startDate}&end_date=${endDate}`);
     }
   };
@@ -89,6 +90,7 @@ export class PureLocations extends React.Component {
       places.locations.sort(
         (a, b) => parseFloat(b.google.rating) - parseFloat(a.google.rating)
       );
+      console.log(places.locations);
       this.setState({
         places: places.locations
       });

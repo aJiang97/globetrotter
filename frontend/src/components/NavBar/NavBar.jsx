@@ -10,6 +10,7 @@ import logo from "../../assets/logo-no-text-white.png";
 class PureNavBar extends React.Component {
   render() {
     const { classes } = this.props;
+
     return (
       <AppBar
         position="fixed"
