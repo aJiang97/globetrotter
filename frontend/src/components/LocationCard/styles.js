@@ -1,13 +1,9 @@
 import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
-  action: {
-    padding: '0'
-  },
   card: {
-    width: "80%",
-    margin: 20,
-    // display: "block"
+    width: "55%",
+    margin: 20
   },
   expand: {
     transform: "rotate(0deg)",

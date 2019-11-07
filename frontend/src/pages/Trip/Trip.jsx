@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { IconButton, TextField, Typography } from "@material-ui/core";
 
+import { NavBar } from "../../components";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import { styles } from "./styles";
 import bg from "../../assets/trip-bg.jpg";
@@ -30,10 +31,17 @@ export class PureTrip extends React.Component {
       end_date: event.target.value
     });
   };
+  handleSubmit = () => {
+    const { location, start_date, end_date } = this.state;
+    history.push(
+      `/preferences?location=${location}&start_date=${start_date}&end_date=${end_date}`
+    );
+  };
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.home}>
+        <NavBar />
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
         <div className={classes.modal_container}>
@@ -99,7 +107,7 @@ export class PureTrip extends React.Component {
             color="primary"
             variant="contained"
             className={classes.nextButton}
-            onClick={() => history.push("/preferences")}
+            onClick={this.handleSubmit}
           >
             <ArrowForwardIcon />
           </IconButton>

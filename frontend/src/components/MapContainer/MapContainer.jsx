@@ -52,10 +52,10 @@ export class MapContainer extends React.Component {
             key={key}
             onClick={this.onMarkerClick}
             position={{
-              lat: loc.lat,
-              lng: loc.lng
+              lat: loc.foursquare.coordinate.latitude,
+              lng: loc.foursquare.coordinate.longitude
             }}
-            name={loc.title} 
+            name={loc.foursquare.venue_name} 
           >
             <InfoWindow
               marker={this.state.activeMarker}
