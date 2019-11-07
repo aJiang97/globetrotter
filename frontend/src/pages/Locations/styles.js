@@ -19,12 +19,11 @@ const viewButton = {
 
 export const styles = createStyles(theme => ({
   container: {
-    width: "100vw",
-    marginTop: 150,
+    width: "95%",
+    marginTop: 100,
     marginLeft: 30,
     display: "flex",
-    flexDirection: "column",
-    alignItems: "left"
+    flexDirection: "column"
   },
   locationCardContainer: {
     display: "flex",

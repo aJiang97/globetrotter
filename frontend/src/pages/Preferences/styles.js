@@ -39,5 +39,8 @@ export const styles = createStyles(theme => ({
     color: "white",
     marginLeft: 100,
     marginRight: 100
+  },
+  errorMessage: {
+    marginLeft: 163
   }
 }));

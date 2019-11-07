@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography } from "@material-ui/core";
 import { Add, Close, DoubleArrow } from "@material-ui/icons";
 
-import { LocationCard, LocationListWindow } from "../../components";
+import { LocationCard, LocationListWindow, NavBar } from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
@@ -14,7 +14,8 @@ export class PureLocations extends React.Component {
     this.state = {
       places: [],
       isOpenListWindow: false,
-      addedLocations: []
+      addedLocations: [],
+      displayError: false
     };
   }
 
@@ -23,7 +24,8 @@ export class PureLocations extends React.Component {
       const addedLocations = state.addedLocations.concat(key);
       return {
         ...state,
-        addedLocations
+        addedLocations,
+        displayError: false
       };
     });
   };
@@ -46,6 +48,25 @@ export class PureLocations extends React.Component {
     });
   };
 
+  handleSubmit = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const startDate = urlParams.get("start_date");
+    const endDate = urlParams.get("end_date");
+
+    if (this.state.addedLocations.length === 0) {
+      this.setState({
+        displayError: true
+      });
+    } else {
+      var placesToIndex = {};
+      this.state.addedLocations.map(
+        (location, i) => (placesToIndex[location.foursquare.venue_name] = i)
+      );
+      this.props.setPlaces(this.getAddedLocations());
+      history.push(`/tripview?start_date=${startDate}&end_date=${endDate}`);
+    }
+  };
+
   getAddedLocations = () => {
     return this.state.places.filter(
       (value, key) => this.state.addedLocations.indexOf(key) !== -1
@@ -56,7 +77,7 @@ export class PureLocations extends React.Component {
     return Object.keys(types).filter(type => type === true);
   };
 
-  UNSAFE_componentWillMount = () => {
+  componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const city = urlParams.get("location");
     const preferences = urlParams
@@ -78,6 +99,7 @@ export class PureLocations extends React.Component {
     const { classes } = this.props;
     return (
       <div>
+        <NavBar />
         <div className={classes.container}>
           <Typography variant="h5" className={classes.title}>
             Recommended Locations
@@ -132,6 +154,7 @@ export class PureLocations extends React.Component {
           locations={this.getAddedLocations()}
           onRemove={this.handleRemoveLocation}
           getTypes={this.getTypes}
+          displayError={this.state.displayError}
         />
         <Button
           variant="contained"
@@ -141,9 +164,7 @@ export class PureLocations extends React.Component {
               ? classes.viewButtonOut
               : classes.viewButtonIn
           }
-          onClick={() => {
-            history.push("/tripview");
-          }}
+          onClick={this.handleSubmit}
         >
           View Plan
         </Button>

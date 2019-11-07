@@ -5,6 +5,7 @@ import { PreferenceCard } from "../../components/PreferenceCard";
 import { styles } from "./styles";
 import history from "../../history";
 
+import { NavBar } from "../../components";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import bg from "../../assets/trip-bg.jpg";
@@ -21,7 +22,7 @@ export class PurePreferences extends React.Component {
         Museums: false,
         "Religious Sites": false,
         "National Monument": false,
-        "Themeparks": false,
+        Themeparks: false,
         Markets: false,
         Restaurants: false
       }
@@ -45,11 +46,11 @@ export class PurePreferences extends React.Component {
         result.push(value);
       }
     }
-    return result
+    return result;
   };
 
   handleSubmit = () => {
-    const preferences = this.getSelected()
+    const preferences = this.getSelected();
     if (preferences.length === 0) {
       this.setState({
         displayError: true
@@ -69,6 +70,7 @@ export class PurePreferences extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.home}>
+        <NavBar />
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
         <div className={classes.container}>
@@ -81,7 +83,11 @@ export class PurePreferences extends React.Component {
             getSelected={this.getSelected}
           />
           {this.state.displayError && (
-            <Typography variant="caption" color="error">
+            <Typography
+              variant="caption"
+              color="error"
+              className={classes.errorMessage}
+            >
               Please choose at least 1 option
             </Typography>
           )}

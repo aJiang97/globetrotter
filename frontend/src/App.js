@@ -4,7 +4,6 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import history from "./history";
 import { Home, Trip, Locations, Preferences, TripView } from "./pages";
-import { NavBar } from "./components";
 import "./App.css";
 
 const theme = createMuiTheme({
@@ -31,17 +30,44 @@ const theme = createMuiTheme({
 });
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      transparent: true,
+      places: null,
+      placeToIndex: null
+    };
+  }
+
+  setPlaces = (places, placeToIndex) => {
+    console.log(placeToIndex);
+    this.setState({ places: places, placeToIndex: placeToIndex });
+  };
+
   render() {
     return (
       <MuiThemeProvider theme={theme}>
-        <NavBar />
         <Router history={history}>
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/trip" component={Trip} />
             <Route path="/preferences" component={Preferences} />
-            <Route path="/locations" component={Locations} />
-            <Route path="/tripview" component={TripView} />
+            <Route
+              path="/locations"
+              render={props => (
+                <Locations {...props} setPlaces={this.setPlaces} />
+              )}
+            />
+            <Route
+              path="/tripview"
+              render={props => (
+                <TripView
+                  {...props}
+                  places={this.state.places}
+                  placeToIndex={this.state.placeToIndex}
+                />
+              )}
+            />
           </Switch>
         </Router>
       </MuiThemeProvider>
