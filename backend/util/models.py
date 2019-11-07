@@ -115,9 +115,10 @@ MODEL_route_pathconfig = api.model('route_pathconfig', {
 })
 
 MODEL_route_input = api.model('route_input', {
-    "items": fields.List(fields.Nested(MODEL_route_item), required=True),
-    "options": fields.Nested(MODEL_route_options, required=True),
-    "config": fields.Nested(MODEL_route_pathconfig, required=False)
+    "place_id":fields.String(description='placeIds of selected locations')
+    # "items": fields.List(fields.Nested(MODEL_route_item), required=True),
+    # "options": fields.Nested(MODEL_route_options, required=True),
+    # "config": fields.Nested(MODEL_route_pathconfig, required=False)
 })
 
 
