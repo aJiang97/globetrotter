@@ -6,14 +6,13 @@ from datetime import date, timedelta
 
 from concurrent.futures import ThreadPoolExecutor
 
-from app import api
+from app import api, mp
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
 from requests_futures.sessions import FuturesSession
 
 from util.models import *
 from util.caching import *
-from util.model_interpret import ModelProc
 
 
 details_url = 'https://maps.googleapis.com/maps/api/place/details/json'
@@ -75,7 +74,7 @@ class FoursquareDetails(Resource):
         if dictres is None:
             return None
 
-        return ModelProc().f_location(dictres)      
+        return mp.f_location(dictres)      
 
 @details.route('/google', strict_slashes=False)
 class GoogleDetails(Resource):
@@ -153,7 +152,7 @@ class GoogleDetails(Resource):
             store_cache(content, 'venue_' + vid + '.json')
 
         # Name of the venue might be unclear, hence returns a lengthy response
-        return ModelProc().fs_venuename(dictres['response']['venue'])
+        return mp.fs_venuename(dictres['response']['venue'])
 
     # return dets from either API or cache
     def get_details(self, name):
@@ -185,7 +184,7 @@ class GoogleDetails(Resource):
         if dets is None:
             return None
 
-        return ModelProc().g_location(dets, place_id, name)
+        return mp.g_location(dets, place_id, name)
 
     # get googlemaps location idenitfier
     def get_placeid(self, name):
@@ -274,7 +273,7 @@ class DepthDetails(Resource):
         if dictres is None:
             return None
 
-        return ModelProc().f_location(dictres)
+        return mp.f_location(dictres)
 
     def get_details(self, name):
         place_id = self.get_placeid(name)
@@ -305,7 +304,7 @@ class DepthDetails(Resource):
         if dets is None:
             return None
 
-        return ModelProc().g_location(dets, place_id, name)
+        return mp.g_location(dets, place_id, name)
 
     def get_placeid(self, name):
         params = {

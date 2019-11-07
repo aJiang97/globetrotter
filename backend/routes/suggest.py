@@ -7,14 +7,13 @@ import asyncio
 
 from concurrent.futures import ThreadPoolExecutor
 
-from app import api
+from app import api, mp
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
 from requests_futures.sessions import FuturesSession
 
 from util.models import *
 from util.caching import *
-from util.model_interpret import ModelProc
 from util.categories import categoryIDReference
 
 suggest = api.namespace('suggest', description='Suggest list of places')
@@ -114,7 +113,7 @@ class FSSuggest(Resource):
                 "venue_name": item['venue']['name'],
                 "coordinate": coords,
                 "location_id": item['venue']['id'],
-                "location_types": ModelProc().parseCategory(item['venue']['categories'])
+                "location_types": mp.parseCategory(item['venue']['categories'])
             })
 
         return listres
@@ -176,7 +175,7 @@ class FSPrefSuggest(Resource):
                 "venue_name": venue['name'],
                 "coordinate": coords,
                 "location_id": venue['id'],
-                "location_types": ModelProc().parseCategory(item['venue']['categories'])
+                "location_types": mp.parseCategory(item['venue']['categories'])
             })
 
         return {
@@ -313,7 +312,7 @@ class FSDetailedSuggest(Resource):
         return listres
 
     def procfsvenue(self, parsed):
-        return ModelProc().f_location(parsed)
+        return mp.f_location(parsed)
 
 @suggest.route('/fs_google', strict_slashes=False)
 class DetailedSuggest(Resource):
@@ -360,7 +359,7 @@ class DetailedSuggest(Resource):
             #     break           # debug
             # i = i + 1           # debug
             id = target['venue']['id']
-            name = ModelProc().fs_venuename(target['venue'])
+            name = mp.fs_venuename(target['venue'])
             detail = Detailed(id, name)
             detailedItems[id] = detail
 
@@ -432,7 +431,7 @@ class DetailedSuggest(Resource):
             detailedItems[venueId].set_fslocation(fsvenueobj)
 
     def procfsvenue(self, parsed):
-        return ModelProc().f_location(parsed)
+        return mp.f_location(parsed)
 
     async def getGoogleVenues(self, detailedItems, session):
         # Process placeID synchronously before calling the venues
@@ -487,7 +486,7 @@ class DetailedSuggest(Resource):
 
     def procgooglevenue(self, dets, place_id):
         #get location rating
-        return ModelProc().g_location(dets, place_id)
+        return mp.g_location(dets, place_id)
 
     def getGooglePlaceID(self, detailedItems, session):
         futuredict = dict()
@@ -608,7 +607,7 @@ class DetailedPrefSuggest(Resource):
             #     break           # debug
             # i = i + 1           # debug
             id = target['venue']['id']
-            name = ModelProc().fs_venuename(target['venue'])
+            name = mp.fs_venuename(target['venue'])
             detail = Detailed(id, name)
             detailedItems[id] = detail
 
@@ -680,7 +679,7 @@ class DetailedPrefSuggest(Resource):
             detailedItems[venueId].set_fslocation(fsvenueobj)
 
     def procfsvenue(self, parsed):
-        return ModelProc().f_location(parsed)
+        return mp.f_location(parsed)
 
     async def getGoogleVenues(self, detailedItems, session):
         # Process placeID synchronously before calling the venues
@@ -735,7 +734,7 @@ class DetailedPrefSuggest(Resource):
 
     def procgooglevenue(self, dets, place_id):
         #get location rating
-        return ModelProc().g_location(dets, place_id)
+        return mp.g_location(dets, place_id)
 
     def getGooglePlaceID(self, detailedItems, session):
         futuredict = dict()
