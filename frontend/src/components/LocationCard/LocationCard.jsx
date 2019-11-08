@@ -10,8 +10,9 @@ import {
   Typography
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { ExpandMore, CheckBox } from "@material-ui/icons";
 
+import { StarRating } from "../";
 import { styles } from "./styles";
 
 class PureLocationCard extends React.Component {
@@ -34,33 +35,54 @@ class PureLocationCard extends React.Component {
       <Card className={classes.card}>
         <CardMedia className={classes.media} image={this.props.media} />
         <CardContent>
-          <Typography component="h2" variant="h5">
+          <Typography component="h2" variant="h5" className="title">
             {this.props.title}
           </Typography>
-          <Typography variant="subtitle1" color="textSecondary" component="p">
-            {this.props.type}
-          </Typography>
-          <Typography variant="subtitle1" paragraph>
-            {this.props.duration}
-          </Typography>
-        </CardContent>
-        <CardActions disableSpacing>
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: this.state.expanded
-            })}
-            onClick={this.handleExpandClick}
-            aria-expanded={this.state.expanded}
-            aria-label="show more"
+          <StarRating value={this.props.rating.toFixed(2)} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "flex-start"
+            }}
           >
-            <ExpandMoreIcon />
-          </IconButton>
-        </CardActions>
-        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <Typography paragraph>{this.props.description}</Typography>
-          </CardContent>
-        </Collapse>
+            {this.props.types &&
+              this.props.types.map(type => (
+                <div>
+                  <CheckBox fontSize="small" />
+                  <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {type}
+                  </Typography>
+                </div>
+              ))}
+          </div>
+        </CardContent>
+        {this.props.description && (
+          <div>
+            <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Typography paragraph>{this.props.description}</Typography>
+              </CardContent>
+            </Collapse>
+            <CardActions disableSpacing>
+              <IconButton
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: this.state.expanded
+                })}
+                onClick={this.handleExpandClick}
+                aria-expanded={this.state.expanded}
+                aria-label="show more"
+              >
+                <ExpandMore />
+              </IconButton>
+            </CardActions>
+          </div>
+        )}
       </Card>
     );
   }

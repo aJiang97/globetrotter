@@ -11,7 +11,15 @@ class PureNavBar extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <AppBar position="fixed" style={{ zIndex: 5000 }}>
+      <AppBar
+        position="fixed"
+        className={
+          window.location.pathname === "/locations" ||
+          window.location.pathname === "/tripview"
+            ? classes.appBarLocations
+            : classes.appBarHome
+        }
+      >
         <Toolbar>
           <img src={logo} alt="logo" className={classes.logo} />
           <Button onClick={() => history.push("/home")}>
