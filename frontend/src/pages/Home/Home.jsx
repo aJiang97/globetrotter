@@ -2,7 +2,6 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Fab, Typography } from "@material-ui/core";
 
-import { NavBar } from "../../components";
 import history from "../../history";
 import { styles } from "./styles";
 import bg from "../../assets/home-bg.jpg";
@@ -16,7 +15,6 @@ export class PureHome extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <NavBar />
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
         <div className={classes.center_container}>
@@ -28,7 +26,7 @@ export class PureHome extends React.Component {
           </Typography>
           <Fab
             variant="extended"
-            color="primary"
+            color="secondary"
             className={classes.start_button}
           >
             <Typography
