@@ -30,7 +30,7 @@ export const styles = createStyles(theme => ({
     position: "absolute",
     width: "100%",
     left: 0,
-    bottom: 55,
+    bottom: "50%",
     color: "white"
   },
   suggested: {
