@@ -20,7 +20,7 @@ routing = api.namespace('routing', description='Routing of places')
 class ItineraryAlgorithm(Resource):
     @routing.response(200, 'Success', model=MODEL_route_result)
     @routing.expect(MODEL_route_input)
-    @suggest.doc(description='''takes in locations that are selected to generate distance matrix and itinerary
+    @routing.doc(description='''takes in locations that are selected to generate distance matrix and itinerary
                                 format accepted json
                                 "place_id":"place_id:{put_id_here}"
                                 "place_id":"place_id:{put_id_here}|place_id{extra_ids}|..."''')
