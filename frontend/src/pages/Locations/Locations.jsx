@@ -7,7 +7,7 @@ import { LocationCard, LocationListWindow, NavBar } from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
-import Grid from '@material-ui/core/Grid';
+import Grid from "@material-ui/core/Grid";
 import MapContainer from "../../components/MapContainer/MapContainer";
 
 export class PureLocations extends React.Component {
@@ -61,10 +61,11 @@ export class PureLocations extends React.Component {
       });
     } else {
       var placesToIndex = {};
-      this.state.addedLocations.map(
-        (location, i) => (placesToIndex[location.foursquare.venue_name] = i)
+      const locations = this.getAddedLocations();
+      locations.map(
+        (location, i) => (placesToIndex[location.google.place_id] = i)
       );
-      this.props.setPlaces(this.getAddedLocations());
+      this.props.setPlaces(locations, placesToIndex);
       history.push(`/tripview?start_date=${startDate}&end_date=${endDate}`);
     }
   };
@@ -91,6 +92,7 @@ export class PureLocations extends React.Component {
       places.locations.sort(
         (a, b) => parseFloat(b.google.rating) - parseFloat(a.google.rating)
       );
+      console.log(places.locations);
       this.setState({
         places: places.locations
       });
@@ -103,7 +105,7 @@ export class PureLocations extends React.Component {
       <div>
         <NavBar />
         <Grid className={classes.section}>
-          <Grid container item xs={6} className={classes.flexScroll}>
+          <Grid container item xs={7} className={classes.flexScroll}>
             <Typography variant="h5" className={classes.title}>
               Recommended Locations
             </Typography>
@@ -149,7 +151,7 @@ export class PureLocations extends React.Component {
               }
               onClick={this.handleOpenListWindow}
             >
-            <DoubleArrow />
+              <DoubleArrow />
             </Button>
             <LocationListWindow
               isOpen={this.state.isOpenListWindow}
@@ -166,20 +168,16 @@ export class PureLocations extends React.Component {
                   ? classes.viewButtonOut
                   : classes.viewButtonIn
               }
-              onClick={() => {
-                history.push("/tripview");
-              }}
+              onClick={this.handleSubmit}
             >
               View Plan
-            </Button>  
+            </Button>
           </Grid>
-          <Grid container item xs={6}>
-            <MapContainer
-              locations={this.state.places}
-            />
+          <Grid container item xs={5}>
+            <MapContainer locations={this.state.places} />
           </Grid>
         </Grid>
-      </div>  
+      </div>
     );
   }
 }
