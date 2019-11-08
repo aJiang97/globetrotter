@@ -35,7 +35,7 @@ class PureLocationCard extends React.Component {
       <Card className={classes.card}>
         <CardMedia className={classes.media} image={this.props.media} />
         <CardContent>
-          <Typography component="h2" variant="h5">
+          <Typography component="h2" variant="h5" className="title">
             {this.props.title}
           </Typography>
           <StarRating value={this.props.rating.toFixed(2)} />

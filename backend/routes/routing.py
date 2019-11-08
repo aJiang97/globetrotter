@@ -18,9 +18,28 @@ routing = api.namespace('routing', description='Routing of places')
 
 @routing.route('/itinerary', strict_slashes=False)
 class ItineraryAlgorithm(Resource):
-    @routing.response(200, 'Success', route_result)
-    @routing.expect(route_input)
+    @routing.response(200, 'Success', model=MODEL_route_result)
+    @routing.expect(MODEL_route_input)
+    @routing.doc(description='''takes in locations that are selected to generate distance matrix and itinerary
+                                format accepted json
+                                "place_id":"place_id:{put_id_here}"
+                                "place_id":"place_id:{put_id_here}|place_id{extra_ids}|..."''')
     def post(self):
-        received_item = request.json
-        pass
+        #locations = request.form['place_id']
+        locations =  request.get_json()
+        
+        payload = {
+            'key': config.GOOGLE_WS_API_KEY,
+            'origins':locations["place_id"],
+            'destinations':locations["place_id"]
+        }
+
+        query = requests.get(url="https://maps.googleapis.com/maps/api/distancematrix/json?", params=payload)
+        response = json.loads(query.text)
+        if query.status_code != 200:
+            abort(403,message=response['error_message'])
+
+        #algo/change data into preferred format here
+        return response
+        
 

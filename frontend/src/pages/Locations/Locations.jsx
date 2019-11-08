@@ -7,6 +7,8 @@ import { LocationCard, LocationListWindow, NavBar } from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
+import Grid from "@material-ui/core/Grid";
+import MapContainer from "../../components/MapContainer/MapContainer";
 
 export class PureLocations extends React.Component {
   constructor(props) {
@@ -102,74 +104,79 @@ export class PureLocations extends React.Component {
     return (
       <div>
         <NavBar />
-        <div className={classes.container}>
-          <Typography variant="h5" className={classes.title}>
-            Recommended Locations
-          </Typography>
-          {this.state.places.length !== 0 &&
-            this.state.places.map((loc, key) => (
-              <div key={key} className={classes.locationCardContainer}>
-                {this.state.addedLocations.indexOf(key) !== -1 ? (
-                  <Fab
-                    color="primary"
-                    onClick={() => {
-                      this.handleRemoveLocation(key);
-                    }}
-                  >
-                    <Close />
-                  </Fab>
-                ) : (
-                  <Fab
-                    color="primary"
-                    onClick={() => {
-                      this.handleAddLocation(key);
-                    }}
-                  >
-                    <Add />
-                  </Fab>
-                )}
-                <LocationCard
-                  className={classes.card}
-                  title={loc.foursquare.venue_name}
-                  type={this.getTypes(loc.foursquare.location_types)}
-                  rating={loc.google.rating}
-                  media={loc.foursquare.pictures[0]}
-                  description={loc.foursquare.description}
-                />
-              </div>
-            ))}
-        </div>
-        <Button
-          variant="contained"
-          color="primary"
-          className={
-            this.state.isOpenListWindow
-              ? classes.arrowButtonOut
-              : classes.arrowButtonIn
-          }
-          onClick={this.handleOpenListWindow}
-        >
-          <DoubleArrow />
-        </Button>
-        <LocationListWindow
-          isOpen={this.state.isOpenListWindow}
-          locations={this.getAddedLocations()}
-          onRemove={this.handleRemoveLocation}
-          getTypes={this.getTypes}
-          displayError={this.state.displayError}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          className={
-            this.state.isOpenListWindow
-              ? classes.viewButtonOut
-              : classes.viewButtonIn
-          }
-          onClick={this.handleSubmit}
-        >
-          View Plan
-        </Button>
+        <Grid className={classes.section}>
+          <Grid container item xs={7} className={classes.flexScroll}>
+            <Typography variant="h5" className={classes.title}>
+              Recommended Locations
+            </Typography>
+            {this.state.places.length !== 0 &&
+              this.state.places.map((loc, key) => (
+                <div key={key} className={classes.locationCardContainer}>
+                  {this.state.addedLocations.indexOf(key) !== -1 ? (
+                    <Fab
+                      color="primary"
+                      onClick={() => {
+                        this.handleRemoveLocation(key);
+                      }}
+                    >
+                      <Close />
+                    </Fab>
+                  ) : (
+                    <Fab
+                      color="primary"
+                      onClick={() => {
+                        this.handleAddLocation(key);
+                      }}
+                    >
+                      <Add />
+                    </Fab>
+                  )}
+                  <LocationCard
+                    className={classes.card}
+                    title={loc.foursquare.venue_name}
+                    type={this.getTypes(loc.foursquare.location_types)}
+                    rating={loc.google.rating}
+                    media={loc.foursquare.pictures[0]}
+                    description={loc.foursquare.description}
+                  />
+                </div>
+              ))}
+            <Button
+              variant="contained"
+              color="primary"
+              className={
+                this.state.isOpenListWindow
+                  ? classes.arrowButtonOut
+                  : classes.arrowButtonIn
+              }
+              onClick={this.handleOpenListWindow}
+            >
+              <DoubleArrow />
+            </Button>
+            <LocationListWindow
+              isOpen={this.state.isOpenListWindow}
+              locations={this.getAddedLocations()}
+              onRemove={this.handleRemoveLocation}
+              getTypes={this.getTypes}
+              displayError={this.state.displayError}
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              className={
+                this.state.isOpenListWindow
+                  ? classes.viewButtonOut
+                  : classes.viewButtonIn
+              }
+              onClick={this.handleSubmit}
+            >
+              View Plan
+            </Button>
+          </Grid>
+          <Grid container item xs={5}>
+            <MapContainer locations={this.state.places} />
+          </Grid>
+        </Grid>
       </div>
     );
   }

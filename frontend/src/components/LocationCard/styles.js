@@ -2,12 +2,8 @@ import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
   card: {
-    width: "55%",
+    width: "70%",
     margin: 20
-  },
-  media: {
-    height: 30,
-    paddingTop: "20%"
   },
   expand: {
     transform: "rotate(0deg)",
@@ -18,5 +14,23 @@ export const styles = createStyles(theme => ({
   },
   expandOpen: {
     transform: "rotate(180deg)"
+  },
+  media: {
+    height: "50",
+    paddingTop: "33%",
+    width:"100%",
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: "30px",
+    marginBottom: "10px"
+  },
+  venueType: {
+    fontStyle: "italic",
+    fontSize: "15px",
+    paddingLeft: "65px"
+  },
+  root: {
+    flexGrow: 1,
   }
 }));
