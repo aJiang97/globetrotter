@@ -7,14 +7,13 @@ import asyncio
 
 from concurrent.futures import ThreadPoolExecutor
 
-from app import api
+from app import api, mp
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
 from requests_futures.sessions import FuturesSession
 
 from util.models import *
 from util.caching import *
-from util.model_interpret import ModelProc
 from util.categories import categoryIDReference
 
 suggest = api.namespace('suggest', description='Suggest list of places')
@@ -30,7 +29,7 @@ class FSSuggest(Resource):
     @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request in integer. Range: [10-50]', required=False)
-    @suggest.response(200, description='Success', model=f_locations_short)
+    @suggest.response(200, description='Success', model=MODEL_f_locations_short)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.doc(description='''
@@ -114,7 +113,7 @@ class FSSuggest(Resource):
                 "venue_name": item['venue']['name'],
                 "coordinate": coords,
                 "location_id": item['venue']['id'],
-                "location_types": ModelProc().parseCategory(item['venue']['categories'])
+                "location_types": mp.parseCategory(item['venue']['categories'])
             })
 
         return listres
@@ -135,7 +134,7 @@ class FSPrefSuggest(Resource):
                         religious_sites
                         shopping
         ''',required=True)
-    @suggest.response(200, description = 'Success', model = f_locations_short)
+    @suggest.response(200, description = 'Success', model=MODEL_f_locations_short)
     @suggest.doc(description = 'Suggests locations based on city and types of locations, giving basic details and location name')
     def get(self):
         location = request.args.get('city')
@@ -176,7 +175,7 @@ class FSPrefSuggest(Resource):
                 "venue_name": venue['name'],
                 "coordinate": coords,
                 "location_id": venue['id'],
-                "location_types": ModelProc().parseCategory(item['venue']['categories'])
+                "location_types": mp.parseCategory(item['venue']['categories'])
             })
 
         return {
@@ -189,7 +188,7 @@ class FSDetailedSuggest(Resource):
     @suggest.deprecated
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request', required=False)
-    @suggest.response(200, description='Success', model=f_locations)
+    @suggest.response(200, description='Success', model=MODEL_f_locations)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
@@ -313,13 +312,13 @@ class FSDetailedSuggest(Resource):
         return listres
 
     def procfsvenue(self, parsed):
-        return ModelProc().f_location(parsed)
+        return mp.f_location(parsed)
 
 @suggest.route('/fs_google', strict_slashes=False)
 class DetailedSuggest(Resource):
     @suggest.param('city', 'City that the user wants to check', required=True)
     @suggest.param('count', 'Venue count that the user wants to request, between 10 to 50', required=False)
-    @suggest.response(200, description='Success', model=locations)
+    @suggest.response(200, description='Success', model=MODEL_locations)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
@@ -360,7 +359,7 @@ class DetailedSuggest(Resource):
             #     break           # debug
             # i = i + 1           # debug
             id = target['venue']['id']
-            name = ModelProc().fs_venuename(target['venue'])
+            name = mp.fs_venuename(target['venue'])
             detail = Detailed(id, name)
             detailedItems[id] = detail
 
@@ -432,7 +431,7 @@ class DetailedSuggest(Resource):
             detailedItems[venueId].set_fslocation(fsvenueobj)
 
     def procfsvenue(self, parsed):
-        return ModelProc().f_location(parsed)
+        return mp.f_location(parsed)
 
     async def getGoogleVenues(self, detailedItems, session):
         # Process placeID synchronously before calling the venues
@@ -487,7 +486,7 @@ class DetailedSuggest(Resource):
 
     def procgooglevenue(self, dets, place_id):
         #get location rating
-        return ModelProc().g_location(dets, place_id)
+        return mp.g_location(dets, place_id)
 
     def getGooglePlaceID(self, detailedItems, session):
         futuredict = dict()
@@ -557,7 +556,7 @@ class DetailedPrefSuggest(Resource):
                         religious_sites
                         shopping
         ''',required=True)
-    @suggest.response(200, description='Success', model=locations)
+    @suggest.response(200, description='Success', model=MODEL_locations)
     @suggest.response(400, 'Malformed request input on user side')
     @suggest.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     @suggest.response(403, 'FS API could not fulfill user request. Maximum query on venue is reached.')
@@ -608,7 +607,7 @@ class DetailedPrefSuggest(Resource):
             #     break           # debug
             # i = i + 1           # debug
             id = target['venue']['id']
-            name = ModelProc().fs_venuename(target['venue'])
+            name = mp.fs_venuename(target['venue'])
             detail = Detailed(id, name)
             detailedItems[id] = detail
 
@@ -680,7 +679,7 @@ class DetailedPrefSuggest(Resource):
             detailedItems[venueId].set_fslocation(fsvenueobj)
 
     def procfsvenue(self, parsed):
-        return ModelProc().f_location(parsed)
+        return mp.f_location(parsed)
 
     async def getGoogleVenues(self, detailedItems, session):
         # Process placeID synchronously before calling the venues
@@ -735,7 +734,7 @@ class DetailedPrefSuggest(Resource):
 
     def procgooglevenue(self, dets, place_id):
         #get location rating
-        return ModelProc().g_location(dets, place_id)
+        return mp.g_location(dets, place_id)
 
     def getGooglePlaceID(self, detailedItems, session):
         futuredict = dict()

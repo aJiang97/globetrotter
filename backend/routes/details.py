@@ -6,14 +6,13 @@ from datetime import date, timedelta
 
 from concurrent.futures import ThreadPoolExecutor
 
-from app import api
+from app import api, mp
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
 from requests_futures.sessions import FuturesSession
 
 from util.models import *
 from util.caching import *
-from util.model_interpret import ModelProc
 
 
 details_url = 'https://maps.googleapis.com/maps/api/place/details/json'
@@ -25,7 +24,7 @@ details = api.namespace('details', description='Details of a location')
 class FoursquareDetails(Resource):
     @details.deprecated
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.')
-    @details.response(200, 'Success', f_location)
+    @details.response(200, 'Success', model=MODEL_f_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter city is geocodable (refer to Geocoding API on Google Maps)')
     def get(self):
@@ -75,14 +74,14 @@ class FoursquareDetails(Resource):
         if dictres is None:
             return None
 
-        return ModelProc().f_location(dictres)      
+        return mp.f_location(dictres)      
 
 @details.route('/google', strict_slashes=False)
 class GoogleDetails(Resource):
     @details.deprecated
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.')
     @details.param('venuename', 'Location the user wants details on, using venue name. If param venueID is not empty, venuename will be ignored.')
-    @details.response(200, 'Success', g_location)
+    @details.response(200, 'Success', model=MODEL_g_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter is geocodable (refer to Geocoding API on Google Maps)')
     @details.response(404, 'Places API could not process or fulfill user request, assuming unavailable resource.')
@@ -153,7 +152,7 @@ class GoogleDetails(Resource):
             store_cache(content, 'venue_' + vid + '.json')
 
         # Name of the venue might be unclear, hence returns a lengthy response
-        return ModelProc().fs_venuename(dictres['response']['venue'])
+        return mp.fs_venuename(dictres['response']['venue'])
 
     # return dets from either API or cache
     def get_details(self, name):
@@ -185,7 +184,7 @@ class GoogleDetails(Resource):
         if dets is None:
             return None
 
-        return ModelProc().g_location(dets, place_id, name)
+        return mp.g_location(dets, place_id, name)
 
     # get googlemaps location idenitfier
     def get_placeid(self, name):
@@ -211,7 +210,7 @@ class GoogleDetails(Resource):
 class DepthDetails(Resource):
     @details.param('venueID', 'Location the user wants details on, using Foursquare VenueID.', required=True)
     #@details.param('venuename', 'Location the user wants details on, using venue name. If param venueID is not empty, venuename will be ignored.')
-    @details.response(200, 'Success', fg_location)
+    @details.response(200, 'Success', model=MODEL_fg_location)
     @details.response(400, 'Malformed request input on user side')
     @details.response(403, 'FS API could not process or fulfill user request. Make sure that parameter is geocodable (refer to Geocoding API on Google Maps)')
     @details.response(404, 'Places API could not process or fulfill user request, assuming unavailable resource.')
@@ -274,7 +273,7 @@ class DepthDetails(Resource):
         if dictres is None:
             return None
 
-        return ModelProc().f_location(dictres)
+        return mp.f_location(dictres)
 
     def get_details(self, name):
         place_id = self.get_placeid(name)
@@ -305,7 +304,7 @@ class DepthDetails(Resource):
         if dets is None:
             return None
 
-        return ModelProc().g_location(dets, place_id, name)
+        return mp.g_location(dets, place_id, name)
 
     def get_placeid(self, name):
         params = {
@@ -324,4 +323,9 @@ class DepthDetails(Resource):
         if id['status'] == 'OK':
             return id['candidates'][0]['place_id']
         return None
-        
+
+@details.route('/google_photo', strict_slashes=False)
+class GooglePhoto(Resource):
+    @details.expect(MODEL_photorefs)
+    def post(self):
+        pass
