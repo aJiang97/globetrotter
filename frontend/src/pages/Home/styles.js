@@ -24,7 +24,7 @@ export const styles = createStyles(theme => ({
   bg_layer: {
     zIndex: 1110,
     position: "fixed",
-    top: 0,
+    top: 64,
     left: 0,
     right: 0,
     bottom: 0,
