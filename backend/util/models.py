@@ -161,3 +161,28 @@ MODEL_route_result = api.model('route_result', {
     "distance_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
     "days": fields.List(fields.Nested(MODEL_route_day))
 })
+
+
+# /auth
+# Input
+MODEL_signup_expect = api.model('signup_expect', {
+    "username": fields.String(description='Username of the user. Must be unique.', required=True),
+    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True),
+    "displayname": fields.String(description='Display name of the user. Maximum length is 64')
+})
+
+MODEL_login_expect = api.model('login_expect', {
+    "username": fields.String(description='Username of the user.', required=True),
+    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+})
+
+MODEL_logout_expect = api.model('logout_expect', {
+    "username": fields.String(description='Username of the user.', required=True),
+    "token": fields.String(description='Current access token of the user', required=True)
+})
+
+# Output
+MODEL_auth_token = api.model('auth_token', {
+    "token": fields.String(description='Access token')
+})
+
