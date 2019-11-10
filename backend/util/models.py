@@ -90,6 +90,10 @@ MODEL_photorefs = api.model('photo_references', {
     "references": fields.List(fields.Nested(MODEL_photoref), required=True)
 })
 
+MODEL_photolinks = api.model('photo_links', {
+    "links": fields.List(fields.String())
+})
+
 # /routing
 # Inputs
 # Individual venue item
