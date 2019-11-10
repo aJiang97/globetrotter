@@ -12,12 +12,7 @@ class DB:
         dbconfig = dbname + ' ' + dbuser + ' ' + dbhost + ' ' + dbpw
         self.__conn = psycopg2.connect(dbconfig)
 
-    # Doesn't work for some reason...
-    # def __del__(self):
-    #     if self.__conn is not None:
-    #         self.__conn.close()
-
-    # Add stuff down here...
+    # Authentication endpoints
     def available_username(self, username):
         c = self.__conn.cursor()
 
@@ -114,4 +109,31 @@ class DB:
         c.close()
         self.__conn.commit()
         return True
+    
+
+    # Details/picture endpoint
+    def insert_picture(self, photo_reference, photo_link):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("INSERT INTO photos (photo_reference, photo_link) VALUES (%s, %s);", (photo_reference, photo_link))
+        except Exception as e:
+            print(e)
+
+        c.close()
+        self.__conn.commit()
+
+    def get_picture(self, photo_reference):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT photo_link FROM photos WHERE photo_reference = %s;", (photo_reference,))
+        except Exception as e:
+            print(e)
+
+        rows = c.fetchall()
+        result = rows[0][0]
+
+        c.close()
+        return result
         
