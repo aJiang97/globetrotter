@@ -2,8 +2,11 @@
 
 import os, sys
 
+from db.dbinit import start_db 
+
 def main(host='127.0.0.1', port=None):
     try:
+        start_db()
         run(host, port)
     except ImportError as e:
         print('ERROR:', e, file=sys.stderr)
@@ -35,6 +38,7 @@ def run_flask(host, port):
     import routes.suggest
     import routes.details
     import routes.routing
+    import routes.auth
 
     # Set environment
     os.environ['HOST'] = host
