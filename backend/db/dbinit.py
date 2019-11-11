@@ -8,8 +8,10 @@ def singleton_startup(cursor):
             username varchar(32) NOT NULL,
             hashedpw varchar(128) NOT NULL,
             displayname varchar(64),
+            email varchar(128),
             token varchar(64),
-            PRIMARY KEY (username)
+            PRIMARY KEY (username),
+            UNIQUE (token, email)
         );
     
         CREATE TABLE IF NOT EXISTS photos (
