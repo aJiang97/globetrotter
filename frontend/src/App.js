@@ -40,7 +40,6 @@ class App extends React.Component {
   }
 
   setPlaces = (places, placeToIndex) => {
-    console.log(placeToIndex);
     this.setState({ places: places, placeToIndex: placeToIndex });
   };
 
