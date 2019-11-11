@@ -15,6 +15,10 @@ class APIClient {
     );
   }
 
+  generateItinerary(places) {
+    return this.perform("post", `routing/itinerary`, { place_id: places });
+  }
+
   async perform(method, resource, data) {
     return client({
       method,

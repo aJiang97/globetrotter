@@ -25,8 +25,12 @@ class ItineraryAlgorithm(Resource):
                                 "place_id":"place_id:{put_id_here}"
                                 "place_id":"place_id:{put_id_here}|place_id{extra_ids}|..."''')
     def post(self):
-        #locations = request.form['place_id']
-        locations =  request.get_json()
+        # locations = request.get_json()
+        locations =  json.loads(list(request.form.to_dict().keys())[0])
+
+        print("location")
+        print(locations["place_id"])
+        # print(locations)
         
         payload = {
             'key': config.GOOGLE_WS_API_KEY,
@@ -36,6 +40,7 @@ class ItineraryAlgorithm(Resource):
 
         query = requests.get(url="https://maps.googleapis.com/maps/api/distancematrix/json?", params=payload)
         response = json.loads(query.text)
+        print(query)
         if query.status_code != 200:
             abort(403,message=response['error_message'])
 
