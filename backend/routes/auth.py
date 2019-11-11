@@ -25,6 +25,7 @@ class Signup(Resource):
         username = content.get('username')
         hashedpw = content.get('hashedpw')
         displayname = content.get('displayname')
+        email = content.get('email')
 
         if username is None or hashedpw is None:
             abort(400, 'Malformed request, username and hashedpw is not supplied')
@@ -32,10 +33,10 @@ class Signup(Resource):
         if not db.available_username(username):
             abort(409, 'Username \'{}\' is taken'.format(username))
         
-        reg = db.register(username, hashedpw, displayname)
+        reg = db.register(username, hashedpw, displayname, email)
 
         if reg is None:
-            abort(500, 'Backend is not working as intended or the supplied information was malformed')
+            abort(400, 'Backend is not working as intended or the supplied information was malformed. Make sure that your email is unique.')
 
         return
 

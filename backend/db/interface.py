@@ -28,11 +28,11 @@ class DB:
         c.close()
         return (rlen == 0)
     
-    def register(self, username, hashedpw, displayname=None):
+    def register(self, username, hashedpw, displayname=None, email=None):
         c = self.__conn.cursor()
 
         try:
-            c.execute("INSERT INTO creds (username, hashedpw, displayname) VALUES (%s, %s, %s);", (username, hashedpw, displayname))
+            c.execute("INSERT INTO creds (username, hashedpw, displayname, email) VALUES (%s, %s, %s, %s);", (username, hashedpw, displayname, email))
         except Exception as e:
             print(e)
             return None
@@ -136,4 +136,3 @@ class DB:
 
         c.close()
         return result
-        

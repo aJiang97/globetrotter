@@ -172,7 +172,8 @@ MODEL_route_result = api.model('route_result', {
 MODEL_signup_expect = api.model('signup_expect', {
     "username": fields.String(description='Username of the user. Must be unique.', required=True),
     "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True),
-    "displayname": fields.String(description='Display name of the user. Maximum length is 64')
+    "displayname": fields.String(description='Display name of the user. Maximum length is 64'),
+    "email": fields.String(description='Your email address. Must be unique')
 })
 
 MODEL_login_expect = api.model('login_expect', {
