@@ -5,13 +5,12 @@ import config
 def singleton_startup(cursor):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS creds (
-            username varchar(32) NOT NULL,
+            email varchar(64) NOT NULL,
             hashedpw varchar(128) NOT NULL,
             displayname varchar(64),
-            email varchar(128),
             token varchar(64),
-            PRIMARY KEY (username),
-            UNIQUE (token, email)
+            PRIMARY KEY (email),
+            UNIQUE (token)
         );
     
         CREATE TABLE IF NOT EXISTS photos (
