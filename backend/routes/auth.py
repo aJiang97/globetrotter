@@ -3,6 +3,7 @@ import secrets
 from app import api, db
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
+import json
 
 from util.models import *
 
@@ -18,14 +19,10 @@ class Signup(Resource):
     @auth.expect(MODEL_signup_expect)
     @auth.doc(description='')
     def post(self):
-        if not request.json:
-            abort(400, 'Malformed request, format is not application/json')
-        
-        content = request.get_json()
-        email = content.get('email')
-        hashedpw = content.get('hashedpw')
-        displayname = content.get('displayname')
-        email = content.get('email')
+        content = json.loads(list(request.form.to_dict().keys())[0])
+        email = content['email']
+        hashedpw = content['hashedpw']
+        displayname = content['displayname']
 
         if email is None or hashedpw is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
@@ -49,12 +46,9 @@ class Login(Resource):
     @auth.expect(MODEL_login_expect)
     @auth.doc(description='')
     def post(self):
-        if not request.json:
-            abort(400, 'Malformed request, format is not application/json')
-        
-        content = request.get_json()
-        email = content.get('email')
-        hashedpw = content.get('hashedpw')
+        content = json.loads(list(request.form.to_dict().keys())[0])
+        email = content['email']
+        hashedpw = content['hashedpw']
 
         if email is None or hashedpw is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
