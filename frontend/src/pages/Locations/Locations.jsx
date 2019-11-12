@@ -1,7 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Fab, Typography } from "@material-ui/core";
-import { Add, Close, DoubleArrow } from "@material-ui/icons";
+import { Button, Fab, Typography, Badge } from "@material-ui/core";
+import { Add, Close, ArrowBackIos, ArrowForwardIos, Room } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow, NavBar } from "../../components";
 import { styles } from "./styles";
@@ -151,7 +151,9 @@ export class PureLocations extends React.Component {
               }
               onClick={this.handleOpenListWindow}
             >
-              <DoubleArrow />
+              <Badge showZero badgeContent={this.state.addedLocations.length} color="error">
+                {this.state.isOpenListWindow ? <ArrowForwardIos /> : <ArrowBackIos />}
+              </Badge>
             </Button>
             <LocationListWindow
               isOpen={this.state.isOpenListWindow}
