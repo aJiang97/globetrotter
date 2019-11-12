@@ -13,11 +13,11 @@ class DB:
         self.__conn = psycopg2.connect(dbconfig)
 
     # Authentication endpoints
-    def available_username(self, username):
+    def available_email(self, email):
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT COUNT(*) FROM creds WHERE username = %s;", (username,))
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s;", (email,))
         except Exception as e:
             print(e)
             return None
@@ -28,11 +28,11 @@ class DB:
         c.close()
         return (rlen == 0)
     
-    def register(self, username, hashedpw, displayname=None, email=None):
+    def register(self, email, hashedpw, displayname=None):
         c = self.__conn.cursor()
 
         try:
-            c.execute("INSERT INTO creds (username, hashedpw, displayname, email) VALUES (%s, %s, %s, %s);", (username, hashedpw, displayname, email))
+            c.execute("INSERT INTO creds (email, hashedpw, displayname) VALUES (%s, %s, %s);", (email, hashedpw, displayname))
         except Exception as e:
             print(e)
             return None
@@ -41,11 +41,11 @@ class DB:
         self.__conn.commit()
         return True
 
-    def login(self, username, hashedpw):
+    def login(self, email, hashedpw):
         c = self.__conn.cursor()
         
         try:
-            c.execute("SELECT COUNT(*) FROM creds WHERE username = %s AND hashedpw = %s;", (username, hashedpw))
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
             print(e)
             return None
@@ -71,11 +71,11 @@ class DB:
         c.close()
         return (rlen == 0)
 
-    def insert_token(self, username, token):
+    def insert_token(self, email, token):
         c = self.__conn.cursor()
 
         try:
-            c.execute("UPDATE creds SET token = %s WHERE username = %s;", (token, username))
+            c.execute("UPDATE creds SET token = %s WHERE email = %s;", (token, email))
         except Exception as e:
             print(e)
             return None
@@ -84,11 +84,11 @@ class DB:
         self.__conn.commit()
         return True
 
-    def clear_token(self, username, token):
+    def clear_token(self, email, token):
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT COUNT(*) FROM creds WHERE username = %s AND token = %s;", (username, token))
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
             print(e)
             return None
@@ -101,7 +101,7 @@ class DB:
             return False
 
         try:
-            c.execute("UPDATE creds SET token = NULL WHERE username = %s AND token = %s;", (username, token))
+            c.execute("UPDATE creds SET token = NULL WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
             print(e)
             return None

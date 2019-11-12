@@ -14,7 +14,7 @@ auth = api.namespace('auth', description='User authorization endpoint')
 class Signup(Resource):
     @auth.response(200, 'Success')
     @auth.response(400, 'Malformed request')
-    @auth.response(409, 'Username taken')
+    @auth.response(409, 'Email is already taken')
     @auth.expect(MODEL_signup_expect)
     @auth.doc(description='')
     def post(self):
@@ -22,18 +22,18 @@ class Signup(Resource):
             abort(400, 'Malformed request, format is not application/json')
         
         content = request.get_json()
-        username = content.get('username')
+        email = content.get('email')
         hashedpw = content.get('hashedpw')
         displayname = content.get('displayname')
         email = content.get('email')
 
-        if username is None or hashedpw is None:
-            abort(400, 'Malformed request, username and hashedpw is not supplied')
+        if email is None or hashedpw is None:
+            abort(400, 'Malformed request, email and hashedpw is not supplied')
 
-        if not db.available_username(username):
-            abort(409, 'Username \'{}\' is taken'.format(username))
+        if not db.available_email(email):
+            abort(409, 'Email \'{}\' is taken'.format(email))
         
-        reg = db.register(username, hashedpw, displayname, email)
+        reg = db.register(email, hashedpw, displayname)
 
         if reg is None:
             abort(400, 'Backend is not working as intended or the supplied information was malformed. Make sure that your email is unique.')
@@ -44,8 +44,8 @@ class Signup(Resource):
 @auth.route('/login', strict_slashes=False)
 class Login(Resource):
     @auth.response(200, 'Success', MODEL_auth_token)
-    @auth.response(400, 'Malformed request (missing username/hashedpw)')
-    @auth.response(403, 'Invalid username/password combination')
+    @auth.response(400, 'Malformed request (missing email/hashedpw)')
+    @auth.response(403, 'Invalid email/password combination')
     @auth.expect(MODEL_login_expect)
     @auth.doc(description='')
     def post(self):
@@ -53,22 +53,22 @@ class Login(Resource):
             abort(400, 'Malformed request, format is not application/json')
         
         content = request.get_json()
-        username = content.get('username')
+        email = content.get('email')
         hashedpw = content.get('hashedpw')
 
-        if username is None or hashedpw is None:
-            abort(400, 'Malformed request, username and hashedpw is not supplied')
+        if email is None or hashedpw is None:
+            abort(400, 'Malformed request, email and hashedpw is not supplied')
         
-        login = db.login(username, hashedpw)
+        login = db.login(email, hashedpw)
 
         print(login)
         
         if not login:
-            abort(403, 'Invalid username/password combination')
+            abort(403, 'Invalid email/password combination')
         
         token = self.generate_token()
 
-        db.insert_token(username, token)
+        db.insert_token(email, token)
 
         return {
             "token": token
@@ -93,13 +93,13 @@ class Logout(Resource):
             abort(400, 'Malformed request, format is not application/json')
         
         content = request.get_json()
-        username = content.get('username')
+        email = content.get('email')
         token = content.get('token')
 
-        if username is None or token is None:
-            abort(400, 'Malformed request, username and token is not supplied')
+        if email is None or token is None:
+            abort(400, 'Malformed request, email and token is not supplied')
                 
-        stat = db.clear_token(username, token)
+        stat = db.clear_token(email, token)
 
         if not stat:
             abort(403, 'Bearer token mismatch. Your token is invalid and you should be signed out from your account')
