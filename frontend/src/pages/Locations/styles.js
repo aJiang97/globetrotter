@@ -18,6 +18,13 @@ const viewButton = {
   transition: "right 0.5s"
 };
 
+const flexScroll = {
+  flexGrow: 1,
+  overflow: "auto",
+  maxHeight: "100%",
+  marginTop: "64px"
+}
+
 export const styles = createStyles(theme => ({
   section: {
     flexGrow: 1,
@@ -29,11 +36,11 @@ export const styles = createStyles(theme => ({
     width: '100%'
   },
   flexScroll: {
-    flexGrow: 1,
-    overflow: "auto",
-    maxHeight: "100%",
-    paddingLeft: "30px",
-    marginTop: "75px"
+    ...flexScroll,
+    paddingLeft: "40px"
+  },
+  locationPane: {
+    ...flexScroll
   },
   locationCardContainer: {
     display: "flex",
