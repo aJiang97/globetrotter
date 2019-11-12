@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography, Badge } from "@material-ui/core";
 import { Add, Close, ArrowBackIos, ArrowForwardIos, Room } from "@material-ui/icons";
 
-import { LocationCard, LocationListWindow, NavBar } from "../../components";
+import { LocationCard, LocationListWindow, LocationPane, NavBar } from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
@@ -105,7 +105,7 @@ export class PureLocations extends React.Component {
       <div>
         <NavBar />
         <Grid className={classes.section}>
-          <Grid container item xs={7} className={classes.flexScroll}>
+          <Grid container item xs={6} className={classes.flexScroll}>
             <Typography variant="h5" className={classes.title}>
               Recommended Locations
             </Typography>
@@ -175,8 +175,8 @@ export class PureLocations extends React.Component {
               View Plan
             </Button>
           </Grid>
-          <Grid container item xs={5}>
-            <MapContainer locations={this.state.places} />
+          <Grid container item xs={6} className={classes.locationPane}>
+            {this.state.places.length !== 0 && <LocationPane location={this.state.places[0]} />}
           </Grid>
         </Grid>
       </div>

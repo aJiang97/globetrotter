@@ -1,5 +1,6 @@
 export * from "./LocationCard";
 export * from "./LocationListWindow";
+export * from "./LocationPane";
 export * from "./NavBar";
 export * from "./PreferenceCard";
 export * from "./MapContainer";
@@ -8,3 +9,4 @@ export * from "./StarRating";
 export * from "./TravelSeparator";
 export * from "./DateTabs";
 export * from "./CalendarGrid";
+export * from "./ReviewCard";
