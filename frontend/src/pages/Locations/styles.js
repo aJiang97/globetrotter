@@ -4,9 +4,10 @@ const arrowButton = {
   position: "fixed",
   top: "50%",
   height: 100,
-  padding: 0,
+  padding: "0 50 0 50",
   minWidth: 35,
-  transition: "right 0.5s"
+  transition: "right 0.5s",
+  zIndex: 2
 };
 
 const viewButton = {
@@ -47,15 +48,11 @@ export const styles = createStyles(theme => ({
   },
   arrowButtonIn: {
     ...arrowButton,
-    transform: "scale(-1.5)",
-    right: 0,
-    zIndex: 2
+    right: 0
   },
   arrowButtonOut: {
     ...arrowButton,
-    transform: "scale(1.5)",
-    right: 400,
-    zIndex: 2
+    right: 400
   },
   viewButtonIn: {
     ...viewButton,
