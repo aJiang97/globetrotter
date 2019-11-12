@@ -45,7 +45,7 @@ export const styles = createStyles(theme => ({
     borderRadius: 4
   },
   errorMessage: {
-    position: "fixed",
+    position: "absolute",
     bottom: 40,
     right: 110
   }
