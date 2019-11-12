@@ -170,19 +170,18 @@ MODEL_route_result = api.model('route_result', {
 # /auth
 # Input
 MODEL_signup_expect = api.model('signup_expect', {
-    "username": fields.String(description='Username of the user. Must be unique.', required=True),
+    "email": fields.String(description='Email of the user. Must be unique.', required=True),
     "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True),
-    "displayname": fields.String(description='Display name of the user. Maximum length is 64'),
-    "email": fields.String(description='Your email address. Must be unique')
+    "displayname": fields.String(description='Display name of the user. Maximum length is 64')
 })
 
 MODEL_login_expect = api.model('login_expect', {
-    "username": fields.String(description='Username of the user.', required=True),
-    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+    "email": fields.String(description='Email of the user.', required=True),
+    "email": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
 })
 
 MODEL_logout_expect = api.model('logout_expect', {
-    "username": fields.String(description='Username of the user.', required=True),
+    "email": fields.String(description='Email of the user.', required=True),
     "token": fields.String(description='Current access token of the user', required=True)
 })
 
