@@ -5,9 +5,7 @@ import { styles } from "./styles";
 import {
   CalendarGrid,
   DateTabs,
-  ItineraryLocationCard,
   NavBar,
-  TravelSeparator
 } from "../../components";
 import { Typography } from "@material-ui/core";
 export class PureTripView extends React.Component {
