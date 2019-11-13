@@ -1,14 +1,12 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Fab, Typography, Badge } from "@material-ui/core";
-import { Add, Close, ArrowBackIos, ArrowForwardIos, Room } from "@material-ui/icons";
+import { Button, Fab, Typography, Badge, Grid } from "@material-ui/core";
+import { Add, Close, ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow, LocationPane, NavBar } from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
-import Grid from "@material-ui/core/Grid";
-import MapContainer from "../../components/MapContainer/MapContainer";
 
 export class PureLocations extends React.Component {
   constructor(props) {
@@ -17,7 +15,8 @@ export class PureLocations extends React.Component {
       places: [],
       isOpenListWindow: false,
       addedLocations: [],
-      displayError: false
+      displayError: false,
+      selectedLocation: null
     };
   }
 
@@ -70,6 +69,16 @@ export class PureLocations extends React.Component {
     }
   };
 
+  handleClickLocation = () => {
+    console.log(this.props.location);
+  }
+
+  updateLocationPane(location) {
+    this.setState({
+      selectedLocation: location
+    });
+  }
+
   getAddedLocations = () => {
     return this.state.places.filter(
       (value, key) => this.state.addedLocations.indexOf(key) !== -1
@@ -94,7 +103,8 @@ export class PureLocations extends React.Component {
       );
       console.log(places.locations);
       this.setState({
-        places: places.locations
+        places: places.locations,
+        selectedLocation: places.locations[0]
       });
     });
   };
@@ -113,31 +123,20 @@ export class PureLocations extends React.Component {
               this.state.places.map((loc, key) => (
                 <div key={key} className={classes.locationCardContainer}>
                   {this.state.addedLocations.indexOf(key) !== -1 ? (
-                    <Fab
-                      color="primary"
-                      onClick={() => {
-                        this.handleRemoveLocation(key);
-                      }}
-                    >
+                    <Fab color="primary"
+                         onClick={() => { this.handleRemoveLocation(key) }}>
                       <Close />
                     </Fab>
                   ) : (
-                    <Fab
-                      color="primary"
-                      onClick={() => {
-                        this.handleAddLocation(key);
-                      }}
-                    >
+                    <Fab color="primary"
+                         onClick={() => { this.handleAddLocation(key) }}>
                       <Add />
                     </Fab>
                   )}
                   <LocationCard
                     className={classes.card}
-                    title={loc.foursquare.venue_name}
-                    type={this.getTypes(loc.foursquare.location_types)}
-                    rating={loc.google.rating}
-                    media={loc.foursquare.pictures[0]}
-                    description={loc.foursquare.description}
+                    location={loc}
+                    clickHandler={() => this.updateLocationPane(loc)}
                   />
                 </div>
               ))}
@@ -176,7 +175,7 @@ export class PureLocations extends React.Component {
             </Button>
           </Grid>
           <Grid container item xs={6} className={classes.locationPane}>
-            {this.state.places.length !== 0 && <LocationPane location={this.state.places[0]} />}
+            {this.state.selectedLocation && <LocationPane location={this.state.selectedLocation} />}
           </Grid>
         </Grid>
       </div>
