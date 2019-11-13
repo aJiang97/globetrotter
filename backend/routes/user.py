@@ -13,6 +13,7 @@ user = api.namespace('user', description='User trips endpoint')
 class UserTrip(Resource):
     @user.response(200, 'Success', MODEL_trip_uuid)
     @user.response(400, 'Malformed request')
+    @user.response(403, 'Invalid authorization')
     @user.doc(security='authtoken', description='Store user calendar')
     # @user.expect(MODEL_calendar_header)  # This is intended because we will use pure text/calendar
     @user.param('description', 'Description of the trip. Can be empty string but don\'t be null',required=True)
@@ -48,7 +49,7 @@ class UserTrip(Resource):
         }
 
     @user.response(200, 'Success')
-    @user.response(403, 'Resource is not yours')
+    @user.response(403, 'Invalid authorization')
     @user.response(404, 'Resource is not available')
     @user.doc(security='authtoken', description='Get the calendar of the user using UUID')
     def get(self):
@@ -56,8 +57,8 @@ class UserTrip(Resource):
         pass
 
     @user.response(200, 'Success')
-    @user.response(403, 'Resource is not yours')
-    @user.response(404, 'Resource is not available')
+    @user.response(403, 'Invalid authorization')
+    @user.response(404, 'Resource to patch is not available')
     @user.doc(security='authtoken', description='Update the calendar of the user using UUID and the raw data from the frontend')
     def patch(self):
         # Patch fields of the UUID
