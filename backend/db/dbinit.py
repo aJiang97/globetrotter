@@ -18,6 +18,18 @@ def singleton_startup(cursor):
             photo_link varchar(2048) NOT NULL,
             PRIMARY KEY (photo_reference)
         );
+
+        CREATE TABLE IF NOT EXISTS calendars (
+            id SERIAL PRIMARY KEY,
+            email varchar(64) NOT NULL REFERENCES creds(email),
+            calendarid UUID NOT NULL,
+            tripday TIMESTAMP,
+            calendar BYTEA NOT NULL,
+            modifieddate TIMESTAMP NOT NULL,
+            UNIQUE (calendarid)
+        );
+
+        SET TIMEZONE = 'Australia/Sydney';
     
         INSERT INTO photos (photo_reference, photo_link) VALUES ('CmRaAAAAGrUAys45JWutAEjIG-Mw4LkOhHJL7sC1XRhaU4LyVgh4tlxs93Wz1mcGn-IZKSMpWeyGTFJc2izoKwk1n6uNn4Z_Ah1DyU4fvTwcd9UU_Qyx07byBIm3C5jMD1gIgMCvEhARUuVhS74HqqYKrKbPaGp0GhQUyY-_p_HZFXHKsBVAzxdHWgSv5w', 'https://lh3.googleusercontent.com/p/AF1QipPqslww7frssPpvqXWHCATl6iYspbB4MmbHEtZr') ON CONFLICT DO NOTHING;
     
