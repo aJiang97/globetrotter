@@ -56,16 +56,16 @@ class PureLoginModal extends React.Component {
     this.apiClient
       .loginUser(formData.email.data, encryptedPassword)
       .then(resp => {
-        resp === 403
-          ? this.setState({ success: false })
-          : onSubmit({
-              token: resp.token,
-              email: formData.email.data,
-              password: encryptedPassword
-            });
-      })
-      .then(resp => {
-        resp !== 403 && onClose();
+        if (resp === 403) {
+          this.setState({ success: false });
+        } else {
+          onSubmit({
+            token: resp.token,
+            email: formData.email.data,
+            password: encryptedPassword
+          });
+          onClose();
+        }
       });
   };
 

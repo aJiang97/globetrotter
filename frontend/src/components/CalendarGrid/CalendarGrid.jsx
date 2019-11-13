@@ -59,7 +59,6 @@ class PureCalendarGrid extends React.Component {
         i: i.toString()
       };
     });
-    console.log(cards);
     return cards;
   }
 
@@ -68,8 +67,6 @@ class PureCalendarGrid extends React.Component {
   };
 
   onLayoutChange(layout, layouts) {
-    console.log(layout);
-    console.log(layouts);
     this.props.onLayoutChange(layout, layouts);
   }
 
