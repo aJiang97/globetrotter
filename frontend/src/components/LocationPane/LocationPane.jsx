@@ -23,7 +23,7 @@ class PureLocationPane extends React.Component {
       };
     return (
         <div className={classes.pane}>
-            <CardMedia className={classes.media} image="https://fastly.4sqi.net/img/general/920x600/5339676_YtVmIH-RXZRRmnmqMOeAjfBWC6UNOQT_08YV7x4z9JQ.jpg" />
+            <CardMedia className={classes.media} image={location.foursquare.pictures[0]} />
             <div className={classes.contentSection}>
                 <Typography variant="h3" className={classes.title}>
                     {location.foursquare.venue_name}
@@ -52,7 +52,7 @@ class PureLocationPane extends React.Component {
                         {location.foursquare.description}
                     </Typography>
                 </div>}
-                
+
                 <div className={classes.section}>
                     <Typography variant="h5" className={classes.subheading}>
                         Reviews

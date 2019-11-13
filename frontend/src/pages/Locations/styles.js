@@ -37,10 +37,12 @@ export const styles = createStyles(theme => ({
   },
   flexScroll: {
     ...flexScroll,
-    paddingLeft: "40px"
+    paddingLeft: "40px",
+    paddingRight: "80px"
   },
   locationPane: {
-    ...flexScroll
+    ...flexScroll,
+    boxShadow: "-10px 0px 5px 0px rgba(0,0,0,0.4)"
   },
   locationCardContainer: {
     display: "flex",
@@ -49,9 +51,11 @@ export const styles = createStyles(theme => ({
     width: "100%"
   },
   title: {
-    color: "black",
-    top: "20%",
-    padding: 10
+    fontWeight: "bold",
+    marginTop: "20px",
+    fontSize: "30px",
+    width: "100%",
+    textAlign: "center"
   },
   arrowButtonIn: {
     ...arrowButton,
