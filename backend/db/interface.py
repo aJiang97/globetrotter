@@ -136,3 +136,18 @@ class DB:
 
         c.close()
         return result
+
+    def insert_calendar(self, email, blob):
+        # Inserts BLOB, assign it to EMAIL and generates random UUID
+        # Returns UUID
+        pass
+    
+    def retrieve_calendar_uuid(self, uuid):
+        # Returns BLOB of the UUID
+        pass
+
+    def retrieve_calendars(self, email, orderby=None):
+        # Returns all UUIDs of user
+        pass
+
+    
