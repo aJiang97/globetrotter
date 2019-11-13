@@ -190,3 +190,10 @@ MODEL_auth_token = api.model('auth_token', {
     "token": fields.String(description='Access token')
 })
 
+MODEL_trip_uuid = api.model('trip_uuid', {
+    "uuid": fields.String(description='UUIDs of your trip')
+})
+
+MODEL_trips = api.model('trips', {
+    "trips": fields.List(fields.Nested(MODEL_trip_uuid))
+})
