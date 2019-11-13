@@ -24,7 +24,6 @@ export class PureTripView extends React.Component {
     var dates = [];
     var curDate = startDate;
     while (curDate <= endDate) {
-      console.log(curDate.toString().slice(4, 15));
       dates.push(curDate.toString().slice(4, 15));
       const nextDate = new Date(curDate);
       nextDate.setDate(curDate.getDate() + 1);

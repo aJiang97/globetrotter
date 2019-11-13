@@ -2,7 +2,7 @@ import React from "react";
 import { Paper, Typography, IconButton } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { CheckCircle, Close } from "@material-ui/icons";
+import { Cancel, CheckCircle, Close } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core/styles";
 
 import { styles } from "./styles";
@@ -53,7 +53,6 @@ export class UserRegister extends React.Component {
           ? this.setState({ success: false })
           : this.setState({ success: true });
       })
-      .then(onClose());
   };
 
   render() {
@@ -103,7 +102,7 @@ export class UserRegister extends React.Component {
               </Typography>
             </Button>
             {this.state.success && (
-              <div>
+              <div className={classes.captionContainer}>
                 <CheckCircle className={classes.green} />
                 <Typography variant="caption" className={classes.green}>
                   Your registration is successful!
@@ -111,7 +110,8 @@ export class UserRegister extends React.Component {
               </div>
             )}
             {this.state.success === false && (
-              <div>
+              <div className={classes.captionContainer}>
+                <Cancel className={classes.red} />
                 <Typography variant="caption" color="error">
                   Email is already taken.
                 </Typography>

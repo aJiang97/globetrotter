@@ -53,8 +53,15 @@ export const styles = createStyles(theme => ({
   green: {
     color: "green"
   },
+  red: {
+    color: "red"
+  },
   forgotButton: {
     ...baseButton,
     color: "blue"
+  },
+  captionContainer: {
+    display: "flex",
+    alignItems: "center"
   }
 }));
