@@ -23,7 +23,10 @@ def singleton_startup(cursor):
             id SERIAL PRIMARY KEY,
             email varchar(64) NOT NULL REFERENCES creds(email),
             calendarid UUID NOT NULL,
-            tripday TIMESTAMP,
+            description varchar(64) NOT NULL,
+            location varchar(64) NOT NULL,
+            tripstart TIMESTAMP NOT NULL,
+            tripend TIMESTAMP NOT NULL,
             calendar BYTEA NOT NULL,
             modifieddate TIMESTAMP NOT NULL,
             UNIQUE (calendarid)

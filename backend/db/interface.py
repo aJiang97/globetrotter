@@ -1,4 +1,8 @@
+import uuid
+import datetime
+
 import psycopg2
+import dateutil.parser
 
 import config
 
@@ -137,11 +141,34 @@ class DB:
         c.close()
         return result
 
-    def insert_calendar(self, email, blob):
-        # Inserts BLOB, assign it to EMAIL and generates random UUID
-        # Returns UUID
-        pass
-    
+    def authorize(self, token):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT email FROM creds WHERE token = %s;", (token,))
+        except Exception as e:
+            print(e)
+        
+        rows = c.fetchall()
+        result = rows[0][0]
+        
+        c.close()
+        return result
+
+    def insert_calendar(self, email, description, location, tripstart, tripend, blob):
+        c = self.__conn.cursor()
+
+        try:
+            uuid_r = getrand_uuid(c)
+            c.execute("INSERT INTO calendars (email, calendarid, description, location, tripstart, tripend, calendar, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), blob))
+        except Exception as e:
+            print(e)
+            raise e
+
+        c.close()
+        self.__conn.commit()
+        return uuid_r
+
     def retrieve_calendar_uuid(self, uuid):
         # Returns BLOB of the UUID
         pass
@@ -150,4 +177,22 @@ class DB:
         # Returns all UUIDs of user
         pass
 
-    
+
+# Python is so bad that it needs to be dependent to third party package to parse a standardized datetime format...
+def tztodate(s):
+    return dateutil.parser.parse(s)
+
+def getrand_uuid(curs):
+    uuid_r = None
+    count = 1
+
+    while count:
+        uuid_r = str(uuid.uuid4())
+        curs.execute("SELECT COUNT(*) FROM calendars WHERE calendarid = %s;", (uuid_r,))
+        rows = curs.fetchall()
+        count = rows[0][0]
+
+    if uuid_r is None:
+        raise
+
+    return uuid_r
