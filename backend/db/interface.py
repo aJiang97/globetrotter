@@ -24,9 +24,13 @@ class DB:
             c.execute("SELECT COUNT(*) FROM creds WHERE email = %s;", (email,))
         except Exception as e:
             print(e)
+            c.close()
             return None
         
         rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            return None
         rlen = rows[0][0]
 
         c.close()
@@ -39,6 +43,7 @@ class DB:
             c.execute("INSERT INTO creds (email, hashedpw, displayname) VALUES (%s, %s, %s);", (email, hashedpw, displayname))
         except Exception as e:
             print(e)
+            c.close()
             return None
         
         c.close()
@@ -52,9 +57,14 @@ class DB:
             c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
             print(e)
+            c.close()
             return None
         
         rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            c.close()
+            return None
         rlen = rows[0][0]
 
         c.close()
@@ -67,9 +77,13 @@ class DB:
             c.execute("SELECT COUNT(*) FROM creds WHERE token = %s;", (token,))
         except Exception as e:
             print(e)
+            c.close()
             return None
         
         rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            return None
         rlen = rows[0][0]
 
         c.close()
@@ -82,6 +96,7 @@ class DB:
             c.execute("UPDATE creds SET token = %s WHERE email = %s;", (token, email))
         except Exception as e:
             print(e)
+            c.close()
             return None
 
         c.close()
@@ -95,9 +110,13 @@ class DB:
             c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
             print(e)
+            c.close()
             return None
         
         rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            return None
         rlen = rows[0][0]
 
         if (rlen == 0):
@@ -108,6 +127,7 @@ class DB:
             c.execute("UPDATE creds SET token = NULL WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
             print(e)
+            c.close()
             return None
 
         c.close()
@@ -123,9 +143,12 @@ class DB:
             c.execute("INSERT INTO photos (photo_reference, photo_link) VALUES (%s, %s);", (photo_reference, photo_link))
         except Exception as e:
             print(e)
+            c.close()
+            return None
 
         c.close()
         self.__conn.commit()
+        return True
 
     def get_picture(self, photo_reference):
         c = self.__conn.cursor()
@@ -134,6 +157,8 @@ class DB:
             c.execute("SELECT photo_link FROM photos WHERE photo_reference = %s;", (photo_reference,))
         except Exception as e:
             print(e)
+            c.close()
+            return None
 
         rows = c.fetchall()
         result = rows[0][0]
@@ -148,8 +173,12 @@ class DB:
             c.execute("SELECT email FROM creds WHERE token = %s;", (token,))
         except Exception as e:
             print(e)
+            c.close()
+            return None
         
         rows = c.fetchall()
+        if len(rows) == 0:
+            return None
         result = rows[0][0]
         
         c.close()
@@ -163,6 +192,7 @@ class DB:
             c.execute("INSERT INTO calendars (email, calendarid, description, location, tripstart, tripend, calendar, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), blob))
         except Exception as e:
             print(e)
+            c.close()
             raise e
 
         c.close()
