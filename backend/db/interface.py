@@ -9,39 +9,130 @@ class DB:
         dbhost = "host='" + config.PGHOST + "'"
         dbpw = "password='" + config.PGPASSWORD + "'"
         
-        self.__dbconfig = dbname + ' ' + dbuser + ' ' + dbhost + ' ' + dbpw
+        dbconfig = dbname + ' ' + dbuser + ' ' + dbhost + ' ' + dbpw
         self.__conn = psycopg2.connect(dbconfig)
 
-    def __del__(self):
-        self.__conn.close()
-
-    # Private template query
-    def __read(self, query):
+    # Authentication endpoints
+    def available_email(self, email):
         c = self.__conn.cursor()
-        try:
-            c.execute(query)
-        except Exception as e:
-            raise
-    
-        rows = cur.fetchall()
 
-        result = []
-        for row in rows:
-            result.append(row[1:-1])
+        try:
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s;", (email,))
+        except Exception as e:
+            print(e)
+            return None
+        
+        rows = c.fetchall()
+        rlen = rows[0][0]
+
+        c.close()
+        return (rlen == 0)
+    
+    def register(self, email, hashedpw, displayname=None):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("INSERT INTO creds (email, hashedpw, displayname) VALUES (%s, %s, %s);", (email, hashedpw, displayname))
+        except Exception as e:
+            print(e)
+            return None
         
         c.close()
-        return result
+        self.__conn.commit()
+        return True
 
-    # Private template query
-    def __execute(self, query):
+    def login(self, email, hashedpw):
         c = self.__conn.cursor()
+        
         try:
-            c.execute(query)
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
-            raise
+            print(e)
+            return None
+        
+        rows = c.fetchall()
+        rlen = rows[0][0]
+
+        c.close()
+        return (rlen == 1)
+
+    def available_token(self, token):
+        c = self.__conn.cursor()
+        
+        try:
+            c.execute("SELECT COUNT(*) FROM creds WHERE token = %s;", (token,))
+        except Exception as e:
+            print(e)
+            return None
+        
+        rows = c.fetchall()
+        rlen = rows[0][0]
+
+        c.close()
+        return (rlen == 0)
+
+    def insert_token(self, email, token):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("UPDATE creds SET token = %s WHERE email = %s;", (token, email))
+        except Exception as e:
+            print(e)
+            return None
+
+        c.close()
+        self.__conn.commit()
+        return True
+
+    def clear_token(self, email, token):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND token = %s;", (email, token))
+        except Exception as e:
+            print(e)
+            return None
+        
+        rows = c.fetchall()
+        rlen = rows[0][0]
+
+        if (rlen == 0):
+            c.close()
+            return False
+
+        try:
+            c.execute("UPDATE creds SET token = NULL WHERE email = %s AND token = %s;", (email, token))
+        except Exception as e:
+            print(e)
+            return None
+
+        c.close()
+        self.__conn.commit()
+        return True
+    
+
+    # Details/picture endpoint
+    def insert_picture(self, photo_reference, photo_link):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("INSERT INTO photos (photo_reference, photo_link) VALUES (%s, %s);", (photo_reference, photo_link))
+        except Exception as e:
+            print(e)
 
         c.close()
         self.__conn.commit()
 
-    # Add stuff down here...
-    
+    def get_picture(self, photo_reference):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT photo_link FROM photos WHERE photo_reference = %s;", (photo_reference,))
+        except Exception as e:
+            print(e)
+
+        rows = c.fetchall()
+        result = rows[0][0]
+
+        c.close()
+        return result

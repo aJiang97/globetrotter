@@ -16,5 +16,5 @@ SUGGEST_COUNT_DEFAULT = 10
 
 PGDBNAME = 'globetrotter'
 PGUSER = 'postgres'
-PGHOST = 'localhost:5432'
+PGHOST = 'localhost'
 PGPASSWORD = ''
