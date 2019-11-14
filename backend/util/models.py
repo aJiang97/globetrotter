@@ -90,6 +90,10 @@ MODEL_photorefs = api.model('photo_references', {
     "references": fields.List(fields.Nested(MODEL_photoref), required=True)
 })
 
+MODEL_photolinks = api.model('photo_links', {
+    "links": fields.List(fields.String())
+})
+
 # /routing
 # Inputs
 # Individual venue item
@@ -136,28 +140,54 @@ MODEL_route_item_result = api.model('route_item_result', {
     "name": fields.String(description='Name or label of the location specified on route_item if field type is ONVENUE. "START" and "END" means starting and ending point that was supplied under pathconfig\'s input'),
 })
 
-MODEL_route_day = api.model('route_day', {
-    "venues": fields.List(fields.Nested(MODEL_route_item_result))
-})
+# MODEL_route_day = api.model('route_day', {
+#     "venues": fields.List(fields.Nested(MODEL_route_item_result))
+# })
 
-MODEL_route_matrix_item = api.model('route_matrix_item', {
-    "ok_status": fields.Boolean(description='Show if the item is OK'),
-    "distance": fields.Integer(description='Distance in metre'),
-    "duration": fields.Integer(description='Duration in seconds'),
-    "name": fields.String(description='Name or label of the location specified on route_item if field type is ONVENUE. "START" and "END" means starting and ending point that was supplied under pathconfig\'s input'),
-})
+# MODEL_route_matrix_item = api.model('route_matrix_item', {
+#     "ok_status": fields.Boolean(description='Show if the item is OK'),
+#     "distance": fields.Integer(description='Distance in metre'),
+#     "duration": fields.Integer(description='Duration in seconds'),
+#     "name": fields.String(description='Name or label of the location specified on route_item if field type is ONVENUE. "START" and "END" means starting and ending point that was supplied under pathconfig\'s input'),
+# })
 
 MODEL_route_rows = api.model('route_rows', {
-    "columns": fields.List(fields.Nested(MODEL_route_matrix_item))
+    # "columns": fields.List(fields.Nested(MODEL_route_matrix_item))
+    "columns": fields.Integer(description='Duration between locations'),
 })
 
 MODEL_route_matrix = api.model('route_matrix', {
-    "origins": fields.List(fields.String(description='Array of name supplied from route_item (or "START") where index of this origin will be index of row.')),
-    "destinations": fields.List(fields.String(description='Array of name supplied from route_item (or "END") where index of this destination will be index of column.')),
+    # "origins": fields.List(fields.String(description='Array of name supplied from route_item (or "START") where index of this origin will be index of row.')),
+    # "destinations": fields.List(fields.String(description='Array of name supplied from route_item (or "END") where index of this destination will be index of column.')),
     "rows": fields.List(fields.Nested(MODEL_route_rows))
 })
 
 MODEL_route_result = api.model('route_result', {
-    "distance_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
-    "days": fields.List(fields.Nested(MODEL_route_day))
+    "travel_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
+    "path": fields.List(fields.String(description='place_id of ordered location'))
 })
+
+
+# /auth
+# Input
+MODEL_signup_expect = api.model('signup_expect', {
+    "email": fields.String(description='Email of the user. Must be unique.', required=True),
+    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True),
+    "displayname": fields.String(description='Display name of the user. Maximum length is 64')
+})
+
+MODEL_login_expect = api.model('login_expect', {
+    "email": fields.String(description='Email of the user.', required=True),
+    "email": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+})
+
+MODEL_logout_expect = api.model('logout_expect', {
+    "email": fields.String(description='Email of the user.', required=True),
+    "token": fields.String(description='Current access token of the user', required=True)
+})
+
+# Output
+MODEL_auth_token = api.model('auth_token', {
+    "token": fields.String(description='Access token')
+})
+
