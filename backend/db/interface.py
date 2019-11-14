@@ -72,6 +72,21 @@ class DB:
         c.close()
         return (rlen == 1)
 
+    def get_displayname(self, email, hasehdpw):
+        c = self.__conn.cursor()
+        
+        try:
+            c.execute("SELECT displayname FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        rows = c.fetchall()
+        result = rows[0][0]
+
+        c.close()
+        return result
+
     def available_token(self, token):
         c = self.__conn.cursor()
         
