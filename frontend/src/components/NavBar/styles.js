@@ -36,5 +36,17 @@ export const styles = createStyles(theme => ({
       display: "block"
     },
     color: "white"
+  },
+  account: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  name: {
+    paddingLeft: 10,
+    color: "white"
+  },
+  menu: {
+    zIndex: 5001
   }
 }));

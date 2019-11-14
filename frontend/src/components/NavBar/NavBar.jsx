@@ -1,5 +1,13 @@
 import * as React from "react";
-import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
+import {
+  AppBar,
+  Fab,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Typography,
+  Button
+} from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 
 import { styles } from "./styles";
@@ -13,6 +21,7 @@ class PureNavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      anchorEl: null,
       isLoginOpen: false,
       isRegisterOpen: false
     };
@@ -33,8 +42,48 @@ class PureNavBar extends React.Component {
     this.setState({ isRegisterOpen: false });
   };
 
+  setAnchorEl = el => {
+    this.setState({ anchorEl: el });
+  };
+
+  handleProfileMenuOpen = event => {
+    this.setAnchorEl(event.currentTarget);
+  };
+
+  handleMenuClose = () => {
+    this.setAnchorEl(null);
+  };
+
+  handleUserLogOut = () => {
+    this.handleMenuClose();
+    this.context.logOut();
+    history.push("/home");
+  };
+
+  getInitial = name => {
+    const nameArray = name.split(" ");
+    var initial = "";
+    nameArray.map(word => (initial = initial + word[0].toUpperCase()));
+    return initial;
+  };
+
   render() {
     const { classes } = this.props;
+    const isMenuOpen = Boolean(this.state.anchorEl);
+    const renderMenu = (
+      <Menu
+        anchorEl={this.state.anchorEl}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        keepMounted
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        open={isMenuOpen}
+        onClose={this.handleMenuClose}
+        className={classes.menu}
+      >
+        <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
+        <MenuItem onClick={this.handleUserLogOut}>Log out</MenuItem>
+      </Menu>
+    );
     return (
       <div>
         <AppBar
@@ -54,7 +103,23 @@ class PureNavBar extends React.Component {
               </Typography>
             </Button>
             <div className={classes.grow} />
-            {!this.context.user && (
+            {this.context.user ? (
+              <div className={classes.account}>
+                <Fab size="small" color="secondary">
+                  {/* {this.getInitial(this.context.user.name)} */}
+                  AY
+                </Fab>
+                <Button
+                  edge="end"
+                  aria-haspopup="true"
+                  onClick={this.handleProfileMenuOpen}
+                >
+                  <Typography variant="button" className={classes.name}>
+                    My Profile
+                  </Typography>
+                </Button>
+              </div>
+            ) : (
               <div>
                 <Button onClick={this.openRegisterModal}>
                   <Typography
@@ -78,6 +143,7 @@ class PureNavBar extends React.Component {
             )}
           </Toolbar>
         </AppBar>
+        {renderMenu}
         {this.state.isLoginOpen && (
           <LoginModal
             onClose={this.closeLoginModal}
