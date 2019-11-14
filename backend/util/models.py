@@ -136,28 +136,29 @@ MODEL_route_item_result = api.model('route_item_result', {
     "name": fields.String(description='Name or label of the location specified on route_item if field type is ONVENUE. "START" and "END" means starting and ending point that was supplied under pathconfig\'s input'),
 })
 
-MODEL_route_day = api.model('route_day', {
-    "venues": fields.List(fields.Nested(MODEL_route_item_result))
-})
+# MODEL_route_day = api.model('route_day', {
+#     "venues": fields.List(fields.Nested(MODEL_route_item_result))
+# })
 
-MODEL_route_matrix_item = api.model('route_matrix_item', {
-    "ok_status": fields.Boolean(description='Show if the item is OK'),
-    "distance": fields.Integer(description='Distance in metre'),
-    "duration": fields.Integer(description='Duration in seconds'),
-    "name": fields.String(description='Name or label of the location specified on route_item if field type is ONVENUE. "START" and "END" means starting and ending point that was supplied under pathconfig\'s input'),
-})
+# MODEL_route_matrix_item = api.model('route_matrix_item', {
+#     "ok_status": fields.Boolean(description='Show if the item is OK'),
+#     "distance": fields.Integer(description='Distance in metre'),
+#     "duration": fields.Integer(description='Duration in seconds'),
+#     "name": fields.String(description='Name or label of the location specified on route_item if field type is ONVENUE. "START" and "END" means starting and ending point that was supplied under pathconfig\'s input'),
+# })
 
 MODEL_route_rows = api.model('route_rows', {
-    "columns": fields.List(fields.Nested(MODEL_route_matrix_item))
+    # "columns": fields.List(fields.Nested(MODEL_route_matrix_item))
+    "columns": fields.Integer(description='Duration between locations'),
 })
 
 MODEL_route_matrix = api.model('route_matrix', {
-    "origins": fields.List(fields.String(description='Array of name supplied from route_item (or "START") where index of this origin will be index of row.')),
-    "destinations": fields.List(fields.String(description='Array of name supplied from route_item (or "END") where index of this destination will be index of column.')),
+    # "origins": fields.List(fields.String(description='Array of name supplied from route_item (or "START") where index of this origin will be index of row.')),
+    # "destinations": fields.List(fields.String(description='Array of name supplied from route_item (or "END") where index of this destination will be index of column.')),
     "rows": fields.List(fields.Nested(MODEL_route_rows))
 })
 
 MODEL_route_result = api.model('route_result', {
-    "distance_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
-    "days": fields.List(fields.Nested(MODEL_route_day))
+    "travel_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
+    "path": fields.List(fields.String(description='place_id of ordered location'))
 })

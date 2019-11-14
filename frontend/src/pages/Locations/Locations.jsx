@@ -92,7 +92,6 @@ export class PureLocations extends React.Component {
       places.locations.sort(
         (a, b) => parseFloat(b.google.rating) - parseFloat(a.google.rating)
       );
-      console.log(places.locations);
       this.setState({
         places: places.locations
       });
