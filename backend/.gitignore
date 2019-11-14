@@ -108,3 +108,5 @@ config.py
 
 # API cache
 .api_cache/
+
+testdb.py

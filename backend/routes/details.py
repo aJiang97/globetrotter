@@ -326,6 +326,15 @@ class DepthDetails(Resource):
 
 @details.route('/google_photo', strict_slashes=False)
 class GooglePhoto(Resource):
+    @details.response(200, 'Success', MODEL_photolinks)
+    @details.response(400, 'Malformed request (missing email/hashedpw)')
+    @details.response(403, 'Invalid email/password combination')
     @details.expect(MODEL_photorefs)
     def post(self):
+        if not request.json:
+            abort(400, "Malformed request, format is not application/json")
+
+        content = request.get_json()
+        prefs = content.get('references')
+
         pass
