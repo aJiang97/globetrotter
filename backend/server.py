@@ -68,4 +68,6 @@ if __name__ == "__main__":
         print("This happened to me before. Possible causes:")
         print(" - unfinished util/models.py file")
         print(" - just saved a file (server doesn't support hotload)")
+        print(" - not updated config.py (should match the fields inside config.example)")
+        print(" - incomplete package: `pip install -r requirements.txt`")
         usage()
