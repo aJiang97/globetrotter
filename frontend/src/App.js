@@ -4,6 +4,7 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import history from "./history";
 import { Home, Trip, Locations, Preferences, TripView } from "./pages";
+import { UserContext } from "./UserContext";
 import "./App.css";
 
 const theme = createMuiTheme({
@@ -35,42 +36,57 @@ class App extends React.Component {
     this.state = {
       transparent: true,
       places: null,
-      placeToIndex: null
+      placeToIndex: null,
+      logIn: this.logIn,
+      logOut: this.logOut
     };
   }
 
+  logIn = user => {
+    this.setState({
+      user: user
+    });
+  };
+
+  logOut = () => {
+    this.setState({
+      user: null
+    });
+  };
+
   setPlaces = (places, placeToIndex) => {
-    console.log(placeToIndex);
     this.setState({ places: places, placeToIndex: placeToIndex });
   };
 
   render() {
     return (
-      <MuiThemeProvider theme={theme}>
-        <Router history={history}>
-          <Switch>
-            <Route path="/home" component={Home} />
-            <Route path="/trip" component={Trip} />
-            <Route path="/preferences" component={Preferences} />
-            <Route
-              path="/locations"
-              render={props => (
-                <Locations {...props} setPlaces={this.setPlaces} />
-              )}
-            />
-            <Route
-              path="/tripview"
-              render={props => (
-                <TripView
-                  {...props}
-                  places={this.state.places}
-                  placeToIndex={this.state.placeToIndex}
-                />
-              )}
-            />
-          </Switch>
-        </Router>
-      </MuiThemeProvider>
+      <UserContext.Provider value={this.state}>
+        <MuiThemeProvider theme={theme}>
+          <Router history={history}>
+            <Switch>
+              <Route path="/home" component={Home} />
+              <Route path="/trip" component={Trip} />
+              <Route path="/preferences" component={Preferences} />
+              <Route
+                path="/locations"
+                render={props => (
+                  <Locations {...props} setPlaces={this.setPlaces} />
+                )}
+              />
+              <Route
+                path="/tripview"
+                render={props => (
+                  <TripView
+                    {...props}
+                    places={this.state.places}
+                    placeToIndex={this.state.placeToIndex}
+                  />
+                )}
+              />
+            </Switch>
+          </Router>
+        </MuiThemeProvider>
+      </UserContext.Provider>
     );
   }
 }
