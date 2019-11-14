@@ -25,9 +25,12 @@ def singleton_startup(cursor):
             calendarid UUID NOT NULL,
             description varchar(64) NOT NULL,
             location varchar(64) NOT NULL,
-            tripstart TIMESTAMP NOT NULL,
-            tripend TIMESTAMP NOT NULL,
+            tripstart TIMESTAMPTZ NOT NULL,
+            tripend TIMESTAMPTZ NOT NULL,
             calendar BYTEA NOT NULL,
+            matrix BYTEA NOT NULL,
+            matrix_places BYTEA NOT NULL,
+            ordered_places BYTEA NOT NULL,
             modifieddate TIMESTAMP NOT NULL,
             UNIQUE (calendarid)
         );

@@ -1,8 +1,10 @@
 import uuid
 import datetime
+import json
 
 import psycopg2
 import dateutil.parser
+import pandas
 
 import config
 
@@ -184,12 +186,14 @@ class DB:
         c.close()
         return result
 
-    def insert_calendar(self, email, description, location, tripstart, tripend, blob):
+    def insert_calendar(self, payload):
         c = self.__conn.cursor()
+
+        (email, description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar) = payload
 
         try:
             uuid_r = getrand_uuid(c)
-            c.execute("INSERT INTO calendars (email, calendarid, description, location, tripstart, tripend, calendar, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), blob))
+            c.execute("INSERT INTO calendars (email, calendarid, description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), matrix, matrix_places, ordered_places, calendar))
         except Exception as e:
             print(e)
             c.close()
@@ -199,18 +203,41 @@ class DB:
         self.__conn.commit()
         return uuid_r
 
-    def retrieve_calendar_uuid(self, uuid):
-        # Returns BLOB of the UUID
+    def retrieve_calendar_uuid(self, uuid_r):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar, modifieddate FROM calendars WHERE calendarid = %s;", (uuid_r,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+        if len(rows) == 0:
+            return None
+        result = rows[0]
+        
+        c.close()
+        return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), bytes(result[5]), bytes(result[6]), result[7].tobytes(), datetotz(result[8]))
+
+    def update_calendar(self):
+        # TODO
         pass
 
     def retrieve_calendars(self, email, orderby=None):
-        # Returns all UUIDs of user
+        # TODO
+        # Returns all (calendarid, description, location, tripstart, tripend) of user with email email
         pass
 
 
 # Python is so bad that it needs to be dependent to third party package to parse a standardized datetime format...
 def tztodate(s):
     return dateutil.parser.parse(s)
+
+# And dateutil doesn't have the parser back...
+def datetotz(s):
+    return str(pandas.to_datetime(s, utc=True))
 
 def getrand_uuid(curs):
     uuid_r = None
