@@ -37,12 +37,14 @@ class App extends React.Component {
       transparent: true,
       places: null,
       placeToIndex: null,
+      user: null,
       logIn: this.logIn,
       logOut: this.logOut
     };
   }
 
   logIn = user => {
+    console.log(user);
     this.setState({
       user: user
     });

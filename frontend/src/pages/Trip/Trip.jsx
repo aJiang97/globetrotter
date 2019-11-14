@@ -40,7 +40,7 @@ export class PureTrip extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.home}>
+      <div>
         <NavBar />
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
