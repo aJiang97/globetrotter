@@ -1,7 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography, Badge } from "@material-ui/core";
-import { Add, Close, ArrowBackIos, ArrowForwardIos, Room } from "@material-ui/icons";
+import { Add, Close, ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 
 import { LocationCard, LocationListWindow, NavBar } from "../../components";
 import { styles } from "./styles";

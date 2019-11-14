@@ -2,7 +2,11 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { styles } from "./styles";
 
-import { CalendarGrid, DateTabs, NavBar } from "../../components";
+import {
+  CalendarGrid,
+  DateTabs,
+  NavBar,
+} from "../../components";
 import APIClient from "../../api/apiClient";
 import { Typography } from "@material-ui/core";
 export class PureTripView extends React.Component {

@@ -15,8 +15,19 @@ class APIClient {
     );
   }
 
+  registerUser(name, email, password) {
+    const data = { email: email, hashedpw: password, displayname: name };
+    return this.perform("post", `/auth/signup`, data);
+  }
+
+  loginUser(email, password) {
+    const data = { email: email, hashedpw: password };
+    return this.perform("post", `/auth/login`, data);
+  }
+
   generateItinerary(places) {
     return this.perform("post", `routing/itinerary`, { place_id: places });
+
   }
 
   async perform(method, resource, data) {
@@ -27,9 +38,13 @@ class APIClient {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
-    }).then(resp => {
-      return resp.data ? resp.data : [];
-    });
+    })
+      .then(function(response) {
+        return response.data;
+      })
+      .catch(function(error) {
+        return error.response.status;
+      });
   }
 }
 
