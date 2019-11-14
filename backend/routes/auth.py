@@ -64,8 +64,11 @@ class Login(Resource):
 
         db.insert_token(email, token)
 
+        displayname = db.get_displayname(email, hashedpw)
+
         return {
-            "token": token
+            "token": token,
+            "displayname": displayname
         }
 
     def generate_token(self):
