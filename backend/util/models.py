@@ -177,7 +177,7 @@ MODEL_signup_expect = api.model('signup_expect', {
 
 MODEL_login_expect = api.model('login_expect', {
     "email": fields.String(description='Email of the user.', required=True),
-    "email": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
 })
 
 MODEL_logout_expect = api.model('logout_expect', {
@@ -188,5 +188,28 @@ MODEL_logout_expect = api.model('logout_expect', {
 # Output
 MODEL_auth_token = api.model('auth_token', {
     "token": fields.String(description='Access token')
+})
+
+MODEL_trip_uuid = api.model('trip_uuid', {
+    "uuid": fields.String(description='UUIDs of your trip')
+})
+
+MODEL_trips = api.model('trips', {
+    "trips": fields.List(fields.Nested(MODEL_trip_uuid))
+})
+
+MODEL_trip_detail = api.model('detail', {
+    "description": fields.String(description='Description of the trip. Can be empty string',required=True),
+    "location": fields.String(description='Location of the trip', required=True),
+    "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601', required=True),
+    "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip', required=True)
+})
+
+MODEL_trip_payload = api.model('payload', {
+    "details": fields.Nested(MODEL_trip_detail, required=True),
+    "matrix": fields.Raw(description='JSONObject of the matrix', required=True),
+    "matrix_places": fields.Raw(description='JSONObject of the index of the matrix', required=True),
+    "ordered_places": fields.Raw(description='JSONObject of the ordered places', required=True),
+    "calendar": fields.String(description='Calendar in byte array or string format. Backend will store it as-is', required=True)
 })
 
