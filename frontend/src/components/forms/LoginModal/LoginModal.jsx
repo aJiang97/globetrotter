@@ -12,6 +12,7 @@ import { Close } from "@material-ui/icons";
 import { styles } from "./styles";
 import APIClient from "../../../api/apiClient.js";
 import { encrypt } from "../../../utils/encrypt-decrypt";
+import history from "../../../history";
 
 class PureLoginModal extends React.Component {
   constructor(props) {
@@ -65,6 +66,9 @@ class PureLoginModal extends React.Component {
             password: encryptedPassword
           });
           onClose();
+          if (window.location.pathname === "/home") {
+            history.push("/home");
+          }
         }
       });
   };
