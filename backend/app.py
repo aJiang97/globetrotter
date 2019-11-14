@@ -9,7 +9,14 @@ from db.interface import DB
 app = Flask(__name__)
 CORS(app)
 
-api = Api(app)
+authorization = {
+    'authtoken': {
+        'type': 'apiKey',
+        'in': 'header',
+        'name': 'AUTH-TOKEN'
+    }
+}
+api = Api(app, authorizations=authorization)
 
 mp = ModelProc()
 
