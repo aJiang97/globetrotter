@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Paper, TextField, Typography } from "@material-ui/core";
+import { Button, TextField, Typography } from "@material-ui/core";
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { styles } from "./styles";
@@ -33,7 +33,8 @@ export class PureTrip extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.home}>
+      <div>
+        <NavBar />
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
         <div className={classes.modal_container}>

@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import {
   Card,
-  CardActions,
+  CardActionArea,
   CardContent,
   CardMedia,
   Collapse,
@@ -28,39 +28,66 @@ class PureLocationCard extends React.Component {
     }));
   };
 
+  getTypes = (types) => {
+    return Object.keys(types).filter(type => type === true);
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, location, clickHandler } = this.props;
     return (
       <Card className={classes.card}>
-        <CardMedia className={classes.media} image={this.props.media} />
-        <CardContent>
-          <Typography component="h2" variant="h5">
-            {this.props.title}
-          </Typography>
-          <Typography variant="subtitle1" color="textSecondary" component="p">
-            {this.props.type}
-          </Typography>
-          <Typography variant="subtitle1" paragraph>
-            {this.props.duration}
-          </Typography>
-        </CardContent>
-        <CardActions disableSpacing>
-          <IconButton
-            className={clsx(classes.expand, {
-              [classes.expandOpen]: this.state.expanded
-            })}
-            onClick={this.handleExpandClick}
-            aria-expanded={this.state.expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </IconButton>
-        </CardActions>
-        <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+        <CardActionArea onClick={clickHandler}>
+          <CardMedia className={classes.media} image={location.foursquare.pictures[0]} />
           <CardContent>
-            <Typography paragraph>{this.props.description}</Typography>
+            <Typography component="h2" variant="h5" className="title">
+              {location.foursquare.venue_name}
+            </Typography>
+            <StarRating value={location.google.rating.toFixed(2)} />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "flex-start"
+              }}
+            >
+              {this.props.types &&
+                this.props.types.map(type => (
+                  <div>
+                    <CheckBox fontSize="small" />
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {type}
+                    </Typography>
+                  </div>
+                ))}
+            </div>
           </CardContent>
-        </Collapse>
+        </CardActionArea>
+        {/* {this.props.description && (
+          <div>
+            <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
+              <CardContent>
+                <Typography paragraph>{this.props.description}</Typography>
+              </CardContent>
+            </Collapse>
+            <CardActions disableSpacing>
+              <IconButton
+                className={clsx(classes.expand, {
+                  [classes.expandOpen]: this.state.expanded
+                })}
+                onClick={this.handleExpandClick}
+                aria-expanded={this.state.expanded}
+                aria-label="show more"
+              >
+                <ExpandMore />
+              </IconButton>
+            </CardActions>
+          </div>
+        )} */}
       </Card>
     );
   }
