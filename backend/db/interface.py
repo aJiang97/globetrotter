@@ -201,14 +201,14 @@ class DB:
         c.close()
         return result
 
-    def insert_calendar(self, payload):
+    def insert_trip(self, payload):
         c = self.__conn.cursor()
 
         (email, description, location, tripstart, tripend, blob) = payload
 
         try:
             uuid_r = getrand_uuid(c)
-            c.execute("INSERT INTO calendars (email, tripid, description, location, tripstart, tripend, blob, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), blob))
+            c.execute("INSERT INTO trip (email, tripid, description, location, tripstart, tripend, blob, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), blob))
         except Exception as e:
             print(e)
             c.close()
@@ -218,11 +218,11 @@ class DB:
         self.__conn.commit()
         return uuid_r
 
-    def retrieve_calendar_uuid(self, uuid_r):
+    def retrieve_trip_uuid(self, uuid_r):
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT description, location, tripstart, tripend, blob, modifieddate FROM calendars WHERE tripid = %s;", (uuid_r,))
+            c.execute("SELECT description, location, tripstart, tripend, blob, modifieddate FROM trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
@@ -236,13 +236,13 @@ class DB:
         c.close()
         return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), datetotz(result[5]))
 
-    def update_calendar(self):
+    def update_trip(self, uuid_r, payload):
         # TODO
         pass
 
-    def retrieve_calendars(self, email, orderby=None):
+    def retrieve_trips(self, email, orderby=None):
         # TODO
-        # Returns all (calendarid, description, location, tripstart, tripend) of user with email email
+        # Returns all (tripid, description, location, tripstart, tripend) of user with email email
         pass
 
 
@@ -260,7 +260,7 @@ def getrand_uuid(curs):
 
     while count:
         uuid_r = str(uuid.uuid4())
-        curs.execute("SELECT COUNT(*) FROM calendars WHERE calendarid = %s;", (uuid_r,))
+        curs.execute("SELECT COUNT(*) FROM trip WHERE tripid = %s;", (uuid_r,))
         rows = curs.fetchall()
         count = rows[0][0]
 
