@@ -72,7 +72,7 @@ class DB:
         c.close()
         return (rlen == 1)
 
-    def get_displayname(self, email, hasehdpw):
+    def get_displayname(self, email, hashedpw):
         c = self.__conn.cursor()
         
         try:

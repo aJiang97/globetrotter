@@ -13,16 +13,26 @@ export class PureRating extends React.Component {
     const { classes } = this.props;
     return (
       <div>
-        <Typography className={ classes.ratingValue }>
-          {this.props.value}
-        <Rating 
+        {
+          this.props.noText ?
+          <Rating 
             className={classes.rating}
             initialRating={this.props.value}
             emptySymbol={<FontAwesomeIcon icon={faEmptyStar} />}
             fullSymbol={<FontAwesomeIcon icon={faSolidStar} />} 
             readonly 
-        />
-        </Typography>
+          /> :
+          <Typography className={ classes.ratingValue }>
+            {this.props.value}
+            <Rating 
+                className={classes.rating}
+                initialRating={this.props.value}
+                emptySymbol={<FontAwesomeIcon icon={faEmptyStar} />}
+                fullSymbol={<FontAwesomeIcon icon={faSolidStar} />} 
+                readonly 
+            />
+          </Typography>
+        }
       </div>
     );
   }

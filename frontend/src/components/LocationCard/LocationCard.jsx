@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import {
   Card,
-  CardActions,
+  CardActionArea,
   CardContent,
   CardMedia,
   Collapse,
@@ -29,40 +29,46 @@ class PureLocationCard extends React.Component {
     }));
   };
 
+  getTypes = (types) => {
+    return Object.keys(types).filter(type => type === true);
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, location, clickHandler } = this.props;
     return (
       <Card className={classes.card}>
-        <CardMedia className={classes.media} image={this.props.media} />
-        <CardContent>
-          <Typography component="h2" variant="h5" className="title">
-            {this.props.title}
-          </Typography>
-          <StarRating value={this.props.rating.toFixed(2)} />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              flexWrap: "wrap",
-              justifyContent: "flex-start"
-            }}
-          >
-            {this.props.types &&
-              this.props.types.map(type => (
-                <div>
-                  <CheckBox fontSize="small" />
-                  <Typography
-                    variant="subtitle1"
-                    color="textSecondary"
-                    component="p"
-                  >
-                    {type}
-                  </Typography>
-                </div>
-              ))}
-          </div>
-        </CardContent>
-        {this.props.description && (
+        <CardActionArea onClick={clickHandler}>
+          <CardMedia className={classes.media} image={location.foursquare.pictures[0]} />
+          <CardContent>
+            <Typography component="h2" variant="h5" className="title">
+              {location.foursquare.venue_name}
+            </Typography>
+            <StarRating value={location.google.rating.toFixed(2)} />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "flex-start"
+              }}
+            >
+              {this.props.types &&
+                this.props.types.map(type => (
+                  <div>
+                    <CheckBox fontSize="small" />
+                    <Typography
+                      variant="subtitle1"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      {type}
+                    </Typography>
+                  </div>
+                ))}
+            </div>
+          </CardContent>
+        </CardActionArea>
+        {/* {this.props.description && (
           <div>
             <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
               <CardContent>
@@ -82,7 +88,7 @@ class PureLocationCard extends React.Component {
               </IconButton>
             </CardActions>
           </div>
-        )}
+        )} */}
       </Card>
     );
   }

@@ -1,14 +1,12 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Fab, Typography, Badge } from "@material-ui/core";
+import { Button, Fab, Typography, Badge, Grid } from "@material-ui/core";
 import { Add, Close, ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 
-import { LocationCard, LocationListWindow, NavBar } from "../../components";
+import { LocationCard, LocationListWindow, LocationPane, NavBar } from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
-import Grid from "@material-ui/core/Grid";
-import MapContainer from "../../components/MapContainer/MapContainer";
 
 export class PureLocations extends React.Component {
   constructor(props) {
@@ -17,7 +15,8 @@ export class PureLocations extends React.Component {
       places: [],
       isOpenListWindow: false,
       addedLocations: [],
-      displayError: false
+      displayError: false,
+      selectedLocation: null
     };
   }
 
@@ -70,6 +69,16 @@ export class PureLocations extends React.Component {
     }
   };
 
+  handleClickLocation = () => {
+    console.log(this.props.location);
+  }
+
+  updateLocationPane(location) {
+    this.setState({
+      selectedLocation: location
+    });
+  }
+
   getAddedLocations = () => {
     return this.state.places.filter(
       (value, key) => this.state.addedLocations.indexOf(key) !== -1
@@ -93,7 +102,8 @@ export class PureLocations extends React.Component {
         (a, b) => parseFloat(b.google.rating) - parseFloat(a.google.rating)
       );
       this.setState({
-        places: places.locations
+        places: places.locations,
+        selectedLocation: places.locations[0]
       });
     });
   };
@@ -104,7 +114,7 @@ export class PureLocations extends React.Component {
       <div>
         <NavBar />
         <Grid className={classes.section}>
-          <Grid container item xs={7} className={classes.flexScroll}>
+          <Grid container item xs={6} className={classes.flexScroll}>
             <Typography variant="h5" className={classes.title}>
               Recommended Locations
             </Typography>
@@ -112,31 +122,20 @@ export class PureLocations extends React.Component {
               this.state.places.map((loc, key) => (
                 <div key={key} className={classes.locationCardContainer}>
                   {this.state.addedLocations.indexOf(key) !== -1 ? (
-                    <Fab
-                      color="primary"
-                      onClick={() => {
-                        this.handleRemoveLocation(key);
-                      }}
-                    >
+                    <Fab color="primary"
+                         onClick={() => { this.handleRemoveLocation(key) }}>
                       <Close />
                     </Fab>
                   ) : (
-                    <Fab
-                      color="primary"
-                      onClick={() => {
-                        this.handleAddLocation(key);
-                      }}
-                    >
+                    <Fab color="primary"
+                         onClick={() => { this.handleAddLocation(key) }}>
                       <Add />
                     </Fab>
                   )}
                   <LocationCard
                     className={classes.card}
-                    title={loc.foursquare.venue_name}
-                    type={this.getTypes(loc.foursquare.location_types)}
-                    rating={loc.google.rating}
-                    media={loc.foursquare.pictures[0]}
-                    description={loc.foursquare.description}
+                    location={loc}
+                    clickHandler={() => this.updateLocationPane(loc)}
                   />
                 </div>
               ))}
@@ -174,8 +173,8 @@ export class PureLocations extends React.Component {
               View Plan
             </Button>
           </Grid>
-          <Grid container item xs={5}>
-            <MapContainer locations={this.state.places} />
+          <Grid container item xs={6} className={classes.locationPane}>
+            {this.state.selectedLocation && <LocationPane location={this.state.selectedLocation} />}
           </Grid>
         </Grid>
       </div>

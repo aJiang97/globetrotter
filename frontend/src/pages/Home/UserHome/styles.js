@@ -32,6 +32,11 @@ export const styles = createStyles(theme => ({
     display: "flex",
     flexDirection: "column"
   },
+  uiContainer: {
+    display: "flex",
+    flexDirection: "row",
+    padding: "50px"
+  },
   title: {
     textAlign: "center",
     color: "white"
@@ -43,7 +48,7 @@ export const styles = createStyles(theme => ({
   verticalLine: {
     borderLeft: "3px solid white",
     top: "27%",
-    height: 300,
+    height: "50vh",
     position: "absolute",
     left: "50%",
     marginLeft: -3
