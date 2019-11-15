@@ -7,16 +7,16 @@ from flask import request, jsonify
 
 from util.models import *
 
-user = api.namespace('user', description='User trips endpoint')
+trip = api.namespace('trip', description='User trips endpoint')
 
 
-@user.route('/trip', strict_slashes=False)
-class UserTrip(Resource):
-    @user.response(200, 'Success', MODEL_trip_uuid)
-    @user.response(400, 'Malformed request')
-    @user.response(403, 'Invalid authorization')
-    @user.doc(security='authtoken', description='Store user trip')
-    @user.expect(MODEL_trip_payload)
+@trip.route('', strict_slashes=False)
+class Trip(Resource):
+    @trip.response(200, 'Success', MODEL_trip_uuid)
+    @trip.response(400, 'Malformed request')
+    @trip.response(403, 'Invalid authorization')
+    @trip.doc(security='authtoken', description='Store user trip')
+    @trip.expect(MODEL_trip_payload)
     def post(self):
         email = authorize(request)
 
@@ -40,7 +40,7 @@ class UserTrip(Resource):
 
         uuid_r = None
         try:
-            uuid_r = db.insert_trip(email, payload)
+            uuid_r = db.post_trip(email, payload)
         except Exception as e:
             abort(500, 'We screwed up')
 
@@ -51,11 +51,11 @@ class UserTrip(Resource):
             "uuid": uuid_r
         }
 
-    @user.response(200, 'Success', MODEL_trip_payload)
-    @user.response(403, 'Invalid authorization')
-    @user.response(404, 'Resource is not available')
-    @user.param('uuid', 'UUID of the trip', required=True)
-    @user.doc(security='authtoken', description='Get the trip of the user using UUID')
+    @trip.response(200, 'Success', MODEL_trip_payload)
+    @trip.response(403, 'Invalid authorization')
+    @trip.response(404, 'Resource is not available')
+    @trip.param('uuid', 'UUID of the trip', required=True)
+    @trip.doc(security='authtoken', description='Get the trip of the user using UUID')
     def get(self):
         email = authorize(request)
 
@@ -66,7 +66,7 @@ class UserTrip(Resource):
 
         authorize_access(email, uuid_r)
 
-        result = db.retrieve_trip(uuid_r)
+        result = db.get_trip(uuid_r)
 
         if result is None:
             abort(404, 'Resource is not available')
@@ -84,12 +84,12 @@ class UserTrip(Resource):
             "blob": json.loads(blob)
         }
 
-    @user.response(200, 'Success')
-    @user.response(403, 'Invalid authorization')
-    @user.response(404, 'Resource to patch is not available')
-    @user.doc(security='authtoken', description='Update the trip of the user using UUID and the raw data from the frontend')
-    @user.param('uuid', 'UUID of the trip', required=True)
-    @user.expect(MODEL_trip_payload)
+    @trip.response(200, 'Success')
+    @trip.response(403, 'Invalid authorization')
+    @trip.response(404, 'Resource to patch is not available')
+    @trip.doc(security='authtoken', description='Update the trip of the user using UUID and the raw data from the frontend')
+    @trip.param('uuid', 'UUID of the trip', required=True)
+    @trip.expect(MODEL_trip_payload)
     def patch(self):
         email = authorize(request)
 
@@ -118,18 +118,24 @@ class UserTrip(Resource):
         payload = (description, city, tripstart, tripend, json.dumps(jsonblob).encode('utf-8'))
 
         try:
-            db.update_trip(uuid_r, payload)
+            db.patch_trip(uuid_r, payload)
         except Exception as e:
             abort(500, 'We screwed up')
 
         return
 
+    def delete(self):
+        # TODO
+        # Delete the trip
+        # User needs to be owner
+        pass
 
-@user.route('/trips', strict_slashes=False)
-class UserTrips(Resource):
-    @user.response(200, 'Success', MODEL_trips)
-    @user.response(403, 'User is unauthorized')
-    @user.doc(security='authtoken', description='Get all trips by user with their info')
+
+@trip.route('/all', strict_slashes=False)
+class AllTrip(Resource):
+    @trip.response(200, 'Success', MODEL_trips)
+    @trip.response(403, 'User is unauthorized')
+    @trip.doc(security='authtoken', description='Get all trips by user with their info')
     def get(self):
         email = authorize(request)
 
@@ -139,6 +145,35 @@ class UserTrips(Resource):
             "trips": trips
         }
 
+@trip.route('/user', strict_slashes=False)
+class UserTrip(Resource):
+    @trip.response(200, 'Success')
+    @trip.response(403, 'User is unauthorized')
+    @trip.doc(security='authtoken', description='Add user to read/modify the trip')
+    @trip.param('uuid', 'UUID of the trip', required=True)
+    @trip.expect(MODEL_trip_user)
+    def post(self):
+        # Only owner can do this
+        # Hence db.authorize_access(email, uuid, 0)
+        # Add user to the trip
+        pass
+
+    def delete(self):
+        # Only owner can do this
+        # Delete user from the trip
+        pass
+
+    def patch(self):
+        # Only owner can do this
+        # Modify access permission for user on that trip
+        pass
+
+    def get(self):
+        # All users can see this
+        # List users of the trip
+        pass
+
+    
 
 def authorize(request):
     token = request.headers.get('AUTH-TOKEN', None)
