@@ -23,7 +23,7 @@ def singleton_startup(cursor):
             id SERIAL PRIMARY KEY,
             tripid UUID NOT NULL,
             description varchar(64) NOT NULL,
-            location varchar(64) NOT NULL,
+            city varchar(64) NOT NULL,
             tripstart TIMESTAMPTZ NOT NULL,
             tripend TIMESTAMPTZ NOT NULL,
             blob BYTEA NOT NULL,
@@ -33,7 +33,9 @@ def singleton_startup(cursor):
 
         CREATE TABLE IF NOT EXISTS user_trip (
             email varchar(64) NOT NULL REFERENCES creds(email),
-            tripid UUID NOT NULL REFERENCES trip(tripid)
+            tripid UUID NOT NULL REFERENCES trip(tripid),
+            permission smallint NOT NULL,
+            PRIMARY KEY (email, tripid)
         );
 
         SET TIMEZONE = 'Australia/Sydney';

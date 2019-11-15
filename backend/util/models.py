@@ -186,29 +186,39 @@ MODEL_logout_expect = api.model('logout_expect', {
     "token": fields.String(description='Current access token of the user', required=True)
 })
 
-# Output
-MODEL_auth_token = api.model('auth_token', {
-    "token": fields.String(description='Access token')
-})
-
+# /user/trip
 MODEL_trip_uuid = api.model('trip_uuid', {
     "uuid": fields.String(description='UUIDs of your trip')
 })
 
-MODEL_trips = api.model('trips', {
-    "trips": fields.List(fields.Nested(MODEL_trip_uuid))
-})
-
-MODEL_trip_detail = api.model('detail', {
+MODEL_trip_info = api.model('info', {
     "description": fields.String(description='Description of the trip. Can be empty string',required=True),
-    "location": fields.String(description='Location of the trip', required=True),
+    "city": fields.String(description='City of the trip', required=True),
     "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601', required=True),
-    "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip', required=True),
-    "modifiedddate": fields.DateTime(dt_format='iso8601', description='Modified date. Only available on get request')
+    "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip', required=True)
 })
 
 MODEL_trip_payload = api.model('payload', {
-    "details": fields.Nested(MODEL_trip_detail, required=True),
+    "info": fields.Nested(MODEL_trip_info, required=True),
     "blob": fields.Raw(description='Your blob', required=True)
 })
 
+MODEL_trip_info_withid = api.model('info_withid', {
+    "description": fields.String(description='Description of the trip. Can be empty string'),
+    "city": fields.String(description='City of the trip'),
+    "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601'),
+    "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip'),
+    "modifiedddate": fields.DateTime(dt_format='iso8601', description='Modified date. Only available on get request'),
+    "uuid": fields.String(description='UUIDs of your trip'),
+    "permission": fields.Integer(description='Permission identifier. 0 is owner')
+})
+
+MODEL_trips = api.model('trips', {
+    "trips": fields.List(fields.Nested(MODEL_trip_info_withid))
+})
+
+MODEL_auth_token = api.model('auth_token', {
+    "token": fields.String(description='Access token'),
+    "displayname": fields.String(description='Display name'),
+    "trips": fields.List(fields.Nested(MODEL_trip_info_withid))
+})
