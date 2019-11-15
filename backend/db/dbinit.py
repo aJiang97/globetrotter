@@ -28,13 +28,13 @@ def singleton_startup(cursor):
             tripend TIMESTAMPTZ NOT NULL,
             blob BYTEA NOT NULL,
             modifieddate TIMESTAMP NOT NULL,
-            UNIQUE (calendarid)
+            UNIQUE (tripid)
         );
 
         CREATE TABLE IF NOT EXISTS user_trip (
             email varchar(64) NOT NULL REFERENCES creds(email),
             tripid UUID NOT NULL REFERENCES trip(tripid)
-        )
+        );
 
         SET TIMEZONE = 'Australia/Sydney';
     
