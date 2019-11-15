@@ -34,13 +34,9 @@ class UserTrip(Resource):
         if description is None or location is None or tripstart is None or tripend is None:
             abort(400, 'Required detail field is empty')
 
-        matrix = content.get('matrix')
-        matrix_places = content.get('matrix_places')
-        ordered_places = content.get('ordered_places')
-        # Calendar is a blob
-        calendar = content.get('calendar')
+        jsonblob = content.get('blob')
 
-        payload = (email, description, location, tripstart, tripend, json.dumps(matrix).encode('utf-8'), json.dumps(matrix_places).encode('utf-8'), json.dumps(ordered_places).encode('utf-8'), calendar)
+        payload = (email, description, location, tripstart, tripend, json.dumps(blob).encode('utf-8'))
 
         uuid_r = None
         try:
@@ -73,29 +69,24 @@ class UserTrip(Resource):
         if result is None:
             abort(404, 'Resource is not available')
 
-        mat = result[4].decode('utf-8')
-        mpl = result[5].decode('utf-8')
-        opl = result[6].decode('utf-8')
-        cal = result[7].decode('utf-8')
+        blob = result[4].decode('utf-8')
 
         return {
             "details": {
                 "description": result[0],
                 "location": result[1],
                 "tripstart": result[2],
-                "tripend": result[3]
+                "tripend": result[3],
+                "modifieddate": result[5]
             },
-            "matrix": json.loads(mat),
-            "matrix_places": json.loads(mpl),
-            "ordered_places": json.loads(opl),
-            "calendar": cal,
-            "modifieddate": result[8]
+            "blob": json.loads(blob)
         }
 
     @user.response(200, 'Success')
     @user.response(403, 'Invalid authorization')
     @user.response(404, 'Resource to patch is not available')
     @user.doc(security='authtoken', description='Update the calendar of the user using UUID and the raw data from the frontend')
+    @user.param('uuid', 'UUID of the trip', required=True)
     @user.expect(MODEL_trip_payload)
     def patch(self):
         # TODO
