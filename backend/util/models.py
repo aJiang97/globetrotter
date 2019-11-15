@@ -164,7 +164,8 @@ MODEL_route_matrix = api.model('route_matrix', {
 
 MODEL_route_result = api.model('route_result', {
     "travel_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
-    "path": fields.List(fields.String(description='place_id of ordered location'))
+    "path": fields.List(fields.String(description='place_id of ordered location')),
+    "matrix_places": fields.List(fields.String(description='place id of the index of the travel matrix, same as payload.matrix_places'))
 })
 
 
@@ -208,9 +209,9 @@ MODEL_trip_detail = api.model('detail', {
 
 MODEL_trip_payload = api.model('payload', {
     "details": fields.Nested(MODEL_trip_detail, required=True),
-    "matrix": fields.Raw(description='JSONObject of the matrix', required=True),
-    "matrix_places": fields.Raw(description='JSONObject of the index of the matrix', required=True),
-    "ordered_places": fields.Raw(description='JSONObject of the ordered places', required=True),
+    "matrix": fields.Raw(description='JSONObject of the matrix, same as route_result.travel_matrix', required=True),
+    "matrix_places": fields.Raw(description='JSONObject of the index of the matrix, same as route_result.matrix_places', required=True),
+    "ordered_places": fields.Raw(description='JSONObject of the ordered places, same as route_result.path', required=True),
     "calendar": fields.String(description='Calendar in byte array or string format. Backend will store it as-is', required=True)
 })
 
