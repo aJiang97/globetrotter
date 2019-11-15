@@ -204,7 +204,7 @@ MODEL_trip_detail = api.model('detail', {
     "location": fields.String(description='Location of the trip', required=True),
     "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601', required=True),
     "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip', required=True),
-    "modifiedddate": fields.DateTime(dt_format='iso8601', description='', required=True)
+    "modifiedddate": fields.DateTime(dt_format='iso8601', description='Modified date. Only available on get request')
 })
 
 MODEL_trip_payload = api.model('payload', {

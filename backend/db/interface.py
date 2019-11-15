@@ -204,11 +204,11 @@ class DB:
     def insert_calendar(self, payload):
         c = self.__conn.cursor()
 
-        (email, description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar) = payload
+        (email, description, location, tripstart, tripend, blob) = payload
 
         try:
             uuid_r = getrand_uuid(c)
-            c.execute("INSERT INTO calendars (email, calendarid, description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), matrix, matrix_places, ordered_places, calendar))
+            c.execute("INSERT INTO calendars (email, tripid, description, location, tripstart, tripend, blob, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), blob))
         except Exception as e:
             print(e)
             c.close()
@@ -222,7 +222,7 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar, modifieddate FROM calendars WHERE calendarid = %s;", (uuid_r,))
+            c.execute("SELECT description, location, tripstart, tripend, blob, modifieddate FROM calendars WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
@@ -234,7 +234,7 @@ class DB:
         result = rows[0]
         
         c.close()
-        return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), bytes(result[5]), bytes(result[6]), result[7].tobytes(), datetotz(result[8]))
+        return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), datetotz(result[5]))
 
     def update_calendar(self):
         # TODO
