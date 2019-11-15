@@ -22,7 +22,8 @@
     "react-google-maps": "^9.4.5",
     "react-grid-layout": "^0.17.1",
     "react-rating": "^2.0.0",
-    "react-router-dom": "^5.0.1"
+    "react-router-dom": "^5.0.1",
+    "react-slick": "^0.25.2"
   },
   "scripts": {
     "start": "react-scripts start",
