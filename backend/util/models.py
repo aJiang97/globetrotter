@@ -164,7 +164,8 @@ MODEL_route_matrix = api.model('route_matrix', {
 
 MODEL_route_result = api.model('route_result', {
     "travel_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
-    "path": fields.List(fields.String(description='place_id of ordered location'))
+    "path": fields.List(fields.String(description='place_id of ordered location')),
+    "matrix_places": fields.List(fields.String(description='place id of the index of the travel matrix, same as payload.matrix_places'))
 })
 
 
