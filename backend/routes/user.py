@@ -15,7 +15,7 @@ class UserTrip(Resource):
     @user.response(200, 'Success', MODEL_trip_uuid)
     @user.response(400, 'Malformed request')
     @user.response(403, 'Invalid authorization')
-    @user.doc(security='authtoken', description='Store user calendar')
+    @user.doc(security='authtoken', description='Store user trip')
     @user.expect(MODEL_trip_payload)
     def post(self):
         email = authorize(request)
@@ -40,7 +40,7 @@ class UserTrip(Resource):
 
         uuid_r = None
         try:
-            uuid_r = db.insert_calendar(payload)
+            uuid_r = db.insert_trip(payload)
         except Exception as e:
             abort(500, 'We screwed up')
 
@@ -55,7 +55,7 @@ class UserTrip(Resource):
     @user.response(403, 'Invalid authorization')
     @user.response(404, 'Resource is not available')
     @user.param('uuid', 'UUID of the trip', required=True)
-    @user.doc(security='authtoken', description='Get the calendar of the user using UUID')
+    @user.doc(security='authtoken', description='Get the trip of the user using UUID')
     def get(self):
         email = authorize(request)
         
@@ -64,7 +64,7 @@ class UserTrip(Resource):
         if uuid_r is None:
             abort(400, 'Need the uuid')
 
-        result = db.retrieve_calendar_uuid(uuid_r)
+        result = db.retrieve_trip_uuid(uuid_r)
         
         if result is None:
             abort(404, 'Resource is not available')
@@ -85,13 +85,13 @@ class UserTrip(Resource):
     @user.response(200, 'Success')
     @user.response(403, 'Invalid authorization')
     @user.response(404, 'Resource to patch is not available')
-    @user.doc(security='authtoken', description='Update the calendar of the user using UUID and the raw data from the frontend')
+    @user.doc(security='authtoken', description='Update the trip of the user using UUID and the raw data from the frontend')
     @user.param('uuid', 'UUID of the trip', required=True)
     @user.expect(MODEL_trip_payload)
     def patch(self):
         # TODO
         # Patch fields of the UUID
-        # db.update_calendar(....) <- you may want to update the function to adapt
+        # db.update_trip(....) <- you may want to update the function to adapt
         pass
 
 @user.route('/trips', strict_slashes=False)
