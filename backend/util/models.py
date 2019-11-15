@@ -209,6 +209,7 @@ MODEL_trip_detail = api.model('detail', {
 
 MODEL_trip_payload = api.model('payload', {
     "details": fields.Nested(MODEL_trip_detail, required=True),
+    "locations": fields.Nested(MODEL_locations, required=True),
     "matrix": fields.Raw(description='JSONObject of the matrix, same as route_result.travel_matrix', required=True),
     "matrix_places": fields.Raw(description='JSONObject of the index of the matrix, same as route_result.matrix_places', required=True),
     "ordered_places": fields.Raw(description='JSONObject of the ordered places, same as route_result.path', required=True),
