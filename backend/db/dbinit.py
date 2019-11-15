@@ -19,18 +19,15 @@ def singleton_startup(cursor):
             PRIMARY KEY (photo_reference)
         );
 
-        CREATE TABLE IF NOT EXISTS calendars (
+        CREATE TABLE IF NOT EXISTS trip (
             id SERIAL PRIMARY KEY,
             email varchar(64) NOT NULL REFERENCES creds(email),
-            calendarid UUID NOT NULL,
+            tripid UUID NOT NULL,
             description varchar(64) NOT NULL,
             location varchar(64) NOT NULL,
             tripstart TIMESTAMPTZ NOT NULL,
             tripend TIMESTAMPTZ NOT NULL,
-            calendar BYTEA NOT NULL,
-            matrix BYTEA NOT NULL,
-            matrix_places BYTEA NOT NULL,
-            ordered_places BYTEA NOT NULL,
+            blob BYTEA NOT NULL,
             modifieddate TIMESTAMP NOT NULL,
             UNIQUE (calendarid)
         );

@@ -209,13 +209,6 @@ MODEL_trip_detail = api.model('detail', {
 
 MODEL_trip_payload = api.model('payload', {
     "details": fields.Nested(MODEL_trip_detail, required=True),
-<<<<<<< Updated upstream
-    "matrix": fields.Raw(description='JSONObject of the matrix', required=True),
-    "matrix_places": fields.Raw(description='JSONObject of the index of the matrix', required=True),
-    "ordered_places": fields.Raw(description='JSONObject of the ordered places', required=True),
-    "calendar": fields.String(description='Calendar in byte array or string format. Backend will store it as-is', required=True)
-=======
     "blob": fields.Raw(description='Your blob', required=True)
->>>>>>> Stashed changes
 })
 
