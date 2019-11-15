@@ -171,25 +171,31 @@ MODEL_route_result = api.model('route_result', {
 
 # /auth
 # Input
+at_mod_email = fields.String(description='Email of the user', required=True)
+at_mod_hashedpw = fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+
 MODEL_signup_expect = api.model('signup_expect', {
-    "email": fields.String(description='Email of the user. Must be unique.', required=True),
-    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True),
+    "email": at_mod_email,
+    "hashedpw": at_mod_hashedpw,
     "displayname": fields.String(description='Display name of the user. Maximum length is 64')
 })
 
 MODEL_login_expect = api.model('login_expect', {
-    "email": fields.String(description='Email of the user.', required=True),
-    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+    "email": at_mod_email,
+    "hashedpw": at_mod_hashedpw
 })
 
 MODEL_logout_expect = api.model('logout_expect', {
-    "email": fields.String(description='Email of the user.', required=True),
+    "email": at_mod_email,
     "token": fields.String(description='Current access token of the user', required=True)
 })
 
 # /user/trip
+
+at_mod_uuid = fields.String(description='UUIDs of the trip')
+
 MODEL_trip_uuid = api.model('trip_uuid', {
-    "uuid": fields.String(description='UUIDs of your trip')
+    "uuid": at_mod_uuid
 })
 
 MODEL_trip_info = api.model('info', {
@@ -204,22 +210,34 @@ MODEL_trip_payload = api.model('payload', {
     "blob": fields.Raw(description='Your blob', required=True)
 })
 
+at_mod_permission = fields.Integer(description="""
+    Permission identifier. 0 is owner, 1 is admin, 2 is editor, 3 is viewer. Admin can add/modify/delete 2 or 3. Owner can add/modify/delete 1, 2, and 3. No one can delete the trip apart from owner.
+""")
+
 MODEL_trip_info_withid = api.model('info_withid', {
     "description": fields.String(description='Description of the trip. Can be empty string'),
     "city": fields.String(description='City of the trip'),
     "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601'),
     "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip'),
     "modifiedddate": fields.DateTime(dt_format='iso8601', description='Modified date. Only available on get request'),
-    "uuid": fields.String(description='UUIDs of your trip'),
-    "permission": fields.Integer(description='Permission identifier. 0 is owner')
+    "uuid": at_mod_uuid,
+    "permission": at_mod_permission
 })
 
+at_mod_trips = fields.List(fields.Nested(MODEL_trip_info_withid))
+
 MODEL_trips = api.model('trips', {
-    "trips": fields.List(fields.Nested(MODEL_trip_info_withid))
+    "trips": at_mod_trips
 })
 
 MODEL_auth_token = api.model('auth_token', {
     "token": fields.String(description='Access token'),
     "displayname": fields.String(description='Display name'),
-    "trips": fields.List(fields.Nested(MODEL_trip_info_withid))
+    "trips": at_mod_trips
+})
+
+
+MODEL_trip_user = api.model('trip_user', {
+    "email": fields.String(description='Email of the invited user'),
+    "permission": at_mod_permission
 })

@@ -241,8 +241,8 @@ class DB:
         c.close()
         return perm
 
-
-    def insert_trip(self, email, payload):
+    # Dealing with trip, either create, modify, read
+    def post_trip(self, email, payload):
         c = self.__conn.cursor()
 
         (description, city, tripstart, tripend, blob) = payload
@@ -262,7 +262,7 @@ class DB:
         self.__conn.commit()
         return uuid_r
 
-    def retrieve_trip(self, uuid_r):
+    def get_trip(self, uuid_r):
         c = self.__conn.cursor()
 
         try:
@@ -282,7 +282,7 @@ class DB:
         c.close()
         return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), datetotz(result[5]))
 
-    def update_trip(self, uuid_r, payload):
+    def patch_trip(self, uuid_r, payload):
         c = self.__conn.cursor()
 
         (description, city, tripstart, tripend, blob) = payload
@@ -299,6 +299,14 @@ class DB:
         self.__conn.commit()
         return
 
+    def delete_trip(self, uuid_r):
+        # TODO
+        # Delete all entries in user_trip
+        # And then delete all entries in trip
+        pass
+
+
+    # List all trips information
     def retrieve_trips(self, email, orderby=None):
         c = self.__conn.cursor()
 
@@ -326,11 +334,32 @@ class DB:
             trips.append(dets)
         return trips
 
-    def add_user_trip(self, email, uuid_r, permission):
+    # Trip-User relation
+    # Authorization assertion is done under check_permission that needs to be called before these functions
+    def post_user_trip(self, email, uuid_r, permission):
+        # TODO
+        # POST
         # 0 as owner
-        # 1 as editor
-        # 2 as viewer
+        # 1 as admin
+        # 2 as editor
+        # 3 as viewer
         pass
+
+    def delete_user_trip(self, email, uuid_r):
+        # TODO
+        # DELETE
+        pass
+
+    def patch_user_trip(self, email, uuid_r):
+        # TODO
+        # PATCH
+        pass
+
+    def get_user_trip(self, uuid_r):
+        # TODO
+        # GET
+        pass
+
 
 # Python is so bad that it needs to be dependent to third party package to parse a standardized datetime format...
 def tztodate(s):
