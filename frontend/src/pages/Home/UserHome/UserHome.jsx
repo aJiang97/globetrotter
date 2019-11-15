@@ -65,24 +65,26 @@ export class PureUserHome extends React.Component {
           <Typography variant="h2" className={classes.title}>
             Welcome, Alina
           </Typography>
-          <div style={{ display: "flex", flexDirection: "row", padding: 50 }}>
-            <div style={{ flexDirection: "column" }}>
-              <Typography variant="h4" className={classes.subheading}>
-                Your Trips
-              </Typography>
-              {this.state.trips &&
-                this.state.trips.map((trip, key) => (
-                  <Card key={key} className={classes.card}>
-                    <CardMedia className={classes.media} image={trip.url} />
-                    <CardContent style={{ flexDirection: "column" }}>
-                      <Typography variant="h5">{trip.name}</Typography>
-                      <Typography variant="h5">{trip.location}</Typography>
-                      <Typography variant="body2">
-                        from {trip["start date"]} to {trip["end date"]}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                ))}
+          <div className={classes.uiContainer}>
+            <div style={{ flex: "50%" }}>
+              <div style={{ flexDirection: "column" }}>
+                <Typography variant="h4" className={classes.subheading}>
+                  Your Trips
+                </Typography>
+                {this.state.trips &&
+                  this.state.trips.map((trip, key) => (
+                    <Card key={key} className={classes.card}>
+                      <CardMedia className={classes.media} image={trip.url} />
+                      <CardContent style={{ flexDirection: "column" }}>
+                        <Typography variant="h5">{trip.name}</Typography>
+                        <Typography variant="h5">{trip.location}</Typography>
+                        <Typography variant="body2">
+                          from {trip["start date"]} to {trip["end date"]}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
             </div>
             <div className={classes.verticalLine} />
             <div
@@ -90,7 +92,9 @@ export class PureUserHome extends React.Component {
                 alignSelf: "center",
                 marginLeft: 50,
                 display: "flex",
-                flexDirection: "row"
+                // flexDirection: "row",
+                // backgroundColor: "red",
+                flex: "50%"
               }}
             >
               <Typography variant="h4" className={classes.subheading}>
