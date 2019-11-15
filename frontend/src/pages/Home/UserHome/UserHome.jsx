@@ -88,7 +88,7 @@ export class PureUserHome extends React.Component {
             <div
               style={{
                 alignSelf: "center",
-                marginLeft: 50,
+                marginLeft: "23%",
                 display: "flex",
                 flexDirection: "row"
               }}
