@@ -11,11 +11,12 @@ trip = api.namespace('trip', description='User trips endpoint')
 
 
 @trip.route('', strict_slashes=False)
+@trip.doc(security='authtoken')
 class Trip(Resource):
     @trip.response(200, 'Success', MODEL_trip_uuid)
     @trip.response(400, 'Malformed request')
     @trip.response(403, 'Invalid authorization')
-    @trip.doc(security='authtoken', description='Store user trip')
+    @trip.doc(description='Store user trip')
     @trip.expect(MODEL_trip_payload)
     def post(self):
         email = authorize(request)
@@ -55,7 +56,7 @@ class Trip(Resource):
     @trip.response(403, 'Invalid authorization')
     @trip.response(404, 'Resource is not available')
     @trip.param('uuid', 'UUID of the trip', required=True)
-    @trip.doc(security='authtoken', description='Get the trip of the user using UUID')
+    @trip.doc(description='Get the trip of the user using UUID')
     def get(self):
         email = authorize(request)
 
@@ -87,7 +88,7 @@ class Trip(Resource):
     @trip.response(200, 'Success')
     @trip.response(403, 'Invalid authorization')
     @trip.response(404, 'Resource to patch is not available')
-    @trip.doc(security='authtoken', description='Update the trip of the user using UUID and the raw data from the frontend')
+    @trip.doc(description='Update the trip of the user using UUID and the raw data from the frontend')
     @trip.param('uuid', 'UUID of the trip', required=True)
     @trip.expect(MODEL_trip_payload)
     def patch(self):
@@ -132,10 +133,11 @@ class Trip(Resource):
 
 
 @trip.route('/all', strict_slashes=False)
+@trip.doc(security='authtoken')
 class AllTrip(Resource):
     @trip.response(200, 'Success', MODEL_trips)
     @trip.response(403, 'User is unauthorized')
-    @trip.doc(security='authtoken', description='Get all trips by user with their info')
+    @trip.doc(description='Get all trips by user with their info')
     def get(self):
         email = authorize(request)
 
@@ -146,10 +148,11 @@ class AllTrip(Resource):
         }
 
 @trip.route('/user', strict_slashes=False)
+@trip.doc(security='authtoken')
 class UserTrip(Resource):
     @trip.response(200, 'Success')
     @trip.response(403, 'User is unauthorized')
-    @trip.doc(security='authtoken', description='Add user to read/modify the trip')
+    @trip.doc(description='Add user to read/modify the trip')
     @trip.param('uuid', 'UUID of the trip', required=True)
     @trip.expect(MODEL_trip_user)
     def post(self):
