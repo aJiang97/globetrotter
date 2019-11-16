@@ -65,7 +65,8 @@ class ItineraryAlgorithm(Resource):
         ordered_locations = self.calculate_path_without_start(distance_matrix,locations_id)
         return {
             "travel_matrix":time_matrix,
-            "path":ordered_locations
+            "path":ordered_locations,
+            "matrix_places": locations["place_id"]      # This is for /user/trip endpoint
         }
 
 
