@@ -103,3 +103,10 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Config file
+config.py
+
+# API cache
+.api_cache/
+
+testdb.py

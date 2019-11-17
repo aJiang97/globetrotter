@@ -1,8 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Paper, TextField, Typography } from "@material-ui/core";
+import { IconButton, TextField, Typography } from "@material-ui/core";
 
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { NavBar } from "../../components";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import { styles } from "./styles";
 import bg from "../../assets/trip-bg.jpg";
 import history from "../../history";
@@ -30,10 +31,17 @@ export class PureTrip extends React.Component {
       end_date: event.target.value
     });
   };
+  handleSubmit = () => {
+    const { location, start_date, end_date } = this.state;
+    history.push(
+      `/preferences?location=${location}&start_date=${start_date}&end_date=${end_date}`
+    );
+  };
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.home}>
+      <div>
+        <NavBar />
         <div className={classes.bg_layer} />
         <img src={bg} alt="background" className={classes.bg} />
         <div className={classes.modal_container}>
@@ -41,51 +49,68 @@ export class PureTrip extends React.Component {
             Where's your next adventure?
           </Typography>
           <TextField
-            id="location" label="Destination" value={this.state.location}
+            id="location"
+            label="Destination"
+            value={this.state.location}
             InputLabelProps={{
-              className: classes.inputLabel,
-              shrink: true 
+              className: classes.label,
+              shrink: true
             }}
             InputProps={{
-              className: classes.input
+              className: classes.input,
+              classes: {
+                root: classes.underline
+              }
             }}
             className={classes.textfield}
             onChange={this.handleInputChange}
           />
           <div className={classes.dates}>
             <TextField
-              id="start_date" label="Start date" type="date" value={this.state.start_date}
+              id="start_date"
+              label="Start date"
+              type="date"
+              value={this.state.start_date}
               InputLabelProps={{
-                className: classes.inputLabel,
+                className: classes.label,
                 shrink: true
               }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
+                classes: {
+                  root: classes.underline
+                }
               }}
-              className={classes.dateTextField}
               onChange={this.handleStartDateChange}
             />
+            <div />
             <TextField
-              id="end_date" label="End date" type="date" value={this.state.end_date}
+              id="end_date"
+              label="End date"
+              type="date"
+              value={this.state.end_date}
               InputLabelProps={{
-                className: classes.inputLabel,
+                className: classes.label,
                 shrink: true
               }}
               InputProps={{
-                className: classes.input
+                className: classes.input,
+                classes: {
+                  root: classes.underline
+                }
               }}
-              className={classes.dateTextField}
               onChange={this.handleEndDateChange}
             />
           </div>
-          <Button
-            type="submit" color="primary" variant="contained"
+          <IconButton
+            type="submit"
+            color="primary"
+            variant="contained"
             className={classes.nextButton}
-            href="/preferences"
-            onClick={() => history.push("/preferences")}
+            onClick={this.handleSubmit}
           >
             <ArrowForwardIcon />
-          </Button>
+          </IconButton>
         </div>
       </div>
     );
