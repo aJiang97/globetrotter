@@ -60,12 +60,12 @@ class PureLoginModal extends React.Component {
         if (resp === 403) {
           this.setState({ success: false });
         } else {
-          console.log(resp);
           onSubmit({
             name: resp.displayname,
             token: resp.token,
             email: formData.email.data,
-            password: encryptedPassword
+            password: encryptedPassword,
+            trips: resp.trips
           });
           onClose();
           if (window.location.pathname === "/home") {

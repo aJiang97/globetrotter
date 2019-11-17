@@ -14,23 +14,6 @@ import { cityToISO2 } from "../../../utils/city-to-ISO2.js";
 import bg from "../../../assets/user-bg.jpg";
 import history from "../../../history";
 
-const trips = [
-  {
-    id: "1",
-    name: "Big family trip",
-    location: "Sydney",
-    "start date": "11-12-2019",
-    "end date": "18-12-2019"
-  },
-  {
-    id: "2",
-    name: "Business trip",
-    location: "Tokyo",
-    "start date": "5-1-2020",
-    "end date": "12-1-2020"
-  }
-];
-
 export class PureUserHome extends React.Component {
   constructor(props) {
     super(props);
@@ -38,14 +21,35 @@ export class PureUserHome extends React.Component {
       trips: null
     };
   }
+
   getISO2 = location => {
     const pair = cityToISO2.filter(city => city.city_ascii === location);
     return pair[0].iso2.toLowerCase();
   };
+
+  getDateDDMMYYYY = datetime => {
+    if (datetime.length > 10) {
+      const date = datetime.slice(0, 10).split("-");
+      return `${date[2]}-${date[1]}-${date[0]}`;
+    } else {
+      const date = datetime.split("-");
+      return `${date[2]}-${date[1]}-${date[0]}`;
+    }
+  };
+
+  getDateYYYYMMDD = datetime => {
+    if (datetime.length > 0) {
+      const date = datetime.slice(0, 10);
+      return date;
+    } else {
+      return datetime;
+    }
+  };
+
   componentDidMount = () => {
     this.setState({
-      trips: trips.map(trip => {
-        const iso2 = this.getISO2(trip.location);
+      trips: this.context.user.trips.map(trip => {
+        const iso2 = this.getISO2(trip.city);
         return {
           ...trip,
           iso2: iso2,
@@ -65,8 +69,8 @@ export class PureUserHome extends React.Component {
           <Typography variant="h2" className={classes.title}>
             Welcome, {this.context.user.name}
           </Typography>
-          <div style={{ display: "flex", flexDirection: "row", padding: 50 }}>
-            <div style={{ flexDirection: "column" }}>
+          <div className={classes.centerContainer}>
+            <div className={classes.leftContainer}>
               <Typography variant="h4" className={classes.subheading}>
                 Your Trips
               </Typography>
@@ -74,25 +78,36 @@ export class PureUserHome extends React.Component {
                 this.state.trips.map((trip, key) => (
                   <Card key={key} className={classes.card}>
                     <CardMedia className={classes.media} image={trip.url} />
-                    <CardContent style={{ flexDirection: "column" }}>
-                      <Typography variant="h5">{trip.name}</Typography>
-                      <Typography variant="h5">{trip.location}</Typography>
+                    <CardContent style={classes.cardContent}>
+                      <Typography variant="h5">
+                        <Link
+                          component="button"
+                          onClick={() => {
+                            history.push(
+                              `/tripview?start_date=${this.getDateYYYYMMDD(
+                                trip.tripstart
+                              )}&end_date=${this.getDateYYYYMMDD(
+                                trip.tripend
+                              )}&uuid=${trip.uuid}`
+                            );
+                          }}
+                          variant="h5"
+                          color="inherit"
+                        >
+                          {trip.description}
+                        </Link>
+                      </Typography>
+                      <Typography variant="h5">{trip.city}</Typography>
                       <Typography variant="body2">
-                        from {trip["start date"]} to {trip["end date"]}
+                        from {this.getDateDDMMYYYY(trip.tripstart)} to{" "}
+                        {this.getDateDDMMYYYY(trip.tripend)}
                       </Typography>
                     </CardContent>
                   </Card>
                 ))}
             </div>
             <div className={classes.verticalLine} />
-            <div
-              style={{
-                alignSelf: "center",
-                marginLeft: "23%",
-                display: "flex",
-                flexDirection: "row"
-              }}
-            >
+            <div className={classes.rightContainer}>
               <Typography variant="h4" className={classes.subheading}>
                 or
               </Typography>

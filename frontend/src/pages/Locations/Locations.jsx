@@ -4,7 +4,12 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography, Badge, Grid } from "@material-ui/core";
 import { Add, Close, ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 
-import { LocationCard, LocationListWindow, LocationPane, NavBar } from "../../components";
+import {
+  LocationCard,
+  LocationListWindow,
+  LocationPane,
+  NavBar
+} from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
@@ -62,12 +67,8 @@ export class PureLocations extends React.Component {
         displayError: true
       });
     } else {
-      var placesToIndex = {};
       const locations = this.getAddedLocations();
-      locations.map(
-        (location, i) => (placesToIndex[location.google.place_id] = i)
-      );
-      this.props.setPlaces(locations, placesToIndex);
+      this.props.setPlaces(locations);
       history.push(
         `/tripview?location=${location}&start_date=${startDate}&end_date=${endDate}`
       );
@@ -76,7 +77,7 @@ export class PureLocations extends React.Component {
 
   handleClickLocation = () => {
     console.log(this.props.location);
-  }
+  };
 
   updateLocationPane(location) {
     this.setState({
@@ -123,13 +124,21 @@ export class PureLocations extends React.Component {
       locationList = this.state.places.map((loc, key) => (
         <div key={key} className={classes.locationCardContainer}>
           {this.state.addedLocations.indexOf(key) !== -1 ? (
-            <Fab color="primary"
-                 onClick={() => { this.handleRemoveLocation(key) }}>
+            <Fab
+              color="primary"
+              onClick={() => {
+                this.handleRemoveLocation(key);
+              }}
+            >
               <Close />
             </Fab>
           ) : (
-            <Fab color="primary"
-                 onClick={() => { this.handleAddLocation(key) }}>
+            <Fab
+              color="primary"
+              onClick={() => {
+                this.handleAddLocation(key);
+              }}
+            >
               <Add />
             </Fab>
           )}
@@ -141,7 +150,9 @@ export class PureLocations extends React.Component {
         </div>
       ));
     } else {
-      locationList = <Typography variant="body1">No locations found.</Typography>
+      locationList = (
+        <Typography variant="body1">No locations found.</Typography>
+      );
     }
 
     return (
@@ -152,12 +163,13 @@ export class PureLocations extends React.Component {
             <Typography variant="h5" className={classes.title}>
               Recommended Locations
             </Typography>
-            {this.state.resultsLoaded ? 
-              locationList :
+            {this.state.resultsLoaded ? (
+              locationList
+            ) : (
               <div className={classes.loadingContainer}>
                 <ReactLoading type={"spin"} color={"black"} />
               </div>
-            }
+            )}
 
             {/* Location Basket Drawer */}
             <Button
@@ -203,7 +215,9 @@ export class PureLocations extends React.Component {
             </Button>
           </Grid>
           <Grid container item xs={6} className={classes.locationPane}>
-            {this.state.selectedLocation && <LocationPane location={this.state.selectedLocation} />}
+            {this.state.selectedLocation && (
+              <LocationPane location={this.state.selectedLocation} />
+            )}
           </Grid>
         </Grid>
       </div>

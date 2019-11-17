@@ -25,5 +25,9 @@ export const styles = createStyles(theme => ({
   resize: {
     fontSize: 57,
     fontWeight: "bold"
+  },
+  captionContainer: {},
+  green: {
+    color: "green"
   }
 }));

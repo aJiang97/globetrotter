@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { styles } from "./styles";
 import { Button, TextField, Typography } from "@material-ui/core";
+import { CheckCircle } from "@material-ui/icons";
 
 import { CalendarGrid, DateTabs, NavBar } from "../../components";
 import APIClient from "../../api/apiClient";
@@ -101,40 +102,80 @@ export class PureTripView extends React.Component {
         this.props.places,
         this.state.itinerary
       )
-      .then(data => console.log(data));
+      .then(uuid => {
+        var user = this.context.user;
+        user.trips.push({
+          uuid: uuid,
+          city: city,
+          description: description,
+          modifieddate: new Date(),
+          permission: 0,
+          tripend: end,
+          tripstart: start
+        });
+        this.context.logIn(user);
+      });
   };
 
   componentDidMount = () => {
-    if (this.props.places) {
-      this.apiClient = new APIClient();
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get("uuid");
+    this.apiClient = new APIClient();
+    var placeToIndex = {};
+    if (uuid) {
+      this.apiClient
+        .getItineraryDetail(this.context.user.token, uuid)
+        .then(detail => {
+          const placeIDs = detail.blob.places
+            .map(place => `place_id:${place.google.place_id}`)
+            .join("|");
+          detail.blob.places.map(
+            (location, i) => (placeToIndex[location.google.place_id] = i)
+          );
+          this.apiClient.generateItinerary(placeIDs).then(data => {
+            this.setState({
+              title: detail.info.description,
+              itinerary: detail.blob.orderedPlaces,
+              dates: this.getDates(),
+              currentDateItinerary: this.getCurrentDateItinerary(
+                detail.blob.orderedPlaces,
+                0,
+                this.getDates().length
+              ),
+              placeToIndex: placeToIndex,
+              travelTimes: data.travel_matrix
+            });
+          });
+        });
+    } else if (this.props.places) {
+      const location = urlParams.get("location");
       const placeIDs = this.props.places
         .map(place => `place_id:${place.google.place_id}`)
         .join("|");
-      const urlParams = new URLSearchParams(window.location.search);
-      const location = urlParams.get("location");
-      this.apiClient.generateItinerary(placeIDs).then(data =>
-        //set state based on data
-        {
-          const detailedPath = this.props.places
-            .map((place, i) => ({
-              ...place,
-              order: data.path[i][place.google.place_id],
-              suggestedTime: 45
-            }))
-            .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-          this.setState({
-            title: `Your Trip to ${location}`,
-            itinerary: detailedPath,
-            dates: this.getDates(),
-            currentDateItinerary: this.getCurrentDateItinerary(
-              detailedPath,
-              0,
-              this.getDates().length
-            ),
-            travelTimes: data.travel_matrix
-          });
-        }
+      this.props.places.map(
+        (location, i) => (placeToIndex[location.google.place_id] = i)
       );
+      this.apiClient.generateItinerary(placeIDs).then(data => {
+        const detailedPath = this.props.places
+          .map((place, i) => ({
+            ...place,
+            order: data.path[i][place.google.place_id],
+            suggestedTime: 45
+          }))
+          .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+        this.setState({
+          title: `Your Trip to ${location}`,
+          itinerary: detailedPath,
+          dates: this.getDates(),
+          currentDateItinerary: this.getCurrentDateItinerary(
+            detailedPath,
+            0,
+            this.getDates().length
+          ),
+          placeToIndex: placeToIndex,
+          travelTimes: data.travel_matrix
+        });
+      });
     }
   };
 
@@ -175,6 +216,14 @@ export class PureTripView extends React.Component {
             Save
           </Button>
         )}
+        {this.state.saved && (
+          <div className={classes.captionContainer}>
+            <CheckCircle className={classes.green} />
+            <Typography variant="caption" className={classes.green}>
+              Your itinerary is saved!
+            </Typography>
+          </div>
+        )}
         {this.state.dates && (
           <DateTabs
             tabLabels={this.state.dates}
@@ -184,7 +233,7 @@ export class PureTripView extends React.Component {
         <CalendarGrid
           itinerary={this.state.currentDateItinerary}
           travelTimes={this.state.travelTimes}
-          placeToIndex={this.props.placeToIndex}
+          placeToIndex={this.state.placeToIndex}
         />
       </div>
     );
