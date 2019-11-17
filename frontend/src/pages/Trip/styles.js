@@ -11,7 +11,7 @@ export const styles = createStyles(theme => ({
   bg_layer: {
     zIndex: 1110,
     position: "fixed",
-    top: 64,
+    top: 0,
     left: 0,
     right: 0,
     bottom: 0,
@@ -24,7 +24,7 @@ export const styles = createStyles(theme => ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    padding: "24px 40px 24px 40px",
+    padding: "24px 24px 24px 24px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -34,29 +34,36 @@ export const styles = createStyles(theme => ({
     paddingBottom: 20,
     fontWeight: "bold"
   },
-  inputLabel: {
-    color: "white",
-    shrink: true
+  label: {
+    color: "white !important"
   },
   textfield: {
-    width: "90%",
-    padding: 10,
+    width: "100%",
+    paddingBottom: 10,
     marginBottom: 15
   },
+  underline: {
+    "&:before": {
+      borderBottom: "1px solid white !important"
+    },
+    "&:after": {
+      borderBottom: `2px solid white !important`
+    },
+    "&:hover:not($disabled):not($focused):not($error):before": {
+      borderBottom: `2px solid white !important`
+    }
+  },
   dates: {
-    display: "flex",
-    flexDirection: "row",
-    marginBottom: 30
+    display: "grid",
+    gridTemplateColumns: "1fr 0.15fr 1fr",
+    marginBottom: 30,
+    width: "99%"
   },
   input: {
     color: "white"
   },
-  dateTextField: {
-    width: "50%",
-    paddingRight: 25,
-    paddingLeft: 25
-  },
   nextButton: {
-    marginTop: "auto"
+    marginTop: "auto",
+    color: "white"
   }
 }));

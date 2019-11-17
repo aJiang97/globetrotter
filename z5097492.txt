@@ -1,0 +1,148 @@
+Week 4
+Tuesday
+Today:      I brainstormed more ideas on the project topic and problem
+Tomorrow:   Vote for 2 topics
+Roadblock:  Finding a good viable product idea for a 4-week project is tough
+
+Wednesday
+Today:      I chose 2 topics, the itinerary generator/planner and course planner
+            I ended up choosing only the itinerary generator due to the time constraint
+Tomorrow:   Start brainstorming features
+Roadblock:  Voted a little bit too late and had a tie in the voting
+
+Thursday
+Today:      I reviewed Sebastian's features, labelled the ones that are feasible and
+            left some comments and suggestions
+            Checked the repository on UNSW Gitlab
+            I started setting up front end environment for the project
+Tomorrow:   Wait for others to reply, then divide up the work for the project plan
+Roadblock:  Everyone is busy and is only available at night 
+
+Friday
+Today:      I finished setting up front end environment with React and Material-UI
+            We had the weekly class meeting and had some inspirations from watching
+            other groups' presentations
+            We confirmed our topic with the tutor
+Tomorrow:   Divide up the work for the project plan document and presentation
+Roadblock:  A lot of workload in other courses
+
+Saturday
+Today:      I only responded to others' questions and group discussion on the features
+Tomorrow:   I won't be doing anything on the project tomorrow due to other commitments
+Roadblock:  -
+
+Sunday
+Today:      I didn't do anything for the project today
+Tomorrow:   Focus on the project plan
+Roadblock:  -
+
+Week 5
+Monday
+Today:      I tried working on making user stories based on the features but it was hard
+            We decided to create Epics stories first and then base our user stories on them
+            We came up with 5 Epics stories based on the features
+            We decided on Social Media Companies and Hate Speech for student seminar
+Tomorrow:   Start consolidating user stories on pivotal tracker
+Roadblock:  Tried fitting epics to user stories at the beginning
+
+Tuesday
+Today:      I took the first 2 Epics for the project plan document and presentation
+            I set up the project plan document
+            I started writing for the project plan document
+Tomorrow:   Discuss with Kevin and Sebastian on the algorithm for generating timetable
+Roadblock:  -
+
+Wednesday
+Today:      I met up with Kevin and Sebastian about approximation algorithm for travelling
+            salesman problem (it's NP-hard)
+            I revised the epics and user stories with Sebastian
+            We reduced the epics into 4
+Tomorrow:   Revise user stories in the project plan document
+Roadblock:  -
+
+Thursday
+Today:      I revised the epics and user stories
+            I finished my part for the project plan document
+            I set up the slides for the project plan presentation
+Tomorrow:   Present the plan in the meeting
+            Sprint planning meeting for the first sprint
+Roadblock:  Some people have just started their parts today
+
+Friday
+Today:      We presented the project plan
+            Some of the feedback forms suggested us to reduce the scope
+Tomorrow:   I won't be doing anything on the project tomorrow due to other commitments
+Roadblock:  -
+
+Saturday
+Today:      I didn't do anything for the project today
+Tomorrow:   Study for finance exam next Saturday
+Roadblock:  Coursework for another course
+
+Sunday
+Today:      I didn't do anything for the project today
+Tomorrow:   Study for finance exam this Saturday
+Roadblock:  Coursework for another course
+
+Week 6
+Monday
+Today:      I didn't do anything for the project today
+Tomorrow:   Start working on the project
+Roadblock:  Coursework for another course
+
+Tuesday
+Today:      I completed E1US1 to display home page and Navbar
+Tomorrow:   Work on E1US2
+Roadblock:  The mockups design does not suit the look we are going for
+
+Wednesday
+Today:      I completed E1US2 to display the trip page, fix styling upon feedback
+Tomorrow:   Work on student seminar presentation
+Roadblock:  Everyone has different ideas on the design
+            Only some people start working on user stories, others are busy with 
+            mid term assessments
+
+Thursday
+Today:      I didn't do anything for the project today
+Tomorrow:   Sprint review and planning
+            Practice for the student seminar presentation
+Roadblock:  Some people haven't taken up any user stories, bottleneck on Backend
+
+Friday
+Today:      I made quick fixes for sprint review meeting 
+            I helped Sebastian with React
+            I gave code review for Natasha's merge request
+            We had a condusive sprint planning meeting and distributed the work
+Tomorrow:   Do my exam
+Roadblock:  Bottleneck on Backend
+
+Saturday
+Today:      I had an exam
+Tomorrow:   Work on lecture summaries
+Roadblock:  -
+
+Sunday
+Today:      I had a good rest while doing lecture summaries
+Tomorrow:   Have an anniversary celebration
+Roadblock:  -
+
+Week 7
+Monday
+Today:      I had a whole-day anniversary celebration
+Tomorrow:   Start working on E1US6 (adding locations into location basket)
+Roadblock:  -
+
+Tuesday
+Today:      I started working on E1US6
+Tomorrow:   Continue working on E1US6
+Roadblock:  Had css styling issues with transitions and positioning
+
+Wednesday
+Today:      I finished up E1US6, E1US7 (remove locations from location basket) 
+            and E1US8 (display selected locations and view plan button)
+Tomorrow:   Help other people with their user stories
+            Integrate Frontend and Backend for Epic 1
+Roadblock:  I am getting sick 
+
+Thursday
+Today:      I skipped work and had a good rest
