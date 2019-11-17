@@ -51,6 +51,7 @@ export class PureLocations extends React.Component {
 
   handleSubmit = () => {
     const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get("location");
     const startDate = urlParams.get("start_date");
     const endDate = urlParams.get("end_date");
 
@@ -65,7 +66,9 @@ export class PureLocations extends React.Component {
         (location, i) => (placesToIndex[location.google.place_id] = i)
       );
       this.props.setPlaces(locations, placesToIndex);
-      history.push(`/tripview?start_date=${startDate}&end_date=${endDate}`);
+      history.push(
+        `/tripview?location=${location}&start_date=${startDate}&end_date=${endDate}`
+      );
     }
   };
 
@@ -149,8 +152,16 @@ export class PureLocations extends React.Component {
               }
               onClick={this.handleOpenListWindow}
             >
-              <Badge showZero badgeContent={this.state.addedLocations.length} color="error">
-                {this.state.isOpenListWindow ? <ArrowForwardIos /> : <ArrowBackIos />}
+              <Badge
+                showZero
+                badgeContent={this.state.addedLocations.length}
+                color="error"
+              >
+                {this.state.isOpenListWindow ? (
+                  <ArrowForwardIos />
+                ) : (
+                  <ArrowBackIos />
+                )}
               </Badge>
             </Button>
             <LocationListWindow

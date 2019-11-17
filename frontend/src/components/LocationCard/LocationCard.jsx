@@ -1,16 +1,13 @@
 import * as React from "react";
-import clsx from "clsx";
 import {
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
-  Collapse,
-  IconButton,
   Typography
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import { ExpandMore, CheckBox } from "@material-ui/icons";
+import { CheckBox } from "@material-ui/icons";
 
 import { StarRating } from "../";
 import { styles } from "./styles";
@@ -29,16 +26,19 @@ class PureLocationCard extends React.Component {
     }));
   };
 
-  getTypes = (types) => {
+  getTypes = types => {
     return Object.keys(types).filter(type => type === true);
-  }
+  };
 
   render() {
     const { classes, location, clickHandler } = this.props;
     return (
       <Card className={classes.card}>
         <CardActionArea onClick={clickHandler}>
-          <CardMedia className={classes.media} image={location.foursquare.pictures[0]} />
+          <CardMedia
+            className={classes.media}
+            image={location.foursquare.pictures[0]}
+          />
           <CardContent>
             <Typography component="h2" variant="h5" className="title">
               {location.foursquare.venue_name}
