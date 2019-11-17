@@ -5,10 +5,13 @@ import { styles } from "./styles";
 import {
   CalendarGrid,
   DateTabs,
+  MapContainer,
   NavBar,
 } from "../../components";
 import APIClient from "../../api/apiClient";
 import { Typography } from "@material-ui/core";
+import Grid from '@material-ui/core/Grid';
+
 export class PureTripView extends React.Component {
   constructor(props) {
     super(props);
@@ -102,20 +105,32 @@ export class PureTripView extends React.Component {
     return (
       <div className={classes.container}>
         <NavBar />
-        <Typography variant="h2" className={classes.title}>
-          Your Trip to
-        </Typography>
-        {this.state.dates && (
-          <DateTabs
-            tabLabels={this.state.dates}
-            setDateIndex={this.setDateIndex}
-          />
-        )}
-        <CalendarGrid
-          itinerary={this.state.currentDateItinerary}
-          travelTimes={this.state.travelTimes}
-          placeToIndex={this.props.placeToIndex}
-        />
+        <Grid className={classes.section}>
+          <Grid container item xs={6} className={classes.subSection}>
+            {/* <Grid container item xs={6} className={classes.flexScroll}> */}
+            <Typography variant="h2" className={classes.title}>
+              Your Trip to
+            </Typography>
+            {this.state.dates && (
+              <DateTabs
+                tabLabels={this.state.dates}
+                setDateIndex={this.setDateIndex}
+              />
+            )}
+            <CalendarGrid
+              itinerary={this.state.currentDateItinerary}
+              travelTimes={this.state.travelTimes}
+              placeToIndex={this.props.placeToIndex}
+            />
+          </Grid>
+          <Grid container item xs={6}>
+            {/* {this.state.itinerary} */}
+            {/* console.log({this.state.itinerary}) */}
+            <MapContainer
+              locations={this.state.currentDateItinerary}
+            />
+          </Grid>
+        </Grid>
       </div>
     );
   }
