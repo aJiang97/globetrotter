@@ -41,11 +41,6 @@ export class MapContainer extends React.Component {
         style={style}
         zoom={12}
         disableDefaultUI= {true}
-        // This is Sydney centre coordinates
-        initialCenter={{
-          lat: -33.8708,
-          lng: 151.2073
-        }}
       >
       {this.props.locations.map((loc,key) => (
           <Marker
