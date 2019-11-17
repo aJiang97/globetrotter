@@ -57,6 +57,10 @@ export const styles = createStyles(theme => ({
     width: "100%",
     textAlign: "center"
   },
+  loadingContainer: {
+    margin: "auto",
+    marginTop: "-100px"
+  },
   arrowButtonIn: {
     ...arrowButton,
     right: 0
