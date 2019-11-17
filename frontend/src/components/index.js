@@ -1,7 +1,6 @@
 export * from "./LocationCard";
 export * from "./LocationListWindow";
 export * from "./LocationPane";
-export * from "./Loading";
 export * from "./NavBar";
 export * from "./PreferenceCard";
 export * from "./MapContainer";
