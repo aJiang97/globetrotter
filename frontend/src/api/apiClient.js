@@ -50,6 +50,10 @@ class APIClient {
     return this.perform("post", `trip`, data, token);
   }
 
+  getItineraryDetail(token, uuid) {
+    return this.perform("get", `trip?uuid=${uuid}`, "", token);
+  }
+
   async perform(method, resource, data, token) {
     return client({
       method,

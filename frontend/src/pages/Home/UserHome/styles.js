@@ -24,6 +24,27 @@ export const styles = createStyles(theme => ({
     width: "70%",
     marginLeft: "15%"
   },
+  centerContainer: {
+    display: "flex",
+    flexDirection: "row",
+    padding: 50,
+    width: "70%",
+    marginLeft: "10%"
+  },
+  leftContainer: {
+    flexDirection: "column",
+    width: "50%"
+  },
+  rightContainer: {
+    alignSelf: "center",
+    marginLeft: "5%",
+    display: "flex",
+    flexDirection: "row",
+    width: "50%"
+  },
+  cardContainer: {
+    flexDirection: "column"
+  },
   contentContainer: {
     zIndex: 1111,
     left: 0,
