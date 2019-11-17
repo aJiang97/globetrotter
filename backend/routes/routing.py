@@ -25,17 +25,12 @@ class ItineraryAlgorithm(Resource):
                                 "place_id":"place_id:{put_id_here}"
                                 "place_id":"place_id:{put_id_here}|place_id{extra_ids}|..."''')
     def post(self):
-        # locations = request.get_json()
-        locations =  json.loads(list(request.form.to_dict().keys())[0])
+        locations = request.get_json()
 
-        print("location")
-        print(locations["place_id"])
-        # print(locations)
-        
         payload = {
             'key': config.GOOGLE_WS_API_KEY,
-            'origins':locations["place_id"],
-            'destinations':locations["place_id"]
+            'origins':locations.get("place_id"),
+            'destinations':locations.get("place_id")
         }
 
         query = requests.get(url="https://maps.googleapis.com/maps/api/distancematrix/json?", params=payload)
@@ -45,7 +40,7 @@ class ItineraryAlgorithm(Resource):
             abort(403,message=response['error_message'])
 
         #collecting data for algorithm
-        locations_id = locations["place_id"].replace("place_id:","").split("|")
+        locations_id = locations.get("place_id").replace("place_id:","").split("|")
 
         distance_matrix = []
         time_matrix = []
@@ -66,7 +61,7 @@ class ItineraryAlgorithm(Resource):
         return {
             "travel_matrix":time_matrix,
             "path":ordered_locations,
-            "matrix_places": locations["place_id"]      # This is for /user/trip endpoint
+            "matrix_places": locations.get("place_id")      # This is for /user/trip endpoint
         }
 
 
