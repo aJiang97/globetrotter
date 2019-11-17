@@ -1,4 +1,5 @@
 import React from "react";
+import ReactLoading from "react-loading";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography, Badge, Grid } from "@material-ui/core";
 import { Add, Close, ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
@@ -16,7 +17,8 @@ export class PureLocations extends React.Component {
       isOpenListWindow: false,
       addedLocations: [],
       displayError: false,
-      selectedLocation: null
+      selectedLocation: null,
+      resultsLoaded: false
     };
   }
 
@@ -103,13 +105,42 @@ export class PureLocations extends React.Component {
       );
       this.setState({
         places: places.locations,
-        selectedLocation: places.locations[0]
+        selectedLocation: places.locations[0],
+        resultsLoaded: true
       });
     });
   };
 
   render() {
     const { classes } = this.props;
+    const locations = this.state.places;
+    let locationList;
+
+    if (locations && locations.length !== 0) {
+      locationList = this.state.places.map((loc, key) => (
+        <div key={key} className={classes.locationCardContainer}>
+          {this.state.addedLocations.indexOf(key) !== -1 ? (
+            <Fab color="primary"
+                 onClick={() => { this.handleRemoveLocation(key) }}>
+              <Close />
+            </Fab>
+          ) : (
+            <Fab color="primary"
+                 onClick={() => { this.handleAddLocation(key) }}>
+              <Add />
+            </Fab>
+          )}
+          <LocationCard
+            className={classes.card}
+            location={loc}
+            clickHandler={() => this.updateLocationPane(loc)}
+          />
+        </div>
+      ));
+    } else {
+      locationList = <Typography variant="body1">No locations found.</Typography>
+    }
+
     return (
       <div>
         <NavBar />
@@ -118,27 +149,14 @@ export class PureLocations extends React.Component {
             <Typography variant="h5" className={classes.title}>
               Recommended Locations
             </Typography>
-            {this.state.places.length !== 0 &&
-              this.state.places.map((loc, key) => (
-                <div key={key} className={classes.locationCardContainer}>
-                  {this.state.addedLocations.indexOf(key) !== -1 ? (
-                    <Fab color="primary"
-                         onClick={() => { this.handleRemoveLocation(key) }}>
-                      <Close />
-                    </Fab>
-                  ) : (
-                    <Fab color="primary"
-                         onClick={() => { this.handleAddLocation(key) }}>
-                      <Add />
-                    </Fab>
-                  )}
-                  <LocationCard
-                    className={classes.card}
-                    location={loc}
-                    clickHandler={() => this.updateLocationPane(loc)}
-                  />
-                </div>
-              ))}
+            {this.state.resultsLoaded ? 
+              locationList :
+              <div className={classes.loadingContainer}>
+                <ReactLoading type={"spin"} color={"black"} />
+              </div>
+            }
+
+            {/* Location Basket Drawer */}
             <Button
               variant="contained"
               color="primary"
