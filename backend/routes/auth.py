@@ -19,7 +19,10 @@ class Signup(Resource):
     @auth.expect(MODEL_signup_expect)
     @auth.doc(description='')
     def post(self):
-        content = json.loads(list(request.form.to_dict().keys())[0])
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
+
+        content = request.get_json()
         email = content['email']
         hashedpw = content['hashedpw']
         displayname = content['displayname']
@@ -46,7 +49,10 @@ class Login(Resource):
     @auth.expect(MODEL_login_expect)
     @auth.doc(description='')
     def post(self):
-        content = json.loads(list(request.form.to_dict().keys())[0])
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
+
+        content = request.get_json()
         email = content['email']
         hashedpw = content['hashedpw']
 
@@ -54,8 +60,6 @@ class Login(Resource):
             abort(400, 'Malformed request, email and hashedpw is not supplied')
         
         login = db.login(email, hashedpw)
-
-        print(login)
         
         if not login:
             abort(403, 'Invalid email/password combination')
@@ -65,10 +69,12 @@ class Login(Resource):
         db.insert_token(email, token)
 
         displayname = db.get_displayname(email, hashedpw)
+        trips = db.retrieve_trips(email)
 
         return {
             "token": token,
-            "displayname": displayname
+            "displayname": displayname,
+            "trips": trips
         }
 
     def generate_token(self):

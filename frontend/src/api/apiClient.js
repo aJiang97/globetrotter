@@ -25,18 +25,38 @@ class APIClient {
     return this.perform("post", `/auth/login`, data);
   }
 
-  generateItinerary(places) {
-    return this.perform("post", `routing/itinerary`, { place_id: places });
-
+  logoutUser(email, token) {
+    const data = { email: email, token: token };
+    return this.perform("post", `/auth/logout`, data);
   }
 
-  async perform(method, resource, data) {
+  generateItinerary(places) {
+    return this.perform("post", `routing/itinerary`, { place_id: places });
+  }
+
+  saveItinerary(token, description, city, start, end, places, orderedPlaces) {
+    const data = {
+      info: {
+        description: description,
+        city: city,
+        tripstart: start,
+        tripend: end
+      },
+      blob: {
+        places: places, // original places passed to routing endpoint
+        orderedPlaces: orderedPlaces // the orderedPlaces from routing endpoint
+      }
+    };
+    return this.perform("post", `trip`, data, token);
+  }
+
+  async perform(method, resource, data, token) {
     return client({
       method,
       url: resource,
       data,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "AUTH-TOKEN": token
       }
     })
       .then(function(response) {

@@ -1,14 +1,12 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { styles } from "./styles";
+import { Button, TextField, Typography } from "@material-ui/core";
 
-import {
-  CalendarGrid,
-  DateTabs,
-  NavBar,
-} from "../../components";
+import { CalendarGrid, DateTabs, NavBar } from "../../components";
 import APIClient from "../../api/apiClient";
-import { Typography } from "@material-ui/core";
+import { UserContext } from "../../UserContext";
+
 export class PureTripView extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +14,9 @@ export class PureTripView extends React.Component {
       currentDateItinerary: null,
       itinerary: null,
       travelTimes: null,
-      dates: null
+      dates: null,
+      isEditableTitle: false,
+      title: ""
     };
   }
 
@@ -66,12 +66,52 @@ export class PureTripView extends React.Component {
     });
   };
 
+  handleEditableTitle = () => {
+    this.setState({
+      isEditableTitle: true
+    });
+  };
+
+  handleNonEditableTitle = () => {
+    this.setState({
+      isEditableTitle: false
+    });
+  };
+
+  handleChangeTitle = e => {
+    this.setState({
+      title: e.target.value
+    });
+  };
+
+  handleSaveItinerary = () => {
+    this.apiClient = new APIClient();
+    const urlParams = new URLSearchParams(window.location.search);
+    const city = urlParams.get("location");
+    const start = this.state.dates[0];
+    const end = this.state.dates[this.state.dates.length - 1];
+    const description = this.state.title;
+    this.apiClient
+      .saveItinerary(
+        this.context.user.token,
+        description,
+        city,
+        start,
+        end,
+        this.props.places,
+        this.state.itinerary
+      )
+      .then(data => console.log(data));
+  };
+
   componentDidMount = () => {
     if (this.props.places) {
       this.apiClient = new APIClient();
       const placeIDs = this.props.places
         .map(place => `place_id:${place.google.place_id}`)
         .join("|");
+      const urlParams = new URLSearchParams(window.location.search);
+      const location = urlParams.get("location");
       this.apiClient.generateItinerary(placeIDs).then(data =>
         //set state based on data
         {
@@ -83,6 +123,7 @@ export class PureTripView extends React.Component {
             }))
             .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
           this.setState({
+            title: `Your Trip to ${location}`,
             itinerary: detailedPath,
             dates: this.getDates(),
             currentDateItinerary: this.getCurrentDateItinerary(
@@ -102,9 +143,38 @@ export class PureTripView extends React.Component {
     return (
       <div className={classes.container}>
         <NavBar />
-        <Typography variant="h2" className={classes.title}>
-          Your Trip to
-        </Typography>
+        {this.state.isEditableTitle ? (
+          <TextField
+            InputProps={{
+              classes: {
+                input: classes.resize
+              }
+            }}
+            onBlur={this.handleNonEditableTitle}
+            onChange={this.handleChangeTitle}
+            onMouseOut={this.handleNonEditableTitle}
+            value={this.state.title}
+            className={classes.title}
+          />
+        ) : (
+          <Typography
+            variant="h2"
+            className={classes.title}
+            onMouseOver={this.handleEditableTitle}
+          >
+            {this.state.title}
+          </Typography>
+        )}
+        {this.context.user && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.saveButton}
+            onClick={this.handleSaveItinerary}
+          >
+            Save
+          </Button>
+        )}
         {this.state.dates && (
           <DateTabs
             tabLabels={this.state.dates}
@@ -120,5 +190,7 @@ export class PureTripView extends React.Component {
     );
   }
 }
+
+PureTripView.contextType = UserContext;
 
 export const TripView = withStyles(styles)(PureTripView);
