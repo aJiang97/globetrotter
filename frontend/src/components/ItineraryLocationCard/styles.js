@@ -4,7 +4,8 @@ export const styles = createStyles(theme => ({
   card: {
     display: "flex",
     // width: "65vw",
-    borderRadius: "15px"
+    borderRadius: "15px",
+    marginBottom: "10px"
   },
 
   // Time Section

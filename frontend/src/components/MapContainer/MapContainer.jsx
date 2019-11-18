@@ -42,7 +42,7 @@ export class MapContainer extends React.Component {
         zoom={12}
         disableDefaultUI= {true}
       >
-      {this.props.locations.map((loc,key) => (
+      {/* {this.props.locations.map((loc,key) => (
           <Marker
             key={key}
             onClick={this.onMarkerClick}
@@ -61,7 +61,7 @@ export class MapContainer extends React.Component {
               </div>
             </InfoWindow>
           </Marker>
-      ))}
+      ))} */}
       </Map>
     )
   }

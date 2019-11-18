@@ -5,12 +5,12 @@ import { styles } from "./styles";
 import {
   CalendarGrid,
   DateTabs,
-  MapContainer,
   NavBar,
 } from "../../components";
 import APIClient from "../../api/apiClient";
 import { Typography } from "@material-ui/core";
 import Grid from '@material-ui/core/Grid';
+import MapContainer from "../../components/MapContainer/MapContainer";
 
 export class PureTripView extends React.Component {
   constructor(props) {
