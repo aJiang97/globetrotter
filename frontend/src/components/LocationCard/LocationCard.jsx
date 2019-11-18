@@ -27,7 +27,13 @@ class PureLocationCard extends React.Component {
   };
 
   getTypes = types => {
-    return Object.keys(types).filter(type => type === true);
+    var result = [];
+    for (let value of Object.keys(types)) {
+      if (types[value]) {
+        result.push(value);
+      }
+    }
+    return result;
   };
 
   render() {
@@ -43,18 +49,13 @@ class PureLocationCard extends React.Component {
             <Typography component="h2" variant="h5" className="title">
               {location.foursquare.venue_name}
             </Typography>
-            <StarRating value={location.google.rating.toFixed(2)} />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                justifyContent: "flex-start"
-              }}
-            >
-              {this.props.types &&
-                this.props.types.map(type => (
-                  <div>
+            {location.google.rating && (
+              <StarRating value={location.google.rating.toFixed(2)} />
+            )}
+            <div className={classes.typesContainer}>
+              {location.foursquare.location_types &&
+                this.getTypes(location.foursquare.location_types).map(type => (
+                  <div className={classes.typeContainer}>
                     <CheckBox fontSize="small" />
                     <Typography
                       variant="subtitle1"
@@ -68,27 +69,6 @@ class PureLocationCard extends React.Component {
             </div>
           </CardContent>
         </CardActionArea>
-        {/* {this.props.description && (
-          <div>
-            <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
-              <CardContent>
-                <Typography paragraph>{this.props.description}</Typography>
-              </CardContent>
-            </Collapse>
-            <CardActions disableSpacing>
-              <IconButton
-                className={clsx(classes.expand, {
-                  [classes.expandOpen]: this.state.expanded
-                })}
-                onClick={this.handleExpandClick}
-                aria-expanded={this.state.expanded}
-                aria-label="show more"
-              >
-                <ExpandMore />
-              </IconButton>
-            </CardActions>
-          </div>
-        )} */}
       </Card>
     );
   }

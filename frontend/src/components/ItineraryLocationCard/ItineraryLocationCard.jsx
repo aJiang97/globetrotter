@@ -74,7 +74,7 @@ class PureItineraryLocationCard extends React.Component {
               <Typography variant="h3" className={classes.venueName}>
                 {this.props.title}
               </Typography>
-              <StarRating value={4.5} />
+              {this.props.rating && <StarRating value={this.props.rating.toFixed(2)} /> }
               <Typography
                 className={classes.venueType}
                 variant="subtitle1"

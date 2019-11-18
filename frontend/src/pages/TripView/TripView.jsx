@@ -1,10 +1,10 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { styles } from "./styles";
 import { Button, TextField, Typography } from "@material-ui/core";
-import { CheckCircle } from "@material-ui/icons";
 
+import { styles } from "./styles";
 import { CalendarGrid, DateTabs, NavBar } from "../../components";
+import { SaveMessage } from "./SaveMessage";
 import APIClient from "../../api/apiClient";
 import { UserContext } from "../../UserContext";
 
@@ -17,7 +17,8 @@ export class PureTripView extends React.Component {
       travelTimes: null,
       dates: null,
       isEditableTitle: false,
-      title: ""
+      title: "",
+      saved: false,
     };
   }
 
@@ -81,14 +82,20 @@ export class PureTripView extends React.Component {
 
   handleChangeTitle = e => {
     this.setState({
-      title: e.target.value
+      title: e.target.value,
     });
   };
 
+  handleCloseSaveMessage = e => {
+    this.setState({
+      saved: false
+    })
+  }
+ 
   handleSaveItinerary = () => {
     this.apiClient = new APIClient();
     const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get("location");
+    const city = urlParams.get("location").replace("_"," ");
     const start = this.state.dates[0];
     const end = this.state.dates[this.state.dates.length - 1];
     const description = this.state.title;
@@ -102,20 +109,17 @@ export class PureTripView extends React.Component {
         this.props.places,
         this.state.itinerary
       )
-      .then(uuid => {
+      .then(data => {
         var user = this.context.user;
-        user.trips.push({
-          uuid: uuid,
-          city: city,
-          description: description,
-          modifieddate: new Date(),
-          permission: 0,
-          tripend: end,
-          tripstart: start
-        });
-        this.context.logIn(user);
-      });
-  };
+        this.apiClient.getAllTrips(this.context.user.token).then((data) => {
+          user.trips = data.trips
+          this.context.logIn(user);
+          this.setState({
+            saved: true
+          })
+        })
+      })
+  }
 
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -148,7 +152,7 @@ export class PureTripView extends React.Component {
           });
         });
     } else if (this.props.places) {
-      const location = urlParams.get("location");
+      const location = urlParams.get("location").replace("_", " ");
       const placeIDs = this.props.places
         .map(place => `place_id:${place.google.place_id}`)
         .join("|");
@@ -216,14 +220,6 @@ export class PureTripView extends React.Component {
             Save
           </Button>
         )}
-        {this.state.saved && (
-          <div className={classes.captionContainer}>
-            <CheckCircle className={classes.green} />
-            <Typography variant="caption" className={classes.green}>
-              Your itinerary is saved!
-            </Typography>
-          </div>
-        )}
         {this.state.dates && (
           <DateTabs
             tabLabels={this.state.dates}
@@ -235,6 +231,7 @@ export class PureTripView extends React.Component {
           travelTimes={this.state.travelTimes}
           placeToIndex={this.state.placeToIndex}
         />
+        <SaveMessage open={this.state.saved} onClose={this.handleCloseSaveMessage}/>
       </div>
     );
   }

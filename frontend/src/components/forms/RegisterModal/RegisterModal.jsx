@@ -207,7 +207,8 @@ export class UserRegister extends React.Component {
           ...formData[e.target.name],
           data: e.target.value
         }
-      }
+      },
+      success: null
     });
   };
 }

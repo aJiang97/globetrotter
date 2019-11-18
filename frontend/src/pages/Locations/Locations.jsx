@@ -75,10 +75,6 @@ export class PureLocations extends React.Component {
     }
   };
 
-  handleClickLocation = () => {
-    console.log(this.props.location);
-  };
-
   updateLocationPane(location) {
     this.setState({
       selectedLocation: location
@@ -92,16 +88,21 @@ export class PureLocations extends React.Component {
   };
 
   getTypes = types => {
-    return Object.keys(types).filter(type => type === true);
+    var result = [];
+    for (let value of Object.keys(types)) {
+      if (types[value]) {
+        result.push(value);
+      }
+    }
+    return result;
   };
 
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get("location");
+    const city = urlParams.get("location").replace("_", " ");
     const preferences = urlParams
       .get("preferences")
       .toLowerCase()
-      .replace(" ", "_");
     this.apiClient = new APIClient();
     this.apiClient.getLocations(city, preferences).then(places => {
       places.locations.sort(
