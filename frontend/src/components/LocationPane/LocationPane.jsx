@@ -32,7 +32,7 @@ class PureLocationPane extends React.Component {
                 {/* Reviews and Type of Location */}
                 <Grid item container spacing={2} className={classes.grid}>
                     <Grid item md={3}>
-                        <StarRating value={location.google.rating} />
+                        <StarRating value={location.google.rating.toFixed(2)} />
                     </Grid>
                     <Grid item md={9}>
                         <Typography className={classes.venueType} variant="subtitle1" color="textSecondary" component="p" noWrap>
