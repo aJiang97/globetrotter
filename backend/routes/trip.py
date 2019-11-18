@@ -99,7 +99,7 @@ class Trip(Resource):
         if uuid_r is None:
             abort(400, 'Need the uuid')
 
-        authorize_access(email, uuid_r)
+        authorize_access(email, uuid_r, 2)
 
         # Get payload and set variables
         content = request.get_json()
@@ -126,10 +126,20 @@ class Trip(Resource):
         return
 
     def delete(self):
-        # TODO
-        # Delete the trip
-        # User needs to be owner
-        pass
+        email = authorize(request)
+
+        uuid_r = request.args.get('uuid')
+        if uuid_r is None:
+            abort(400, 'Need the uuid')
+
+        authorize_access(email, uuid_r, 0)
+
+        try:
+            db.delete_trip(uuid_r)
+        except Exception as e:
+            abort(500, 'We screwed up')
+
+        return
 
 
 @trip.route('/all', strict_slashes=False)
@@ -157,24 +167,83 @@ class UserTrip(Resource):
     @trip.expect(MODEL_trip_user)
     def post(self):
         # Only owner can do this
-        # Hence db.authorize_access(email, uuid, 0)
+        # Hence authorize_access(email, uuid, 0)
         # Add user to the trip
-        pass
+        email = authorize(request)
+
+        uuid_r = request.args.get('uuid')
+        if uuid_r is None:
+            abort(400, 'Need the uuid')
+
+        authorize_access(email, uuid_r, 0)
+
+        # Get payload and set variables
+        content = request.get_json()
+        requester_email = content.get("email")
+        permission = content.get("permission")
+
+        if requester_email is None or permission is None:
+            abort(400, "Bad request")
+
+        if not isinstance(permission, int):
+            abort(400, "Permission is not integer")
+        
+        if permission < 1 or permission > 3:
+            abort(403, "Permission number is not allowed")
+
+        try:
+            db.post_user_trip(requester_email, uuid_r, permission)
+        except Exception as e:
+            abort(400, "Bad request: " + e)
+
+        return
 
     def delete(self):
         # Only owner can do this
         # Delete user from the trip
-        pass
+        email = authorize(request)
 
+        uuid_r = request.args.get('uuid')
+        if uuid_r is None:
+            abort(400, 'Need the uuid')
+
+        authorize_access(email, uuid_r, 0)
+
+        # TODO
+        return
+
+    @trip.response(200, 'Success')
+    @trip.response(403, 'User is unauthorized')
+    @trip.doc(description='Modify user privilege to read/modify the trip')
+    @trip.param('uuid', 'UUID of the trip', required=True)
+    @trip.expect(MODEL_trip_user)
     def patch(self):
         # Only owner can do this
         # Modify access permission for user on that trip
-        pass
+        email = authorize(request)
+
+        uuid_r = request.args.get('uuid')
+        if uuid_r is None:
+            abort(400, 'Need the uuid')
+
+        authorize_access(email, uuid_r, 0)
+
+        # TODO
+        return
 
     def get(self):
         # All users can see this
         # List users of the trip
-        pass
+        email = authorize(request)
+
+        uuid_r = request.args.get('uuid')
+        if uuid_r is None:
+            abort(400, 'Need the uuid')
+
+        authorize_access(email, uuid_r)
+
+        # TODO
+        return
 
     
 
@@ -193,7 +262,7 @@ def authorize(request):
 
 
 def authorize_access(email, uuid_r, accessType=None):
-    perm = db.check_permission(email, uuid_r)
+    perm = db.get_perm(email, uuid_r)
 
     if perm is None:
         abort(404, 'Resource is unavailable')
@@ -202,5 +271,5 @@ def authorize_access(email, uuid_r, accessType=None):
 
     if accessType is None:
         return
-    elif not accessType > perm:
+    elif not accessType >= perm:
         abort(403, 'Unauthorized access')
