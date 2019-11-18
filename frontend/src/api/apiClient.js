@@ -50,6 +50,10 @@ class APIClient {
     return this.perform("post", `trip`, data, token);
   }
 
+  getAllTrips(token) {
+    return this.perform("get", `trip/all`, "", token);
+  }
+
   getItineraryDetail(token, uuid) {
     return this.perform("get", `trip?uuid=${uuid}`, "", token);
   }

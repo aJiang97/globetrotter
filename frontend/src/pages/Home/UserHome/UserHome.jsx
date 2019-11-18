@@ -1,12 +1,14 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import {
+  Fab,
   Card,
   CardContent,
   CardMedia,
   Link,
   Typography
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 
 import { styles } from "./styles";
 import { UserContext } from "../../../UserContext";
@@ -28,35 +30,28 @@ export class PureUserHome extends React.Component {
   };
 
   getDateDDMMYYYY = datetime => {
-    if (datetime.length > 10) {
-      const date = datetime.slice(0, 10).split("-");
-      return `${date[2]}-${date[1]}-${date[0]}`;
-    } else {
-      const date = datetime.split("-");
-      return `${date[2]}-${date[1]}-${date[0]}`;
-    }
+    const date = datetime.slice(0, 10).split("-");
+    return `${date[2]}-${date[1]}-${date[0]}`;
   };
 
   getDateYYYYMMDD = datetime => {
-    if (datetime.length > 0) {
-      const date = datetime.slice(0, 10);
-      return date;
-    } else {
-      return datetime;
-    }
+    const date = datetime.slice(0, 10);
+    return date;
   };
 
   componentDidMount = () => {
     this.setState({
-      trips: this.context.user.trips.map(trip => {
-        const iso2 = this.getISO2(trip.city);
-        return {
-          ...trip,
-          iso2: iso2,
-          url: `https://lipis.github.io/flag-icon-css/flags/4x3/${iso2}.svg`,
-          alt: `${iso2}.svg`
-        };
-      })
+      trips: this.context.user.trips
+        .map(trip => {
+          const iso2 = this.getISO2(trip.city);
+          return {
+            ...trip,
+            iso2: iso2,
+            url: `https://lipis.github.io/flag-icon-css/flags/4x3/${iso2}.svg`,
+            alt: `${iso2}.svg`
+          };
+        })
+        .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
     });
   };
   render() {
@@ -70,10 +65,24 @@ export class PureUserHome extends React.Component {
             Welcome, {this.context.user.name}
           </Typography>
           <div className={classes.centerContainer}>
-            <div className={classes.leftContainer}>
-              <Typography variant="h4" className={classes.subheading}>
-                Your Trips
+            <Typography variant="h4" className={classes.subheading}>
+              Your Trips
+            </Typography>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <Fab
+                variant="contained"
+                color="white"
+                onClick={() => {
+                  history.push("/trip");
+                }}
+              >
+                <Add />
+              </Fab>
+              <Typography variant="h5" className={classes.subheading}>
+                Plan a new trip
               </Typography>
+            </div>
+            <div className={classes.cardContainer}>
               {this.state.trips &&
                 this.state.trips.map((trip, key) => (
                   <Card key={key} className={classes.card}>
@@ -105,24 +114,6 @@ export class PureUserHome extends React.Component {
                     </CardContent>
                   </Card>
                 ))}
-            </div>
-            <div className={classes.verticalLine} />
-            <div className={classes.rightContainer}>
-              <Typography variant="h4" className={classes.subheading}>
-                or
-              </Typography>
-              <Typography variant="h4" className={classes.subheading}>
-                <Link
-                  component="button"
-                  onClick={() => {
-                    history.push("/trip");
-                  }}
-                  variant="h4"
-                  color="inherit"
-                >
-                  Add a new trip
-                </Link>
-              </Typography>
             </div>
           </div>
         </div>

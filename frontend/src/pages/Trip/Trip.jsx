@@ -33,8 +33,9 @@ export class PureTrip extends React.Component {
   };
   handleSubmit = () => {
     const { location, start_date, end_date } = this.state;
+    const parsedLocation = location.replace(" ", "_");
     history.push(
-      `/preferences?location=${location}&start_date=${start_date}&end_date=${end_date}`
+      `/preferences?location=${parsedLocation}&start_date=${start_date}&end_date=${end_date}`
     );
   };
   render() {
