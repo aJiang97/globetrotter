@@ -17,6 +17,7 @@ export const styles = createStyles(theme => ({
     flexGrow: 1,
     overflow: "auto",
     maxHeight: "100%",
+    paddingRight: "30px"
   },
   flexScroll: {
     // paddingLeft: "30px",
@@ -24,10 +25,11 @@ export const styles = createStyles(theme => ({
   },
   title: {
     fontFamily: "Roboto",
-    marginBottom: "20px"
+    marginBottom: "20px",
+    marginTop: "30px"
   },
   container: {
-    margin: "100px 5%",
+    margin: "63px 5%",
     width: "90%"
   },
   dateTabs: {
