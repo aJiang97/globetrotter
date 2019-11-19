@@ -228,37 +228,6 @@ class DB:
         c.close()
         return result
 
-    def check_permission(self, email, uuid_r):
-        c = self.__conn.cursor()
-
-        try:
-            c.execute("SELECT COUNT(*) FROM user_trip WHERE tripid = %s;", (uuid_r,))
-        except Exception as e:
-            print(e)
-            c.close()
-            return None
-        
-        rows = c.fetchall()
-        if rows[0][0] == 0:
-            c.close()
-            return None
-
-        try:
-            c.execute("SELECT permission FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
-        except Exception as e:
-            print(e)
-            c.close()
-            return None
-        
-        rows = c.fetchall()
-        if len(rows) == 0:
-            c.close()
-            return -1
-        
-        perm = rows[0][0]
-        c.close()
-        return perm
-
     # Dealing with trip, either create, modify, read
     def post_trip(self, email, payload):
         c = self.__conn.cursor()
@@ -318,10 +287,18 @@ class DB:
         return
 
     def delete_trip(self, uuid_r):
-        # TODO
-        # Delete all entries in user_trip
-        # And then delete all entries in trip
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("DELETE FROM trip WHERE uuid = %s;", (uuid_r,))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
+        return
 
 
     # List all trips information
@@ -353,30 +330,105 @@ class DB:
         return trips
 
     # Trip-User relation
-    # Authorization assertion is done under check_permission that needs to be called before these functions
+    # Authorization assertion is done under get_user_trip that needs to be called before these functions
     def post_user_trip(self, email, uuid_r, permission):
-        # TODO
         # POST
         # 0 as owner
         # 1 as admin
         # 2 as editor
         # 3 as viewer
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("INSERT INTO user_trip (email, tripid, permission) VALUES (%s, %s, %s);", (email, uuid_r, permission))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
+        return uuid_r
 
     def delete_user_trip(self, email, uuid_r):
-        # TODO
-        # DELETE
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("DELETE FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
 
     def patch_user_trip(self, email, uuid_r):
-        # TODO
-        # PATCH
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("UPDATE user_trip SET permission = %s WHERE email = %s AND tripid = %s;", (permission, email, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
 
     def get_user_trip(self, uuid_r):
-        # TODO
-        # GET
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT email, permission FROM user_trip WHERE tripid = %s;", (uuid_r,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+
+        rows = c.fetchall()
+                
+        users = []
+        for result in rows:
+            user = {
+                "email": result[0],
+                "permission": result[1]
+            }
+
+        c.close()
+        return users
+
+    # Permission stuff
+    def get_perm(self, email, uuid_r):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT COUNT(*) FROM user_trip WHERE tripid = %s;", (uuid_r,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+        if rows[0][0] == 0:
+            c.close()
+            return None
+
+        try:
+            c.execute("SELECT permission FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            return -1
+        
+        perm = rows[0][0]
+        c.close()
+        return perm
 
 
 # Python is so bad that it needs to be dependent to third party package to parse a standardized datetime format...
@@ -398,6 +450,6 @@ def getrand_uuid(curs):
         count = rows[0][0]
 
     if uuid_r is None:
-        raise
+        raise Exception("Can't insert uuid")
 
     return uuid_r
