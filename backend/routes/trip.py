@@ -198,6 +198,11 @@ class UserTrip(Resource):
 
         return
 
+    @trip.response(200, 'Success')
+    @trip.response(403, 'User is unauthorized')
+    @trip.doc(description='Add user to read/modify the trip')
+    @trip.param('uuid', 'UUID of the trip', required=True)
+    @trip.expect(MODEL_trip_user_del)
     def delete(self):
         # Only owner can do this
         # Delete user from the trip
@@ -209,7 +214,17 @@ class UserTrip(Resource):
 
         authorize_access(email, uuid_r, 0)
 
-        # TODO
+        content = request.get_json()
+        requester_email = content.get("email")
+
+        if requester_email is None:
+            abort(400, "Bad request")
+
+        try:
+            db.delete_user_trip(requester_email, uuid_r)
+        except Exception as e:
+            abort(400, "Bad request: " + e)
+
         return
 
     @trip.response(200, 'Success')
@@ -228,9 +243,31 @@ class UserTrip(Resource):
 
         authorize_access(email, uuid_r, 0)
 
-        # TODO
+        # Get payload and set variables
+        content = request.get_json()
+        requester_email = content.get("email")
+        permission = content.get("permission")
+
+        if requester_email is None or permission is None:
+            abort(400, "Bad request")
+
+        if not isinstance(permission, int):
+            abort(400, "Permission is not integer")
+        
+        if permission < 1 or permission > 3:
+            abort(403, "Permission number is not allowed")
+
+        try:
+            db.patch_user_trip(requester_email, uuid_r, permission)
+        except Exception as e:
+            abort(400, "Bad request: " + e)
+
         return
 
+    @trip.response(200, 'Success', MODEL_trip_users)
+    @trip.response(403, 'User is unauthorized')
+    @trip.doc(description='Get all users which has access to this trip')
+    @trip.param('uuid', 'UUID of the trip', required=True)
     def get(self):
         # All users can see this
         # List users of the trip
@@ -242,10 +279,13 @@ class UserTrip(Resource):
 
         authorize_access(email, uuid_r)
 
-        # TODO
-        return
+        result = db.get_user_trip(uuid_r)
 
-    
+        if result is None:
+            abort(404, 'Resource is not available')
+
+        return result
+
 
 def authorize(request):
     token = request.headers.get('AUTH-TOKEN', None)
