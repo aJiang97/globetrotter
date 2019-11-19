@@ -333,19 +333,52 @@ class DB:
         return uuid_r
 
     def delete_user_trip(self, email, uuid_r):
-        # TODO
-        # DELETE
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("DELETE FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
 
     def patch_user_trip(self, email, uuid_r):
-        # TODO
-        # PATCH
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("UPDATE user_trip SET permission = %s WHERE email = %s AND tripid = %s;", (permission, email, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
 
     def get_user_trip(self, uuid_r):
-        # TODO
-        # GET
-        pass
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT email, permission FROM user_trip WHERE tripid = %s;", (uuid_r,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+
+        rows = c.fetchall()
+                
+        users = []
+        for result in rows:
+            user = {
+                "email": result[0],
+                "permission": result[1]
+            }
+
+        c.close()
+        return users
 
     # Permission stuff
     def get_perm(self, email, uuid_r):
