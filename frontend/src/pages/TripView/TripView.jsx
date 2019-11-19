@@ -1,10 +1,10 @@
 import React from "react";
+import { Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, TextField, Typography } from "@material-ui/core";
 
 import { styles } from "./styles";
-import { CalendarGrid, DateTabs, NavBar } from "../../components";
-import { SaveMessage } from "./SaveMessage";
+import { AlertMessage, CalendarGrid, DateTabs, NavBar } from "../../components";
 import APIClient from "../../api/apiClient";
 import { UserContext } from "../../UserContext";
 
@@ -19,6 +19,8 @@ export class PureTripView extends React.Component {
       isEditableTitle: false,
       title: "",
       saved: false,
+      deleted: false,
+      redirect: false
     };
   }
 
@@ -82,20 +84,42 @@ export class PureTripView extends React.Component {
 
   handleChangeTitle = e => {
     this.setState({
-      title: e.target.value,
+      title: e.target.value
     });
   };
 
   handleCloseSaveMessage = e => {
     this.setState({
       saved: false
-    })
-  }
- 
+    });
+  };
+
+  handleCloseDeleteMessage = e => {
+    this.setState({
+      deleted: false
+    });
+  };
+
+  handleDeleteTrip = () => {
+    this.apiClient = new APIClient();
+    const urlParams = new URLSearchParams(window.location.search);
+    this.apiClient
+      .deleteTrip(this.context.user.token, urlParams.get("uuid"))
+      .then(data => {
+        var user = this.context.user;
+        this.apiClient.getAllTrips(this.context.user.token).then(data => {
+          user.trips = data.trips;
+          this.context.logIn(user);
+          this.setState({ deleted: true });
+        });
+        this.id = setTimeout(() => this.setState({ redirect: true }), 5000);
+      });
+  };
+
   handleSaveItinerary = () => {
     this.apiClient = new APIClient();
     const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get("location").replace("_"," ");
+    const city = urlParams.get("location").replace("_", " ");
     const start = this.state.dates[0];
     const end = this.state.dates[this.state.dates.length - 1];
     const description = this.state.title;
@@ -111,14 +135,18 @@ export class PureTripView extends React.Component {
       )
       .then(data => {
         var user = this.context.user;
-        this.apiClient.getAllTrips(this.context.user.token).then((data) => {
-          user.trips = data.trips
+        this.apiClient.getAllTrips(this.context.user.token).then(data => {
+          user.trips = data.trips;
           this.context.logIn(user);
           this.setState({
             saved: true
-          })
-        })
-      })
+          });
+        });
+      });
+  };
+
+  componentWillUnmount() {
+    clearTimeout(this.id);
   }
 
   componentDidMount = () => {
@@ -211,14 +239,24 @@ export class PureTripView extends React.Component {
           </Typography>
         )}
         {this.context.user && (
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.saveButton}
-            onClick={this.handleSaveItinerary}
-          >
-            Save
-          </Button>
+          <div className={classes.buttonsContainer}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={this.handleDeleteTrip}
+              className={classes.DeleteButton}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSaveItinerary}
+              className={classes.SaveButton}
+            >
+              Save
+            </Button>
+          </div>
         )}
         {this.state.dates && (
           <DateTabs
@@ -231,7 +269,19 @@ export class PureTripView extends React.Component {
           travelTimes={this.state.travelTimes}
           placeToIndex={this.state.placeToIndex}
         />
-        <SaveMessage open={this.state.saved} onClose={this.handleCloseSaveMessage}/>
+        <AlertMessage
+          type="save"
+          open={this.state.saved}
+          onClose={this.handleCloseSaveMessage}
+          message={"Your trip is successfully saved!"}
+        />
+        <AlertMessage
+          type="delete"
+          open={this.state.deleted}
+          onClose={this.handleCloseDeleteMessage}
+          message={"Your trip is successfully deleted!"}
+        />
+        {this.state.redirect && <Redirect to="/home" />}
       </div>
     );
   }
