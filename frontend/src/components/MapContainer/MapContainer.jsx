@@ -43,8 +43,8 @@ export class MapContainer extends React.Component {
         disableDefaultUI= {true}
         // This is Sydney centre coordinates
         initialCenter={{
-          lat: -33.8708,
-          lng: 151.2073
+          lat: this.props.locations[0].foursquare.coordinate.latitude,
+          lng: this.props.locations[0].foursquare.coordinate.longitude
         }}
       >
       {this.props.locations.map((loc,key) => (
