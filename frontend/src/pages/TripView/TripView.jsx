@@ -3,7 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button, TextField, Typography } from "@material-ui/core";
 
 import { styles } from "./styles";
-import { CalendarGrid, DateTabs, NavBar } from "../../components";
+import { CalendarGrid, DateTabs, NavBar, UsersRow, AddUserModal } from "../../components";
 import { SaveMessage } from "./SaveMessage";
 import APIClient from "../../api/apiClient";
 import { UserContext } from "../../UserContext";
@@ -17,6 +17,7 @@ export class PureTripView extends React.Component {
       travelTimes: null,
       dates: null,
       isEditableTitle: false,
+      isAddUserOpen: false,
       title: "",
       saved: false,
     };
@@ -121,6 +122,14 @@ export class PureTripView extends React.Component {
       })
   }
 
+  openAddUserModal = () => {
+    this.setState({ isAddUserOpen: true });
+  }
+  
+  closeAddUserModal = () => {
+    this.setState({ isAddUserOpen: false });
+  }
+
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
@@ -210,6 +219,11 @@ export class PureTripView extends React.Component {
             {this.state.title}
           </Typography>
         )}
+
+        {/* Add Users Row Here */}
+        <UsersRow users={[]} handleAdd={this.openAddUserModal}/>
+
+
         {this.context.user && (
           <Button
             variant="contained"
@@ -232,6 +246,15 @@ export class PureTripView extends React.Component {
           placeToIndex={this.state.placeToIndex}
         />
         <SaveMessage open={this.state.saved} onClose={this.handleCloseSaveMessage}/>
+
+        {/* Form for adding users to the trip  */}
+        {this.state.isAddUserOpen && (
+          <AddUserModal
+            onClose={this.closeAddUserModal}
+            onSubmit={() => console.log("Submitted New User")}
+          />
+        )}
+
       </div>
     );
   }
