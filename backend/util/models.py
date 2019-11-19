@@ -190,6 +190,10 @@ MODEL_logout_expect = api.model('logout_expect', {
     "token": fields.String(description='Current access token of the user', required=True)
 })
 
+MODEL_getuser_expect = api.model('getuser_expect', {
+    "email": at_mod_email
+})
+
 # /user/trip
 
 at_mod_uuid = fields.String(description='UUIDs of the trip')

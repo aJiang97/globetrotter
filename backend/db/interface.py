@@ -85,11 +85,29 @@ class DB:
             print(e)
             c.close()
             return None
+
         rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            return None
         result = rows[0][0]
 
         c.close()
         return result
+    
+    def get_username(self, email):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT displayname FROM creds WHERE email =", email)
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+        c.close()
+        return None if len(rows == 0) else rows[0][0]
 
     def available_token(self, token):
         c = self.__conn.cursor()
