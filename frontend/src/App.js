@@ -36,7 +36,6 @@ class App extends React.Component {
     this.state = {
       transparent: true,
       places: null,
-      placeToIndex: null,
       user: null,
       logIn: this.logIn,
       logOut: this.logOut
@@ -56,8 +55,8 @@ class App extends React.Component {
     });
   };
 
-  setPlaces = (places, placeToIndex) => {
-    this.setState({ places: places, placeToIndex: placeToIndex });
+  setPlaces = (places) => {
+    this.setState({ places: places });
   };
 
   render() {
@@ -81,7 +80,6 @@ class App extends React.Component {
                   <TripView
                     {...props}
                     places={this.state.places}
-                    placeToIndex={this.state.placeToIndex}
                   />
                 )}
               />

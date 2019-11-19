@@ -8,13 +8,14 @@ import pandas
 
 import config
 
+
 class DB:
     def __init__(self):
         dbname = "dbname='" + config.PGDBNAME + "'"
         dbuser = "user='" + config.PGUSER + "'"
         dbhost = "host='" + config.PGHOST + "'"
         dbpw = "password='" + config.PGPASSWORD + "'"
-        
+
         dbconfig = dbname + ' ' + dbuser + ' ' + dbhost + ' ' + dbpw
         self.__conn = psycopg2.connect(dbconfig)
 
@@ -28,7 +29,7 @@ class DB:
             print(e)
             c.close()
             return None
-        
+
         rows = c.fetchall()
         if len(rows) == 0:
             c.close()
@@ -37,31 +38,33 @@ class DB:
 
         c.close()
         return (rlen == 0)
-    
+
     def register(self, email, hashedpw, displayname=None):
         c = self.__conn.cursor()
 
         try:
-            c.execute("INSERT INTO creds (email, hashedpw, displayname) VALUES (%s, %s, %s);", (email, hashedpw, displayname))
+            c.execute("INSERT INTO creds (email, hashedpw, displayname) VALUES (%s, %s, %s);",
+                      (email, hashedpw, displayname))
         except Exception as e:
             print(e)
             c.close()
             return None
-        
+
         c.close()
         self.__conn.commit()
         return True
 
     def login(self, email, hashedpw):
         c = self.__conn.cursor()
-        
+
         try:
-            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
+            c.execute(
+                "SELECT COUNT(*) FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
             print(e)
             c.close()
             return None
-        
+
         rows = c.fetchall()
         if len(rows) == 0:
             c.close()
@@ -74,9 +77,10 @@ class DB:
 
     def get_displayname(self, email, hashedpw):
         c = self.__conn.cursor()
-        
+
         try:
-            c.execute("SELECT displayname FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
+            c.execute(
+                "SELECT displayname FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
             print(e)
             c.close()
@@ -89,14 +93,14 @@ class DB:
 
     def available_token(self, token):
         c = self.__conn.cursor()
-        
+
         try:
             c.execute("SELECT COUNT(*) FROM creds WHERE token = %s;", (token,))
         except Exception as e:
             print(e)
             c.close()
             return None
-        
+
         rows = c.fetchall()
         if len(rows) == 0:
             c.close()
@@ -110,7 +114,8 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("UPDATE creds SET token = %s WHERE email = %s;", (token, email))
+            c.execute("UPDATE creds SET token = %s WHERE email = %s;",
+                      (token, email))
         except Exception as e:
             print(e)
             c.close()
@@ -124,12 +129,13 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s AND token = %s;", (email, token))
+            c.execute(
+                "SELECT COUNT(*) FROM creds WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
             print(e)
             c.close()
             return None
-        
+
         rows = c.fetchall()
         if len(rows) == 0:
             c.close()
@@ -141,7 +147,8 @@ class DB:
             return False
 
         try:
-            c.execute("UPDATE creds SET token = NULL WHERE email = %s AND token = %s;", (email, token))
+            c.execute(
+                "UPDATE creds SET token = NULL WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
             print(e)
             c.close()
@@ -150,14 +157,15 @@ class DB:
         c.close()
         self.__conn.commit()
         return True
-    
 
     # Details/picture endpoint
+
     def insert_picture(self, photo_reference, photo_link):
         c = self.__conn.cursor()
 
         try:
-            c.execute("INSERT INTO photos (photo_reference, photo_link) VALUES (%s, %s);", (photo_reference, photo_link))
+            c.execute("INSERT INTO photos (photo_reference, photo_link) VALUES (%s, %s);",
+                      (photo_reference, photo_link))
         except Exception as e:
             print(e)
             c.close()
@@ -171,7 +179,8 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT photo_link FROM photos WHERE photo_reference = %s;", (photo_reference,))
+            c.execute(
+                "SELECT photo_link FROM photos WHERE photo_reference = %s;", (photo_reference,))
         except Exception as e:
             print(e)
             c.close()
@@ -192,23 +201,58 @@ class DB:
             print(e)
             c.close()
             return None
-        
+
         rows = c.fetchall()
         if len(rows) == 0:
             return None
         result = rows[0][0]
-        
+
         c.close()
         return result
 
-    def insert_calendar(self, payload):
+    def check_permission(self, email, uuid_r):
         c = self.__conn.cursor()
 
-        (email, description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar) = payload
+        try:
+            c.execute("SELECT COUNT(*) FROM user_trip WHERE tripid = %s;", (uuid_r,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+        if rows[0][0] == 0:
+            c.close()
+            return None
+
+        try:
+            c.execute("SELECT permission FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+        if len(rows) == 0:
+            c.close()
+            return -1
+        
+        perm = rows[0][0]
+        c.close()
+        return perm
+
+    # Dealing with trip, either create, modify, read
+    def post_trip(self, email, payload):
+        c = self.__conn.cursor()
+
+        (description, city, tripstart, tripend, blob) = payload
 
         try:
             uuid_r = getrand_uuid(c)
-            c.execute("INSERT INTO calendars (email, calendarid, description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now());", (email, uuid_r, description, location, tztodate(tripstart), tztodate(tripend), matrix, matrix_places, ordered_places, calendar))
+            c.execute("INSERT INTO trip (tripid, description, city, tripstart, tripend, blob, modifieddate) VALUES (%s, %s, %s, %s, %s, %s, now());",
+                      (uuid_r, description, city, tztodate(tripstart), tztodate(tripend), blob))
+            c.execute(
+                "INSERT INTO user_trip (email, tripid, permission) VALUES (%s, %s, 0)", (email, uuid_r))
         except Exception as e:
             print(e)
             c.close()
@@ -218,31 +262,102 @@ class DB:
         self.__conn.commit()
         return uuid_r
 
-    def retrieve_calendar_uuid(self, uuid_r):
+    def get_trip(self, uuid_r):
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT description, location, tripstart, tripend, matrix, matrix_places, ordered_places, calendar, modifieddate FROM calendars WHERE calendarid = %s;", (uuid_r,))
+            c.execute(
+                "SELECT description, city, tripstart, tripend, blob, modifieddate FROM trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
             return None
-        
+
         rows = c.fetchall()
         if len(rows) == 0:
+            c.close()
             return None
         result = rows[0]
-        
-        c.close()
-        return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), bytes(result[5]), bytes(result[6]), result[7].tobytes(), datetotz(result[8]))
 
-    def update_calendar(self):
+        c.close()
+        return (result[0], result[1], datetotz(result[2]), datetotz(result[3]), bytes(result[4]), datetotz(result[5]))
+
+    def patch_trip(self, uuid_r, payload):
+        c = self.__conn.cursor()
+
+        (description, city, tripstart, tripend, blob) = payload
+
+        try:
+            c.execute("UPDATE trip SET description = %s, city = %s, tripstart = %s, tripend = %s, blob = %s, modifieddate = now() WHERE uuid = %s;",
+                      (description, city, tztodate(tripstart), tztodate(tripend), blob, uuid_r))
+        except Exception as e:
+            print(e)
+            c.close()
+            raise e
+
+        c.close()
+        self.__conn.commit()
+        return
+
+    def delete_trip(self, uuid_r):
         # TODO
+        # Delete all entries in user_trip
+        # And then delete all entries in trip
         pass
 
-    def retrieve_calendars(self, email, orderby=None):
+
+    # List all trips information
+    def retrieve_trips(self, email, orderby=None):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute(
+                "SELECT trip.description, trip.city, trip.tripstart, trip.tripend, trip.modifieddate, trip.tripid, user_trip.permission FROM trip, user_trip WHERE trip.tripid = user_trip.tripid AND user_trip.email = %s;", (email,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+
+        rows = c.fetchall()
+
+        trips = []
+        for detail in rows:
+            dets = {
+                "description": detail[0],
+                "city": detail[1],
+                "tripstart": datetotz(detail[2]),
+                "tripend": datetotz(detail[3]),
+                "modifieddate": datetotz(detail[4]),
+                "uuid": detail[5],
+                "permission": detail[6]
+            }
+            trips.append(dets)
+        return trips
+
+    # Trip-User relation
+    # Authorization assertion is done under check_permission that needs to be called before these functions
+    def post_user_trip(self, email, uuid_r, permission):
         # TODO
-        # Returns all (calendarid, description, location, tripstart, tripend) of user with email email
+        # POST
+        # 0 as owner
+        # 1 as admin
+        # 2 as editor
+        # 3 as viewer
+        pass
+
+    def delete_user_trip(self, email, uuid_r):
+        # TODO
+        # DELETE
+        pass
+
+    def patch_user_trip(self, email, uuid_r):
+        # TODO
+        # PATCH
+        pass
+
+    def get_user_trip(self, uuid_r):
+        # TODO
+        # GET
         pass
 
 
@@ -260,7 +375,7 @@ def getrand_uuid(curs):
 
     while count:
         uuid_r = str(uuid.uuid4())
-        curs.execute("SELECT COUNT(*) FROM calendars WHERE calendarid = %s;", (uuid_r,))
+        curs.execute("SELECT COUNT(*) FROM trip WHERE tripid = %s;", (uuid_r,))
         rows = curs.fetchall()
         count = rows[0][0]
 
