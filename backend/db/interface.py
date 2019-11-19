@@ -272,7 +272,8 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("DELETE FROM trip WHERE uuid = %s;", (uuid_r,))
+            c.execute("DELETE FROM user_trip WHERE tripid = %s;", (uuid_r,))
+            c.execute("DELETE FROM trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
