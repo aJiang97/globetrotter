@@ -108,3 +108,26 @@ class Logout(Resource):
             abort(403, 'Bearer token mismatch. Your token is invalid and you should be signed out from your account')
 
         return
+
+@auth.route('/getuser', strict_slashes=False)
+class Getuser(Resource):
+    @auth.response(200, 'Success')
+    @auth.response(400, 'Malformed request. Missing email')
+    @auth.response(409, 'User not found.')
+    @auth.expect(MODEL_getuser_expect)
+    @auth.doc(desciption='')
+    def post(self):
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
+        
+        email = request.get_json().get('email')
+
+        if email is None:
+            abort(400, 'Malformed request, missing email')
+
+        if db.available_email(email):
+            abort(409, 'User not found.')
+        
+        return {
+            "displayname": db.get_displayname(email)
+        }
