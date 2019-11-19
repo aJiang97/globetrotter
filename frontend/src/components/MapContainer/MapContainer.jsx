@@ -41,8 +41,13 @@ export class MapContainer extends React.Component {
         style={style}
         zoom={12}
         disableDefaultUI= {true}
+        // This is Sydney centre coordinates
+        initialCenter={{
+          lat: -33.8708,
+          lng: 151.2073
+        }}
       >
-      {/* {this.props.locations.map((loc,key) => (
+      {this.props.locations.map((loc,key) => (
           <Marker
             key={key}
             onClick={this.onMarkerClick}
@@ -52,16 +57,16 @@ export class MapContainer extends React.Component {
             }}
             name={loc.foursquare.venue_name} 
           >
-            <InfoWindow
+            {/* <InfoWindow
               marker={this.state.activeMarker}
               visible={this.state.showingInfoWindow}
             >
               <div>
                 <h1>{this.state.selectedPlace.name}</h1>
               </div>
-            </InfoWindow>
+            </InfoWindow> */}
           </Marker>
-      ))} */}
+      ))}
       </Map>
     )
   }

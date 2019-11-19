@@ -124,11 +124,11 @@ export class PureTripView extends React.Component {
             />
           </Grid>
           <Grid container item xs={6}>
-            {/* {this.state.itinerary} */}
-            {/* console.log({this.state.itinerary}) */}
-            <MapContainer
-              locations={this.state.currentDateItinerary}
-            />
+            {this.state.dates && this.state.currentDateItinerary && (
+              <MapContainer
+                locations={this.state.currentDateItinerary}
+              />
+            )}
           </Grid>
         </Grid>
       </div>
