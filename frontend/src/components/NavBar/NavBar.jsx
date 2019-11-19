@@ -14,6 +14,7 @@ import { styles } from "./styles";
 import history from "../../history";
 import { UserContext } from "../../UserContext";
 import { LoginModal, RegisterModal } from "../forms";
+import APIClient from "../../api/apiClient";
 
 import logo from "../../assets/logo-no-text-white.png";
 
@@ -56,8 +57,13 @@ class PureNavBar extends React.Component {
 
   handleUserLogOut = () => {
     this.handleMenuClose();
-    this.context.logOut();
-    history.push("/home");
+    this.apiClient = new APIClient();
+    this.apiClient
+      .logoutUser(this.context.user.email, this.context.user.token)
+      .then(data => {
+        this.context.logOut();
+        history.push("/home");
+      });
   };
 
   getInitial = name => {
@@ -106,8 +112,7 @@ class PureNavBar extends React.Component {
             {this.context.user ? (
               <div className={classes.account}>
                 <Fab size="small" color="secondary">
-                  {/* {this.getInitial(this.context.user.name)} */}
-                  AY
+                  {this.getInitial(this.context.user.name)}
                 </Fab>
                 <Button
                   edge="end"
@@ -115,7 +120,7 @@ class PureNavBar extends React.Component {
                   onClick={this.handleProfileMenuOpen}
                 >
                   <Typography variant="button" className={classes.name}>
-                    My Profile
+                    {this.context.user.name}
                   </Typography>
                 </Button>
               </div>

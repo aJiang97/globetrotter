@@ -63,7 +63,13 @@ class PureCalendarGrid extends React.Component {
   }
 
   getTypes = types => {
-    return Object.keys(types).filter(type => type === true);
+    var result = [];
+    for (let value of Object.keys(types)) {
+      if (types[value]) {
+        result.push(value);
+      }
+    }
+    return result;
   };
 
   onLayoutChange(layout, layouts) {
@@ -123,7 +129,7 @@ class PureCalendarGrid extends React.Component {
                   type={this.getTypes(item.foursquare.location_types)}
                   media={item.foursquare.pictures[0]}
                   suggestedTime={item.suggestedTime}
-                  rating={item.google.rating.toFixed(2)}
+                  rating={item.google.rating}
                 />
               </div>
             ))}

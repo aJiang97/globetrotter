@@ -1,14 +1,13 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { styles } from "./styles";
+import { Button, TextField, Typography } from "@material-ui/core";
 
-import {
-  CalendarGrid,
-  DateTabs,
-  NavBar,
-} from "../../components";
+import { styles } from "./styles";
+import { CalendarGrid, DateTabs, NavBar } from "../../components";
+import { SaveMessage } from "./SaveMessage";
 import APIClient from "../../api/apiClient";
-import { Typography } from "@material-ui/core";
+import { UserContext } from "../../UserContext";
+
 export class PureTripView extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +15,10 @@ export class PureTripView extends React.Component {
       currentDateItinerary: null,
       itinerary: null,
       travelTimes: null,
-      dates: null
+      dates: null,
+      isEditableTitle: false,
+      title: "",
+      saved: false,
     };
   }
 
@@ -66,34 +68,118 @@ export class PureTripView extends React.Component {
     });
   };
 
+  handleEditableTitle = () => {
+    this.setState({
+      isEditableTitle: true
+    });
+  };
+
+  handleNonEditableTitle = () => {
+    this.setState({
+      isEditableTitle: false
+    });
+  };
+
+  handleChangeTitle = e => {
+    this.setState({
+      title: e.target.value,
+    });
+  };
+
+  handleCloseSaveMessage = e => {
+    this.setState({
+      saved: false
+    })
+  }
+ 
+  handleSaveItinerary = () => {
+    this.apiClient = new APIClient();
+    const urlParams = new URLSearchParams(window.location.search);
+    const city = urlParams.get("location").replace("_"," ");
+    const start = this.state.dates[0];
+    const end = this.state.dates[this.state.dates.length - 1];
+    const description = this.state.title;
+    this.apiClient
+      .saveItinerary(
+        this.context.user.token,
+        description,
+        city,
+        start,
+        end,
+        this.props.places,
+        this.state.itinerary
+      )
+      .then(data => {
+        var user = this.context.user;
+        this.apiClient.getAllTrips(this.context.user.token).then((data) => {
+          user.trips = data.trips
+          this.context.logIn(user);
+          this.setState({
+            saved: true
+          })
+        })
+      })
+  }
+
   componentDidMount = () => {
-    if (this.props.places) {
-      this.apiClient = new APIClient();
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get("uuid");
+    this.apiClient = new APIClient();
+    var placeToIndex = {};
+    if (uuid) {
+      this.apiClient
+        .getItineraryDetail(this.context.user.token, uuid)
+        .then(detail => {
+          const placeIDs = detail.blob.places
+            .map(place => `place_id:${place.google.place_id}`)
+            .join("|");
+          detail.blob.places.map(
+            (location, i) => (placeToIndex[location.google.place_id] = i)
+          );
+          this.apiClient.generateItinerary(placeIDs).then(data => {
+            this.setState({
+              title: detail.info.description,
+              itinerary: detail.blob.orderedPlaces,
+              dates: this.getDates(),
+              currentDateItinerary: this.getCurrentDateItinerary(
+                detail.blob.orderedPlaces,
+                0,
+                this.getDates().length
+              ),
+              placeToIndex: placeToIndex,
+              travelTimes: data.travel_matrix
+            });
+          });
+        });
+    } else if (this.props.places) {
+      const location = urlParams.get("location").replace("_", " ");
       const placeIDs = this.props.places
         .map(place => `place_id:${place.google.place_id}`)
         .join("|");
-      this.apiClient.generateItinerary(placeIDs).then(data =>
-        //set state based on data
-        {
-          const detailedPath = this.props.places
-            .map((place, i) => ({
-              ...place,
-              order: data.path[i][place.google.place_id],
-              suggestedTime: 45
-            }))
-            .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-          this.setState({
-            itinerary: detailedPath,
-            dates: this.getDates(),
-            currentDateItinerary: this.getCurrentDateItinerary(
-              detailedPath,
-              0,
-              this.getDates().length
-            ),
-            travelTimes: data.travel_matrix
-          });
-        }
+      this.props.places.map(
+        (location, i) => (placeToIndex[location.google.place_id] = i)
       );
+      this.apiClient.generateItinerary(placeIDs).then(data => {
+        const detailedPath = this.props.places
+          .map((place, i) => ({
+            ...place,
+            order: data.path[i][place.google.place_id],
+            suggestedTime: 45
+          }))
+          .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+        this.setState({
+          title: `Your Trip to ${location}`,
+          itinerary: detailedPath,
+          dates: this.getDates(),
+          currentDateItinerary: this.getCurrentDateItinerary(
+            detailedPath,
+            0,
+            this.getDates().length
+          ),
+          placeToIndex: placeToIndex,
+          travelTimes: data.travel_matrix
+        });
+      });
     }
   };
 
@@ -102,9 +188,38 @@ export class PureTripView extends React.Component {
     return (
       <div className={classes.container}>
         <NavBar />
-        <Typography variant="h2" className={classes.title}>
-          Your Trip to
-        </Typography>
+        {this.state.isEditableTitle ? (
+          <TextField
+            InputProps={{
+              classes: {
+                input: classes.resize
+              }
+            }}
+            onBlur={this.handleNonEditableTitle}
+            onChange={this.handleChangeTitle}
+            onMouseOut={this.handleNonEditableTitle}
+            value={this.state.title}
+            className={classes.title}
+          />
+        ) : (
+          <Typography
+            variant="h2"
+            className={classes.title}
+            onMouseOver={this.handleEditableTitle}
+          >
+            {this.state.title}
+          </Typography>
+        )}
+        {this.context.user && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.saveButton}
+            onClick={this.handleSaveItinerary}
+          >
+            Save
+          </Button>
+        )}
         {this.state.dates && (
           <DateTabs
             tabLabels={this.state.dates}
@@ -114,11 +229,14 @@ export class PureTripView extends React.Component {
         <CalendarGrid
           itinerary={this.state.currentDateItinerary}
           travelTimes={this.state.travelTimes}
-          placeToIndex={this.props.placeToIndex}
+          placeToIndex={this.state.placeToIndex}
         />
+        <SaveMessage open={this.state.saved} onClose={this.handleCloseSaveMessage}/>
       </div>
     );
   }
 }
+
+PureTripView.contextType = UserContext;
 
 export const TripView = withStyles(styles)(PureTripView);

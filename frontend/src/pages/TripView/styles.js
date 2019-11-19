@@ -3,7 +3,8 @@ import { createStyles } from "@material-ui/core/styles";
 export const styles = createStyles(theme => ({
   title: {
     fontFamily: "Roboto",
-    marginBottom: "20px"
+    marginBottom: "20px",
+    width: "80%"
   },
   container: {
     margin: "100px 10%",
@@ -14,7 +15,19 @@ export const styles = createStyles(theme => ({
     marginTop: "500px"
   },
   itinerary: {
-    // backgroundColor: "green",
     paddingTop: "30px"
+  },
+  saveButton: {
+    position: "absolute",
+    top: 118,
+    right: 150
+  },
+  resize: {
+    fontSize: 57,
+    fontWeight: "bold"
+  },
+  captionContainer: {},
+  green: {
+    color: "green"
   }
 }));

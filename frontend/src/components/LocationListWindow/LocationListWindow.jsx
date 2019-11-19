@@ -40,7 +40,7 @@ class PureLocationListWindow extends React.Component {
                 {location.foursquare.venue_name}
               </Typography>
               <Typography variant="caption" color="textSecondary" component="p">
-                {this.props.getTypes(location.foursquare.location_types)}
+                {this.props.getTypes(location.foursquare.location_types).join(", ")}
               </Typography>
             </CardContent>
           </Card>
