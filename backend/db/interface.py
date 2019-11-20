@@ -325,6 +325,8 @@ class DB:
         try:
             c.execute("INSERT INTO user_trip (email, tripid, permission) VALUES (%s, %s, %s);", (email, uuid_r, permission))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -339,6 +341,8 @@ class DB:
         try:
             c.execute("DELETE FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -352,6 +356,8 @@ class DB:
         try:
             c.execute("UPDATE user_trip SET permission = %s WHERE email = %s AND tripid = %s;", (permission, email, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
