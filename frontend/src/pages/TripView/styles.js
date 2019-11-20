@@ -42,5 +42,22 @@ export const styles = createStyles(theme => ({
   },
   green: {
     color: "green"
+  },
+  underline: {
+    "&:before": {
+      borderBottom: "1px solid white !important"
+    },
+    "&:after": {
+      borderBottom: `2px solid white !important`
+    },
+    "&:hover:not($disabled):not($focused):not($error):before": {
+      borderBottom: `2px solid white !important`
+    }
+  },
+  datesContainer: {
+    display: "grid",
+    gridTemplateColumns: "0.5fr 1fr 0.5fr 1fr",
+    width: "45%",
+    alignItems: "baseline"
   }
 }));
