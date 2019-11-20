@@ -363,7 +363,7 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT email, permission FROM user_trip WHERE tripid = %s;", (uuid_r,))
+            c.execute("SELECT user_trip.email, user_trip.permission, creds.displayname FROM user_trip INNER JOIN creds ON user_trip.email = creds.email WHERE user_trip.tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
@@ -375,8 +375,10 @@ class DB:
         for result in rows:
             user = {
                 "email": result[0],
-                "permission": result[1]
+                "permission": result[1],
+                "displayname": result[2]
             }
+            users.append(user)
 
         c.close()
         return users
