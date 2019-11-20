@@ -43,7 +43,7 @@ export class PureUserHome extends React.Component {
     this.setState({
       trips: this.context.user.trips
         .map(trip => {
-          const iso2 = this.getISO2(trip.city);
+          const iso2 = this.getISO2(trip.city.split(",")[0]);
           return {
             ...trip,
             iso2: iso2,
