@@ -20,6 +20,7 @@ export class PureTripView extends React.Component {
       isAddUserOpen: false,
       title: "",
       saved: false,
+      users: []
     };
   }
 
@@ -160,6 +161,12 @@ export class PureTripView extends React.Component {
             });
           });
         });
+
+        // this.apiClient
+        //   .getUsersOnTrip(this.context.user.token, uuid)
+        //   .then(response => {
+        //     alert(response);
+        // });
     } else if (this.props.places) {
       const location = urlParams.get("location").replace("_", " ");
       const placeIDs = this.props.places
@@ -220,10 +227,7 @@ export class PureTripView extends React.Component {
           </Typography>
         )}
 
-        {/* Add Users Row Here */}
-        <UsersRow users={[]} handleAdd={this.openAddUserModal}/>
-
-
+        <UsersRow users={this.state.users} handleAdd={this.openAddUserModal}/>
         {this.context.user && (
           <Button
             variant="contained"

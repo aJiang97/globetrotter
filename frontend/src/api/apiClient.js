@@ -30,6 +30,11 @@ class APIClient {
     return this.perform("post", `/auth/logout`, data);
   }
 
+  getUser(email, token) {
+    const data = { email: email, token: token };
+    return this.perform("get", `/auth/getuser`, data);
+  }
+
   generateItinerary(places) {
     return this.perform("post", `routing/itinerary`, { place_id: places });
   }
@@ -56,6 +61,10 @@ class APIClient {
 
   getItineraryDetail(token, uuid) {
     return this.perform("get", `trip?uuid=${uuid}`, "", token);
+  }
+
+  getUsersOnTrip(token, uuid) {
+    return this.perform("get", `trip/user?uuid=${uuid}`, "", token);
   }
 
   async perform(method, resource, data, token) {

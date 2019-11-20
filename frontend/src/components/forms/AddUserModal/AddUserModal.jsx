@@ -11,8 +11,7 @@ import { Close } from "@material-ui/icons";
 
 import { styles } from "./styles";
 import APIClient from "../../../api/apiClient.js";
-import { encrypt } from "../../../utils/encrypt-decrypt";
-import history from "../../../history";
+import { UserContext } from "../../../UserContext";
 
 class PureAddUserModal extends React.Component {
   constructor(props) {
@@ -47,7 +46,13 @@ class PureAddUserModal extends React.Component {
     e.preventDefault();
     console.log("Form submitted");
     console.log(formData)
-    // this.apiClient = new APIClient();
+    
+    this.apiClient = new APIClient();
+    this.apiClient
+      .getUser(formData.email, this.context.user.token)
+      .then(response => {
+        alert(response);
+      })
     // this.apiClient
     //   .loginUser(formData.email.data, encryptedPassword)
     //   .then(resp => {
@@ -123,5 +128,7 @@ class PureAddUserModal extends React.Component {
     );
   }
 }
+
+PureAddUserModal.contextType = UserContext;
 
 export const AddUserModal = withStyles(styles)(PureAddUserModal);
