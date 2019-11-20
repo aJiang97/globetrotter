@@ -55,6 +55,10 @@ class APIClient {
     return this.perform("post", `trip`, data, token);
   }
 
+  deleteTrip(token, uuid) {
+    return this.perform("delete", `trip?uuid=${uuid}`, "", token);
+  }
+
   getAllTrips(token) {
     return this.perform("get", `trip/all`, "", token);
   }

@@ -54,18 +54,20 @@ class PureLocationCard extends React.Component {
             )}
             <div className={classes.typesContainer}>
               {location.foursquare.location_types &&
-                this.getTypes(location.foursquare.location_types).map(type => (
-                  <div className={classes.typeContainer}>
-                    <CheckBox fontSize="small" />
-                    <Typography
-                      variant="subtitle1"
-                      color="textSecondary"
-                      component="p"
-                    >
-                      {type}
-                    </Typography>
-                  </div>
-                ))}
+                this.getTypes(location.foursquare.location_types).map(
+                  (type, key) => (
+                    <div key={key} className={classes.typeContainer}>
+                      <CheckBox fontSize="small" />
+                      <Typography
+                        variant="subtitle1"
+                        color="textSecondary"
+                        component="p"
+                      >
+                        {type}
+                      </Typography>
+                    </div>
+                  )
+                )}
             </div>
           </CardContent>
         </CardActionArea>

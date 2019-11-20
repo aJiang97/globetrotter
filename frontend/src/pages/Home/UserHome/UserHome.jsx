@@ -54,6 +54,7 @@ export class PureUserHome extends React.Component {
         .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
     });
   };
+
   render() {
     const { classes } = this.props;
     return (
@@ -70,8 +71,7 @@ export class PureUserHome extends React.Component {
             </Typography>
             <div style={{ display: "flex", flexDirection: "row" }}>
               <Fab
-                variant="contained"
-                color="white"
+                variant="round"
                 onClick={() => {
                   history.push("/trip");
                 }}
@@ -79,7 +79,16 @@ export class PureUserHome extends React.Component {
                 <Add />
               </Fab>
               <Typography variant="h5" className={classes.subheading}>
-                Plan a new trip
+                <Link
+                  component="button"
+                  variant="h5"
+                  color="inherit"
+                  onClick={() => {
+                    history.push("/trip");
+                  }}
+                >
+                  Plan a new trip
+                </Link>
               </Typography>
             </div>
             <div className={classes.cardContainer}>

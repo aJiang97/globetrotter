@@ -23,11 +23,11 @@ class Signup(Resource):
             abort(400, 'Malformed request, format is not application/json')
 
         content = request.get_json()
-        email = content['email']
-        hashedpw = content['hashedpw']
-        displayname = content['displayname']
+        email = content.get('email')
+        hashedpw = content.get('hashedpw')
+        displayname = content.get('displayname')
 
-        if email is None or hashedpw is None:
+        if email is None or hashedpw is None or displayname is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
 
         if not db.available_email(email):
@@ -53,8 +53,8 @@ class Login(Resource):
             abort(400, 'Malformed request, format is not application/json')
 
         content = request.get_json()
-        email = content['email']
-        hashedpw = content['hashedpw']
+        email = content.get('email')
+        hashedpw = content.get('hashedpw')
 
         if email is None or hashedpw is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
