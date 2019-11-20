@@ -46,6 +46,8 @@ class DB:
             c.execute("INSERT INTO creds (email, hashedpw, displayname) VALUES (%s, %s, %s);",
                       (email, hashedpw, displayname))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -135,6 +137,8 @@ class DB:
             c.execute("UPDATE creds SET token = %s WHERE email = %s;",
                       (token, email))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -168,6 +172,8 @@ class DB:
             c.execute(
                 "UPDATE creds SET token = NULL WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -185,6 +191,8 @@ class DB:
             c.execute("INSERT INTO photos (photo_reference, photo_link) VALUES (%s, %s);",
                       (photo_reference, photo_link))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -241,6 +249,8 @@ class DB:
             c.execute(
                 "INSERT INTO user_trip (email, tripid, permission) VALUES (%s, %s, 0)", (email, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -278,6 +288,8 @@ class DB:
             c.execute("UPDATE trip SET description = %s, city = %s, tripstart = %s, tripend = %s, blob = %s, modifieddate = now() WHERE uuid = %s;",
                       (description, city, tztodate(tripstart), tztodate(tripend), blob, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -290,7 +302,8 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("DELETE FROM trip WHERE uuid = %s;", (uuid_r,))
+            c.execute("DELETE FROM user_trip WHERE tripid = %s;", (uuid_r,))
+            c.execute("DELETE FROM trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
@@ -342,6 +355,8 @@ class DB:
         try:
             c.execute("INSERT INTO user_trip (email, tripid, permission) VALUES (%s, %s, %s);", (email, uuid_r, permission))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -356,6 +371,8 @@ class DB:
         try:
             c.execute("DELETE FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -363,12 +380,14 @@ class DB:
         c.close()
         self.__conn.commit()
 
-    def patch_user_trip(self, email, uuid_r):
+    def patch_user_trip(self, email, uuid_r, permission):
         c = self.__conn.cursor()
 
         try:
             c.execute("UPDATE user_trip SET permission = %s WHERE email = %s AND tripid = %s;", (permission, email, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -380,7 +399,7 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT displayname FROM creds, email, permission FROM user_trip WHERE tripid = %s;", (uuid_r,))
+            c.execute("SELECT user_trip.email, user_trip.permission, creds.displayname FROM user_trip INNER JOIN creds ON user_trip.email = creds.email WHERE user_trip.tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
@@ -391,9 +410,9 @@ class DB:
         users = []
         for result in rows:
             user = {
-                "displayname": result[0],
-                "email": result[1],
-                "permission": result[2]
+                "email": result[0],
+                "permission": result[1],
+                "displayname": result[2]
             }
             users.append(user)
 
@@ -431,6 +450,22 @@ class DB:
         perm = rows[0][0]
         c.close()
         return perm
+
+    def exist_email(self, email):
+        c = self.__conn.cursor()
+
+        try:
+            c.execute("SELECT COUNT(*) FROM creds WHERE email = %s;", (email,))
+        except Exception as e:
+            print(e)
+            c.close()
+            return None
+        
+        rows = c.fetchall()
+
+        exist = rows[0][0]
+        c.close()
+        return (exist == 1)
 
 
 # Python is so bad that it needs to be dependent to third party package to parse a standardized datetime format...
