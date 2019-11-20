@@ -242,6 +242,7 @@ MODEL_auth_token = api.model('auth_token', {
 
 
 MODEL_trip_user = api.model('trip_user', {
+    "displayname": fields.String(description="Display Name of the invited user"),
     "email": fields.String(description='Email of the invited user'),
     "permission": at_mod_permission
 })

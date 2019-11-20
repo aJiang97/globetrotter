@@ -380,7 +380,7 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT email, permission FROM user_trip WHERE tripid = %s;", (uuid_r,))
+            c.execute("SELECT displayname FROM creds, email, permission FROM user_trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
             print(e)
             c.close()
@@ -391,9 +391,11 @@ class DB:
         users = []
         for result in rows:
             user = {
-                "email": result[0],
-                "permission": result[1]
+                "displayname": result[0],
+                "email": result[1],
+                "permission": result[2]
             }
+            users.append(user)
 
         c.close()
         return users
