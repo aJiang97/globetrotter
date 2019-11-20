@@ -59,6 +59,31 @@ class APIClient {
     return this.perform("delete", `trip?uuid=${uuid}`, "", token);
   }
 
+  updateItinerary(
+    token,
+    uuid,
+    description,
+    city,
+    start,
+    end,
+    places,
+    orderedPlaces
+  ) {
+    const data = {
+      info: {
+        description: description,
+        city: city,
+        tripstart: start,
+        tripend: end
+      },
+      blob: {
+        places: places, // original places passed to routing endpoint
+        orderedPlaces: orderedPlaces // the orderedPlaces from routing endpoint
+      }
+    };
+    return this.perform("patch", `trip?uuid=${uuid}`, data, token);
+  }
+
   getAllTrips(token) {
     return this.perform("get", `trip/all`, "", token);
   }

@@ -8,7 +8,7 @@ import {
   IconButton
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { RemoveCircleOutline } from "@material-ui/icons";
 import { styles } from "./styles";
 import { StarRating } from "../../components/StarRating";
 
@@ -28,53 +28,31 @@ import { StarRating } from "../../components/StarRating";
  * }
  */
 class PureItineraryLocationCard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expanded: null
-    };
-  }
-
-  handleExpandClick = () => {
-    this.setState(state => ({
-      expanded: !state.expanded
-    }));
-  };
-
   render() {
-    const { classes } = this.props;
+    const { classes, onDelete } = this.props;
     return (
       <Card className={classes.card} raised>
         <Grid container>
-          {/* Time Section */}
-          <Grid item md={2}>
-            <CardContent className={classes.timeColumn}>
-              <div className={classes.suggestion}>
-                <Typography className={classes.suggested}>
-                  Suggested:
-                </Typography>
-                <Typography className={classes.suggestedTime}>
-                  {this.props.suggestedTime}
-                </Typography>
-              </div>
-            </CardContent>
-          </Grid>
-
           {/* Photo Section */}
-          <Grid item md={4}>
+          <Grid item md={5}>
             <CardMedia className={classes.media} image={this.props.media} />
           </Grid>
 
           {/* Content Section */}
-          <Grid item md={6}>
+          <Grid item md={7}>
             <CardContent className={classes.cardContent}>
-              <IconButton className={classes.moreButton}>
-                <MoreVertIcon />
+              <IconButton
+                className={classes.removeButton}
+                onClick={() => onDelete(this.props.id)}
+              >
+                <RemoveCircleOutline />
               </IconButton>
               <Typography variant="h3" className={classes.venueName}>
                 {this.props.title}
               </Typography>
-              {this.props.rating && <StarRating value={this.props.rating.toFixed(2)} /> }
+              {this.props.rating && (
+                <StarRating value={this.props.rating.toFixed(2)} />
+              )}
               <Typography
                 className={classes.venueType}
                 variant="subtitle1"
