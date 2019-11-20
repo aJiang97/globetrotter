@@ -101,7 +101,7 @@ class DB:
         c = self.__conn.cursor()
 
         try:
-            c.execute("SELECT displayname FROM creds WHERE email =", email)
+            c.execute("SELECT displayname FROM creds WHERE email = %s;", (email,))
         except Exception as e:
             print(e)
             c.close()
@@ -109,7 +109,7 @@ class DB:
         
         rows = c.fetchall()
         c.close()
-        return None if len(rows == 0) else rows[0][0]
+        return None if len(rows) == 0 else rows[0][0]
 
     def available_token(self, token):
         c = self.__conn.cursor()

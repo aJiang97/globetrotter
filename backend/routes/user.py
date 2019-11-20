@@ -24,10 +24,12 @@ class Search(Resource):
             abort(400, 'Required email field is empty')
 
         exist = db.exist_email(email)
+        username = db.get_username(email)
 
         if exist is None:
             abort(500, 'Database screwed up')
         
         return {
-            "exist": exist
+            "exist": exist,
+            "displayname": username
         }

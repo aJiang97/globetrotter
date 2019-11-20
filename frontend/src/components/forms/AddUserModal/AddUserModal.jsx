@@ -42,46 +42,69 @@ class PureAddUserModal extends React.Component {
     });
   };
 
-  handleSubmit = (e, formData, onSubmit, onClose) => {
+  handleSubmit = (e, formData, isUserOnTrip, onSubmit, onClose) => {
     e.preventDefault();
     console.log("Form submitted");
-    console.log(formData)
+    console.log(formData);
+    console.log(formData.email);
+    console.log(this.context.user.token);
     
     this.apiClient = new APIClient();
     this.apiClient
-      .getUser(formData.email, this.context.user.token)
+      .getUser(formData.email.data, this.context.user.token)
       .then(response => {
-        alert(response);
+        if (!response.exist) {
+          this.setState({
+            formData: {
+              ...formData,
+              email: {
+                ...formData.email,
+                error: "User does not exist."
+              }
+            }
+          });
+        } else {
+          // Make sure that user is not already on the trip
+          if (isUserOnTrip(formData.email.data)) {
+            this.setState({
+              formData: {
+                ...formData,
+                email: {
+                  ...formData.email,
+                  error: "User is already added on this trip."
+                }
+              }
+            });
+          } else {
+            this.setState({
+              formData: {
+                ...formData,
+                email: {
+                  ...formData.email,
+                  error: undefined
+                }
+              }
+            });
+  
+            onSubmit({
+              email: formData.email.data,
+              displayname: response.displayname
+            });
+  
+            onClose();
+          }
+        }
       })
-    // this.apiClient
-    //   .loginUser(formData.email.data, encryptedPassword)
-    //   .then(resp => {
-    //     if (resp === 403) {
-    //       this.setState({ success: false });
-    //     } else {
-    //       onSubmit({
-    //         name: resp.displayname,
-    //         token: resp.token,
-    //         email: formData.email.data,
-    //         password: encryptedPassword,
-    //         trips: resp.trips
-    //       });
-    //       onClose();
-    //       if (window.location.pathname === "/home") {
-    //         history.push("/home");
-    //       }
-    //     }
-    //   });
   };
 
   render() {
-    const { classes, onClose, onSubmit } = this.props;
+    const { classes, isUserOnTrip, onClose, onSubmit } = this.props;
     const { formData } = this.state;
     const { formConfig } = this;
     return (
       <React.Fragment>
         <div className={classes.darkBackdrop} onClick={onClose} />
-        <form onSubmit={e => this.handleSubmit(e, formData, onSubmit, onClose)}>
+        <form onSubmit={e => this.handleSubmit(e, formData, isUserOnTrip, onSubmit, onClose)}>
           <Paper className={classes.modal}>
             <Typography variant="h5" className={classes.title}>
               Add User to Trip

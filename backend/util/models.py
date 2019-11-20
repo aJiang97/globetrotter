@@ -266,5 +266,6 @@ MODEL_search_user = api.model('search_user', {
 })
 
 MODEL_search_user_result = api.model('search_user_result', {
-    "found": fields.Boolean()
+    "found": fields.Boolean(),
+    "displayname": fields.String(description='Display name')
 })
