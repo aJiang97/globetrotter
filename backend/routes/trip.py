@@ -185,6 +185,9 @@ class UserTrip(Resource):
         if requester_email is None or permission is None:
             abort(400, "Bad request")
 
+        if requester_email == email:
+            abort(403, "You can't add permission to your own email")
+
         if not isinstance(permission, int):
             abort(400, "Permission is not integer")
         
@@ -194,7 +197,7 @@ class UserTrip(Resource):
         try:
             db.post_user_trip(requester_email, uuid_r, permission)
         except Exception as e:
-            abort(400, "Bad request: " + e)
+            abort(400, "Bad request: " + str(e))
 
         return
 
@@ -223,7 +226,7 @@ class UserTrip(Resource):
         try:
             db.delete_user_trip(requester_email, uuid_r)
         except Exception as e:
-            abort(400, "Bad request: " + e)
+            abort(400, "Bad request: " + str(e))
 
         return
 
@@ -251,6 +254,9 @@ class UserTrip(Resource):
         if requester_email is None or permission is None:
             abort(400, "Bad request")
 
+        if requester_email == email:
+            abort(403, "You are not allowed to modify your own permission")
+
         if not isinstance(permission, int):
             abort(400, "Permission is not integer")
         
@@ -260,7 +266,7 @@ class UserTrip(Resource):
         try:
             db.patch_user_trip(requester_email, uuid_r, permission)
         except Exception as e:
-            abort(400, "Bad request: " + e)
+            abort(400, "Bad request: " + str(e))
 
         return
 
