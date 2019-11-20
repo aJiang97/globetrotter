@@ -51,7 +51,7 @@ export class UserAvatar extends React.Component {
                     {/* Owner cannot delete himself from the trip */}
                     <Badge badgeContent={<Close style={{fontSize: "10px"}}/>} color="secondary" 
                         onClick={() => handleRemove(user.email)}
-                        invisible={!this.currentUserCanRemove(currentUser) || user.permission === 0 || this.state.hover}>
+                        invisible={!this.currentUserCanRemove(currentUser) || user.permission === 0 || user.permission === 1 || this.state.hover}>
                         <Avatar style={{backgroundColor: color}}>
                             {this.getInitials(user.displayname)}
                         </Avatar>
