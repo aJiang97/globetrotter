@@ -12,9 +12,12 @@ export class PureTripView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      uuid: null,
       currentDateItinerary: null,
       itinerary: null,
       travelTimes: null,
+      startDate: null,
+      endDate: null,
       dates: null,
       isEditableTitle: false,
       isAddUserOpen: false,
@@ -22,16 +25,16 @@ export class PureTripView extends React.Component {
       saved: false,
       users: [],
       deleted: false,
-      redirect: false
+      redirect: false,
+      dateIndex: 0
     };
     this.apiClient = new APIClient();
   }
 
-  getDates = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    var startDate = new Date(urlParams.get("start_date"));
-    var endDate = new Date(urlParams.get("end_date"));
+  getDates = (start, end) => {
     var dates = [];
+    const startDate = new Date(start)
+    const endDate = new Date(end)
     var curDate = startDate;
     while (curDate <= endDate) {
       dates.push(curDate.toString().slice(4, 15));
@@ -44,6 +47,7 @@ export class PureTripView extends React.Component {
 
   setDateIndex = index => {
     this.setState({
+      dateIndex: index,
       currentDateItinerary: this.getCurrentDateItinerary(
         this.state.itinerary,
         index,
@@ -52,24 +56,49 @@ export class PureTripView extends React.Component {
     });
   };
 
-  getDetailedPath = path => {
-    var detailedPath = [];
-    for (var i = 0; i < path.length; i++) {
-      for (var j = 0; j < this.props.places; j++) {
-        if (
-          JSON.stringify(path[i]) ===
-          JSON.stringify(this.props.places[j].google.place_id)
-        )
-          detailedPath.push(this.props.places[j]);
-      }
-    }
-    return detailedPath;
-  };
-
   getCurrentDateItinerary = (path, index, period) => {
     const nPlacesPerDate = Math.ceil(path.length / period);
     return path.filter((place, i) => {
       return i < nPlacesPerDate * (index + 1) && i >= nPlacesPerDate * index;
+    });
+  };
+
+  getElementOrder = (path, id) => {
+    for (var i = 0; i < path.length; i++) {
+      if (path[i] === id) {
+        return i;
+      }
+    }
+  };
+
+  handleDeleteLocation = g_id => {
+    const places = this.state.itinerary.filter(
+      place => place.google.place_id !== g_id
+    );
+    const placeToIndex = {};
+    places.map((place, i) => (placeToIndex[place.google.place_id] = i));
+    const placeIDs = places
+      .map(place => `place_id:${place.google.place_id}`)
+      .join("|");
+    this.apiClient = new APIClient();
+    this.apiClient.generateItinerary(placeIDs).then(data => {
+      const detailedPath = places
+        .map((place) => ({
+          ...place,
+          order: this.getElementOrder(data.path, place.google.place_id)
+        }))
+        .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+      this.setState({
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: this.getCurrentDateItinerary(
+          detailedPath,
+          this.state.dateIndex,
+          this.state.dates.length
+        ),
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix
+      });
     });
   };
 
@@ -83,27 +112,47 @@ export class PureTripView extends React.Component {
   }
 
   handleEditableTitle = () => {
-    this.setState({
-      isEditableTitle: true
-    });
+    this.setState({ isEditableTitle: true });
   };
 
   handleNonEditableTitle = () => {
-    this.setState({
-      isEditableTitle: false
-    });
+    this.setState({ isEditableTitle: false });
   };
 
   handleChangeTitle = e => {
-    this.setState({
-      title: e.target.value
-    });
+    this.setState({ title: e.target.value });
   };
 
-  handleCloseSaveMessage = e => {
+  handleStartDateChange = e => {
+    const newDates = this.getDates(e.target.value, this.state.endDate)
+    this.setDateIndex(0)
     this.setState({
-      saved: false
-    });
+      startDate: e.target.value,
+      dates: newDates,
+      currentDateItinerary: this.getCurrentDateItinerary(
+        this.state.itinerary,
+        0,
+        newDates.length
+      ),
+    })
+  }
+
+  handleEndDateChange = e => {
+    const newDates = this.getDates(this.state.startDate, e.target.value)
+    this.setDateIndex(0)
+    this.setState({
+      endDate: e.target.value,
+      dates: newDates,
+      currentDateItinerary: this.getCurrentDateItinerary(
+        this.state.itinerary,
+        0,
+        newDates.length
+      ),
+    })
+  }
+
+  handleCloseSaveMessage = e => {
+    this.setState({ saved: false });
   };
 
   handleCloseDeleteMessage = e => {
@@ -113,10 +162,8 @@ export class PureTripView extends React.Component {
   };
 
   handleDeleteTrip = () => {
-    // this.apiClient = new APIClient();
-    const urlParams = new URLSearchParams(window.location.search);
     this.apiClient
-      .deleteTrip(this.context.user.token, urlParams.get("uuid"))
+      .deleteTrip(this.context.user.token, this.state.uuid)
       .then(data => {
         var user = this.context.user;
         this.apiClient.getAllTrips(this.context.user.token).then(data => {
@@ -126,24 +173,27 @@ export class PureTripView extends React.Component {
         });
         this.id = setTimeout(() => this.setState({ redirect: true }), 5000);
       });
-  };
+  }
 
   handleSaveItinerary = () => {
-    // this.apiClient = new APIClient();
-    const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get("location").replace("_", " ");
-    const start = this.state.dates[0];
-    const end = this.state.dates[this.state.dates.length - 1];
-    const description = this.state.title;
-    this.apiClient
-      .saveItinerary(
-        this.context.user.token,
-        description,
-        city,
-        start,
-        end,
-        this.props.places,
-        this.state.itinerary
+    const { uuid, title, startDate, endDate, places, itinerary, city } = this.state;
+    const {token } = this.context.user;
+    if (uuid) {
+      this.apiClient.updateItinerary(
+        token, uuid, title, city, startDate, endDate, places, itinerary
+      ).then(data => {
+        var user = this.context.user;
+        this.apiClient.getAllTrips(this.context.user.token).then(data => {
+          user.trips = data.trips;
+          this.context.logIn(user);
+          this.setState({
+            saved: true
+          });
+        });
+      })
+    } else {
+      this.apiClient.saveItinerary(
+        token, title, city, startDate, endDate, places, itinerary
       )
       .then(data => {
         var user = this.context.user;
@@ -155,6 +205,7 @@ export class PureTripView extends React.Component {
           });
         });
       });
+    }
   };
 
   handleAddUserToTrip = (user) => {
@@ -214,6 +265,9 @@ export class PureTripView extends React.Component {
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
+    const startDate = urlParams.get("start_date");
+    const endDate = urlParams.get("end_date");
+    const dates = this.getDates(startDate, endDate);
     this.apiClient = new APIClient();
     var placeToIndex = {};
     if (uuid) {
@@ -228,13 +282,18 @@ export class PureTripView extends React.Component {
           );
           this.apiClient.generateItinerary(placeIDs).then(data => {
             this.setState({
+              uuid: uuid,
               title: detail.info.description,
               itinerary: detail.blob.orderedPlaces,
-              dates: this.getDates(),
+              city: detail.info.city,
+              places: detail.blob.places,
+              startDate: startDate,
+              endDate: endDate,
+              dates: dates,
               currentDateItinerary: this.getCurrentDateItinerary(
                 detail.blob.orderedPlaces,
-                0,
-                this.getDates().length
+                this.state.dateIndex,
+                dates.length
               ),
               placeToIndex: placeToIndex,
               travelTimes: data.travel_matrix
@@ -256,18 +315,21 @@ export class PureTripView extends React.Component {
         const detailedPath = this.props.places
           .map((place, i) => ({
             ...place,
-            order: data.path[i][place.google.place_id],
-            suggestedTime: 45
+            order: this.getElementOrder(data.path, place.google.place_id)
           }))
           .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
         this.setState({
           title: `Your Trip to ${location}`,
           itinerary: detailedPath,
-          dates: this.getDates(),
+          city: urlParams.get("location"),
+          places: this.props.places,
+          startDate: startDate,
+          endDate: endDate,
+          dates: dates,
           currentDateItinerary: this.getCurrentDateItinerary(
             detailedPath,
-            0,
-            this.getDates().length
+            this.state.dateIndex,
+            dates.length
           ),
           placeToIndex: placeToIndex,
           travelTimes: data.travel_matrix
@@ -317,6 +379,7 @@ export class PureTripView extends React.Component {
               color="secondary"
               onClick={this.handleDeleteTrip}
               className={classes.DeleteButton}
+              disabled={this.state.uuid === null}
             >
               Delete
             </Button>
@@ -325,13 +388,47 @@ export class PureTripView extends React.Component {
               color="primary"
               onClick={this.handleSaveItinerary}
               className={classes.SaveButton}
+              disabled={this.state.place && this.state.places.length === null}
             >
               Save
             </Button>
           </div>
         )}
+        {this.state.dates &&
+          <div className={classes.datesContainer}>
+            From
+            <TextField
+              type="date"
+              value={this.state.startDate}
+              InputLabelProps={{
+                shrink: true
+              }}
+              InputProps={{
+                classes: {
+                  root: classes.underline
+                }
+              }}
+              onChange={this.handleStartDateChange}
+            />
+            to
+            <TextField
+              type="date"
+              value={this.state.endDate}
+              InputLabelProps={{
+                shrink: true
+              }}
+              InputProps={{
+                classes: {
+                  root: classes.underline
+                }
+              }}
+              onChange={this.handleEndDateChange}
+            />
+          </div>
+        }
         {this.state.dates && (
           <DateTabs
+            activeDate={this.state.dateIndex}
             tabLabels={this.state.dates}
             setDateIndex={this.setDateIndex}
           />
@@ -340,6 +437,7 @@ export class PureTripView extends React.Component {
           itinerary={this.state.currentDateItinerary}
           travelTimes={this.state.travelTimes}
           placeToIndex={this.state.placeToIndex}
+          handleDeleteLocation={this.handleDeleteLocation}
         />
 
         {/* Form for adding users to the trip  */}
@@ -352,13 +450,11 @@ export class PureTripView extends React.Component {
         )}
 
         <AlertMessage
-          type="save"
           open={this.state.saved}
           onClose={this.handleCloseSaveMessage}
           message={"Your trip is successfully saved!"}
         />
         <AlertMessage
-          type="delete"
           open={this.state.deleted}
           onClose={this.handleCloseDeleteMessage}
           message={"Your trip is successfully deleted!"}

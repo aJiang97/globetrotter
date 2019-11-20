@@ -6,11 +6,6 @@ import { CheckCircle, Close } from "@material-ui/icons";
 import { styles } from "./styles";
 
 export class PureAlertMessage extends React.Component {
-  handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    this.props.onClose();
-  };
-
   render() {
     const { classes, open, onClose } = this.props;
     return (

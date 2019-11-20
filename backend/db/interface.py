@@ -285,7 +285,7 @@ class DB:
         (description, city, tripstart, tripend, blob) = payload
 
         try:
-            c.execute("UPDATE trip SET description = %s, city = %s, tripstart = %s, tripend = %s, blob = %s, modifieddate = now() WHERE uuid = %s;",
+            c.execute("UPDATE trip SET description = %s, city = %s, tripstart = %s, tripend = %s, blob = %s, modifieddate = now() WHERE tripid = %s;",
                       (description, city, tztodate(tripstart), tztodate(tripend), blob, uuid_r))
         except Exception as e:
             c.execute("ROLLBACK")
