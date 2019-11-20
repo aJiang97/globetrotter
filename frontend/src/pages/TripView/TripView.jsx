@@ -20,10 +20,11 @@ export class PureTripView extends React.Component {
       isAddUserOpen: false,
       title: "",
       saved: false,
-      users: []
+      users: [],
       deleted: false,
       redirect: false
     };
+    this.apiClient = new APIClient();
   }
 
   getDates = () => {
@@ -103,7 +104,7 @@ export class PureTripView extends React.Component {
   };
 
   handleDeleteTrip = () => {
-    this.apiClient = new APIClient();
+    // this.apiClient = new APIClient();
     const urlParams = new URLSearchParams(window.location.search);
     this.apiClient
       .deleteTrip(this.context.user.token, urlParams.get("uuid"))
@@ -119,7 +120,7 @@ export class PureTripView extends React.Component {
   };
 
   handleSaveItinerary = () => {
-    this.apiClient = new APIClient();
+    // this.apiClient = new APIClient();
     const urlParams = new URLSearchParams(window.location.search);
     const city = urlParams.get("location").replace("_", " ");
     const start = this.state.dates[0];
@@ -146,6 +147,48 @@ export class PureTripView extends React.Component {
         });
       });
   };
+
+  handleAddUserToTrip = (user) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get("uuid");
+    const userToken = this.context.user.token;
+    this.apiClient
+      .addUserToTrip(userToken, user, uuid)
+      .then(response => {
+        this.updateUsersOnTrip(uuid);
+      });
+  }
+
+  handleRemoveUser = (email) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get("uuid");
+    const userToken = this.context.user.token;
+    this.apiClient
+      .deleteUserFromTrip(userToken, email, uuid)
+      .then(response => {
+        this.updateUsersOnTrip(uuid);
+      });
+  }
+
+  updateUsersOnTrip = (uuid) => {
+    const userToken = this.context.user.token;
+    this.apiClient
+      .getUsersOnTrip(userToken, uuid)
+      .then(response => {
+        this.setState({
+          users: response
+        })
+      });
+  }
+
+  isUserOnTrip = (email) => {
+    for (let user of this.state.users) {
+      if (user.email === email) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   componentWillUnmount() {
     clearTimeout(this.id);
@@ -190,11 +233,8 @@ export class PureTripView extends React.Component {
           });
         });
 
-        // this.apiClient
-        //   .getUsersOnTrip(this.context.user.token, uuid)
-        //   .then(response => {
-        //     alert(response);
-        // });
+        this.updateUsersOnTrip(uuid);
+
     } else if (this.props.places) {
       const location = urlParams.get("location").replace("_", " ");
       const placeIDs = this.props.places
@@ -255,7 +295,11 @@ export class PureTripView extends React.Component {
           </Typography>
         )}
 
-        <UsersRow users={this.state.users} handleAdd={this.openAddUserModal}/>
+        <UsersRow 
+          users={this.state.users} 
+          handleAdd={this.openAddUserModal}
+          handleRemove={this.handleRemoveUser}  
+        />
         {this.context.user && (
           <div className={classes.buttonsContainer}>
             <Button
@@ -291,8 +335,9 @@ export class PureTripView extends React.Component {
         {/* Form for adding users to the trip  */}
         {this.state.isAddUserOpen && (
           <AddUserModal
+            isUserOnTrip={this.isUserOnTrip}
             onClose={this.closeAddUserModal}
-            onSubmit={() => console.log("Submitted New User")}
+            onSubmit={this.handleAddUserToTrip}
           />
         )}
 
