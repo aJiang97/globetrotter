@@ -346,7 +346,7 @@ class DB:
         c.close()
         self.__conn.commit()
 
-    def patch_user_trip(self, email, uuid_r):
+    def patch_user_trip(self, email, uuid_r, permission):
         c = self.__conn.cursor()
 
         try:

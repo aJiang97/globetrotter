@@ -246,7 +246,7 @@ MODEL_trip_user_del = api.model('trip_user_del', {
     "email": fields.String(description='Email of the invited user')
 })
 
-MODEL_trip_user_list = api.model('trip_user', {
+MODEL_trip_user_list = api.model('trip_user_get', {
     "email": fields.String(description='Email of the invited user'),
     "permission": at_mod_permission,
     "displayname": fields.String(description='Display name')
