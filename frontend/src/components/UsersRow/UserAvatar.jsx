@@ -36,8 +36,13 @@ export class UserAvatar extends React.Component {
         }
     }
 
+    currentUserCanRemove(currentUser) {
+        // Only Owner and Admin can delete other users from a trip
+        return currentUser.permission === 0 || currentUser.permission === 1;
+    }
+
     render() {
-        const { user, color, handleRemove } = this.props;
+        const { user, currentUser, color, handleRemove } = this.props;
 
         return (
             <Tooltip title={`${user.displayname} (${this.getPermissionText(user.permission)})`}>
@@ -46,7 +51,7 @@ export class UserAvatar extends React.Component {
                     {/* Owner cannot delete himself from the trip */}
                     <Badge badgeContent={<Close style={{fontSize: "10px"}}/>} color="secondary" 
                         onClick={() => handleRemove(user.email)}
-                        invisible={user.permission === 0 || this.state.hover}>
+                        invisible={!this.currentUserCanRemove(currentUser) || user.permission === 0 || this.state.hover}>
                         <Avatar style={{backgroundColor: color}}>
                             {this.getInitials(user.displayname)}
                         </Avatar>
