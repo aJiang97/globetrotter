@@ -255,3 +255,11 @@ MODEL_trip_user_list = api.model('trip_user_get', {
 MODEL_trip_users = api.model('trip_users', {
     "users": fields.List(fields.Nested(MODEL_trip_user_list))
 })
+
+MODEL_search_user = api.model('search_user', {
+    "email": at_mod_email
+})
+
+MODEL_search_user_result = api.model('search_user_result', {
+    "found": fields.Boolean()
+})
