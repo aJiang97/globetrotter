@@ -26,7 +26,7 @@ export class PureUsersRow extends React.Component {
 	}
 
   render() {
-		const { classes, users, handleAdd, handleRemove } = this.props;
+		const { classes, currentUser, users, handleAdd, handleRemove } = this.props;
 		
     return (
       <div className={classes.rowContainer}>
@@ -35,6 +35,7 @@ export class PureUsersRow extends React.Component {
 						return (
 							<li className={classes.listElem} key={i}>
 								<UserAvatar 
+									currentUser={currentUser}
 									user={user} 
 									color={this.getRandomColour(i)}
 									handleRemove={handleRemove}

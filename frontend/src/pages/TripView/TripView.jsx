@@ -73,6 +73,15 @@ export class PureTripView extends React.Component {
     });
   };
 
+  getCurrentUserFromTrip = () => {
+    for (let user of this.state.users) {
+      if (user.email === this.context.user.email) {
+        return user;
+      }
+    }
+    return null;
+  }
+
   handleEditableTitle = () => {
     this.setState({
       isEditableTitle: true
@@ -296,6 +305,7 @@ export class PureTripView extends React.Component {
         )}
 
         <UsersRow 
+          currentUser={this.getCurrentUserFromTrip()}
           users={this.state.users} 
           handleAdd={this.openAddUserModal}
           handleRemove={this.handleRemoveUser}  
