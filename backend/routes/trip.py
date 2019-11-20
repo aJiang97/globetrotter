@@ -1,11 +1,11 @@
 import json
-import ast
 
 from app import api, db
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
 
 from util.models import *
+from util.authorize import authorize, authorize_access
 
 trip = api.namespace('trip', description='User trips endpoint')
 
@@ -185,6 +185,9 @@ class UserTrip(Resource):
         if requester_email is None or permission is None:
             abort(400, "Bad request")
 
+        if requester_email == email:
+            abort(403, "You can't add permission to your own email")
+
         if not isinstance(permission, int):
             abort(400, "Permission is not integer")
         
@@ -194,7 +197,7 @@ class UserTrip(Resource):
         try:
             db.post_user_trip(requester_email, uuid_r, permission)
         except Exception as e:
-            abort(400, "Bad request: " + e)
+            abort(400, "Bad request: " + str(e))
 
         return
 
@@ -223,7 +226,7 @@ class UserTrip(Resource):
         try:
             db.delete_user_trip(requester_email, uuid_r)
         except Exception as e:
-            abort(400, "Bad request: " + e)
+            abort(400, "Bad request: " + str(e))
 
         return
 
@@ -251,6 +254,9 @@ class UserTrip(Resource):
         if requester_email is None or permission is None:
             abort(400, "Bad request")
 
+        if requester_email == email:
+            abort(403, "You are not allowed to modify your own permission")
+
         if not isinstance(permission, int):
             abort(400, "Permission is not integer")
         
@@ -260,7 +266,7 @@ class UserTrip(Resource):
         try:
             db.patch_user_trip(requester_email, uuid_r, permission)
         except Exception as e:
-            abort(400, "Bad request: " + e)
+            abort(400, "Bad request: " + str(e))
 
         return
 
@@ -286,30 +292,3 @@ class UserTrip(Resource):
 
         return result
 
-
-def authorize(request):
-    token = request.headers.get('AUTH-TOKEN', None)
-
-    if not token:
-        abort(403, 'Unsupplied authorization token')
-
-    email = db.authorize(token)
-
-    if email is None:
-        abort(403, 'Invalid authorization token')
-
-    return email
-
-
-def authorize_access(email, uuid_r, accessType=None):
-    perm = db.get_perm(email, uuid_r)
-
-    if perm is None:
-        abort(404, 'Resource is unavailable')
-    elif perm == -1:
-        abort(403, 'Resource is not yours')
-
-    if accessType is None:
-        return
-    elif not accessType >= perm:
-        abort(403, 'Unauthorized access')
