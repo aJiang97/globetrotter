@@ -60,19 +60,20 @@ class PureCalendarGrid extends React.Component {
   };
 
   render() {
-    const {classes} = this.props
+    const { classes } = this.props;
     return (
-      <div className = {classes.container}>
+      <div className={classes.container}>
         {this.state.time &&
           this.state.time.length !== 0 &&
           this.props.itinerary.map((item, key) => (
             <div key={key}>
               <ItineraryLocationCard
+                id={item.google.place_id}
                 title={item.foursquare.venue_name}
                 type={this.getTypes(item.foursquare.location_types)}
                 media={item.foursquare.pictures[0]}
-                suggestedTime={item.suggestedTime}
                 rating={item.google.rating}
+                onDelete={this.props.handleDeleteLocation}
               />
               {key !== this.props.itinerary.length - 1 && (
                 <div>
