@@ -5,8 +5,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button, TextField, Typography } from "@material-ui/core";
 
 import { styles } from "./styles";
-import { AlertMessage, CalendarGrid, DateTabs, NavBar } from "../../components";
 import { AddLocationModal } from "../../components/forms";
+import { AlertMessage, CalendarGrid, DateTabs, NavBar, UsersRow, AddUserModal } from "../../components";
 import APIClient from "../../api/apiClient";
 import { UserContext } from "../../UserContext";
 
@@ -22,14 +22,19 @@ export class PureTripView extends React.Component {
       endDate: null,
       dates: null,
       isEditableTitle: false,
+      isAddUserOpen: false,
       title: "",
       saved: false,
+      users: [],
       deleted: false,
+      deletedUser: null,
+      addedUser: null,
       redirect: false,
       dateIndex: 0,
       openAddLocationModal: false,
       places: null
     };
+    this.apiClient = new APIClient();
   }
 
   getDates = (start, end) => {
@@ -111,6 +116,15 @@ export class PureTripView extends React.Component {
     });
   };
 
+  getUserFromTrip = (email) => {
+    for (let user of this.state.users) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return null;
+  }
+
   handleEditableTitle = () => {
     this.setState({ isEditableTitle: true });
   };
@@ -191,8 +205,19 @@ export class PureTripView extends React.Component {
     });
   };
 
+  handleCloseAddUserMessage = e => {
+    this.setState({
+      addedUser: null
+    });
+  }
+
+  handleCloseDeleteUserMessage = e => {
+    this.setState({
+      deletedUser: null
+    });
+  }
+
   handleDeleteTrip = () => {
-    this.apiClient = new APIClient();
     this.apiClient
       .deleteTrip(this.context.user.token, this.state.uuid)
       .then(data => {
@@ -207,17 +232,8 @@ export class PureTripView extends React.Component {
   };
 
   handleSaveItinerary = () => {
-    this.apiClient = new APIClient();
-    const {
-      uuid,
-      title,
-      startDate,
-      endDate,
-      places,
-      itinerary,
-      city
-    } = this.state;
-    const { token } = this.context.user;
+    const { uuid, title, startDate, endDate, places, itinerary, city } = this.state;
+    const {token } = this.context.user;
     if (uuid) {
       this.apiClient
         .updateItinerary(
@@ -264,8 +280,69 @@ export class PureTripView extends React.Component {
         });
     }
   };
+
+  handleAddUserToTrip = (user) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get("uuid");
+    const userToken = this.context.user.token;
+    this.apiClient
+      .addUserToTrip(userToken, user, uuid)
+      .then(response => {
+        this.updateUsersOnTrip(uuid);
+        this.setState({
+          addedUser: {...user}
+        });
+      });
+  }
+
+  handleRemoveUser = (email) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get("uuid");
+    const userToken = this.context.user.token;
+    const userToDelete = this.getUserFromTrip(email);
+    console.log(email);
+    console.log(userToDelete);
+
+    this.apiClient
+      .deleteUserFromTrip(userToken, email, uuid)
+      .then(response => {
+        this.updateUsersOnTrip(uuid);
+        this.setState({
+          deletedUser: {...userToDelete}
+        });
+      });
+  }
+
+  updateUsersOnTrip = (uuid) => {
+    const userToken = this.context.user.token;
+    this.apiClient
+      .getUsersOnTrip(userToken, uuid)
+      .then(response => {
+        this.setState({
+          users: response
+        })
+      });
+  }
+
+  isUserOnTrip = (email) => {
+    for (let user of this.state.users) {
+      if (user.email === email) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   componentWillUnmount() {
     clearTimeout(this.id);
+  }
+
+  openAddUserModal = () => {
+    this.setState({ isAddUserOpen: true });
+  }
+  
+  closeAddUserModal = () => {
+    this.setState({ isAddUserOpen: false });
   }
 
   componentDidMount = () => {
@@ -306,6 +383,9 @@ export class PureTripView extends React.Component {
             });
           });
         });
+
+        this.updateUsersOnTrip(uuid);
+
     } else if (this.props.places) {
       const location = urlParams.get("location").replace("_", " ");
       const placeIDs = this.props.places
@@ -346,9 +426,60 @@ export class PureTripView extends React.Component {
     return (
       <div className={classes.container}>
         <NavBar />
-        {!this.state.places && (
+        {!this.state.places && 
           <div className={classes.loadingContainer}>
             <ReactLoading type={"spin"} color={"black"} />
+          </div>
+        }
+        {this.state.isEditableTitle ? (
+          <TextField
+            InputProps={{
+              classes: {
+                input: classes.resize
+              }
+            }}
+            onBlur={this.handleNonEditableTitle}
+            onChange={this.handleChangeTitle}
+            onMouseOut={this.handleNonEditableTitle}
+            value={this.state.title}
+            className={classes.title}
+          />
+        ) : (
+          <Typography
+            variant="h2"
+            className={classes.title}
+            onMouseOver={this.handleEditableTitle}
+          >
+            {this.state.title}
+          </Typography>
+        )}
+
+        <UsersRow 
+          currentUser={this.getUserFromTrip(this.context.user.email)}
+          users={this.state.users} 
+          handleAdd={this.openAddUserModal}
+          handleRemove={this.handleRemoveUser}  
+        />
+        {this.context.user && (
+          <div className={classes.buttonsContainer}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={this.handleDeleteTrip}
+              className={classes.DeleteButton}
+              disabled={this.state.uuid === null}
+            >
+              Delete
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSaveItinerary}
+              className={classes.SaveButton}
+              disabled={this.state.place && this.state.places.length === null}
+            >
+              Save
+            </Button>
           </div>
         )}
         <div className={classes.smallContainer}>
@@ -453,6 +584,16 @@ export class PureTripView extends React.Component {
           placeToIndex={this.state.placeToIndex}
           handleDeleteLocation={this.handleDeleteLocation}
         />
+
+        {/* Form for adding users to the trip  */}
+        {this.state.isAddUserOpen && (
+          <AddUserModal
+            isUserOnTrip={this.isUserOnTrip}
+            onClose={this.closeAddUserModal}
+            onSubmit={this.handleAddUserToTrip}
+          />
+        )}
+
         <AlertMessage
           open={this.state.saved}
           onClose={this.handleCloseSaveMessage}
@@ -462,6 +603,16 @@ export class PureTripView extends React.Component {
           open={this.state.deleted}
           onClose={this.handleCloseDeleteMessage}
           message={"Your trip is successfully deleted!"}
+        />
+        <AlertMessage
+          open={this.state.addedUser !== null}
+          onClose={this.handleCloseAddUserMessage}
+          message={`${this.state.addedUser ? this.state.addedUser.displayname : 'User'} was successfully added to this trip.`}
+        />
+        <AlertMessage
+          open={this.state.deletedUser !== null}
+          onClose={this.handleCloseDeleteUserMessage}
+          message={`${this.state.deletedUser ? this.state.deletedUser.displayname : 'User'} was successfully removed from this trip.`}
         />
         {this.state.openAddLocationModal && (
           <AddLocationModal
