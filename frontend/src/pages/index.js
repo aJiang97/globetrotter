@@ -3,3 +3,4 @@ export * from "./Locations";
 export * from "./Preferences";
 export * from "./Trip";
 export * from "./TripView";
+export * from "./Test";
