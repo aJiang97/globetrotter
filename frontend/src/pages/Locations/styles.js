@@ -86,5 +86,9 @@ export const styles = createStyles(theme => ({
   viewButtonOut: {
     ...viewButton,
     right: 0
+  },
+  searchBar: {
+    marginLeft: "5%",
+    width: "90%"
   }
 }));

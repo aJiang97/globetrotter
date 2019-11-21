@@ -6,12 +6,12 @@ export const styles = createStyles(theme => ({
     "&:hover": {
       backgroundColor: fade(theme.palette.common.white, 0.25)
     },
-    width: "90%",
+    width: "100%",
     [theme.breakpoints.up("sm")]: {
-      marginLeft: "5%",
-      width: "90%"
+      marginLeft: 0,
+      width: "100%"
     },
-    marginLeft: "5%",
+    marginLeft: 0,
     alignItems: "center",
     marginTop: 20,
     display: "flex",
