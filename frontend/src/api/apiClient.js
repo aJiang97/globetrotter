@@ -30,6 +30,11 @@ class APIClient {
     return this.perform("post", `/auth/logout`, data);
   }
 
+  getUser(email, token) {
+    const data = { email: email };
+    return this.perform("post", `/user/search`, data, token);
+  }
+
   generateItinerary(places) {
     return this.perform("post", `routing/itinerary`, { place_id: places });
   }
@@ -85,6 +90,24 @@ class APIClient {
 
   getItineraryDetail(token, uuid) {
     return this.perform("get", `trip?uuid=${uuid}`, "", token);
+  }
+
+  getUsersOnTrip(token, uuid) {
+    return this.perform("get", `trip/user?uuid=${uuid}`, "", token);
+  }
+
+  addUserToTrip(token, user, uuid) {
+    const data = {
+      "displayname": user.displayname,
+      "email": user.email,
+      "permission": 2     // Add the new user as an editor
+    }
+    return this.perform("post", `trip/user?uuid=${uuid}`, data, token);
+  }
+
+  deleteUserFromTrip(token, email, uuid) {
+    const data ={ "email": email };
+    return this.perform("delete", `trip/user?uuid=${uuid}`, data, token);
   }
 
   async perform(method, resource, data, token) {

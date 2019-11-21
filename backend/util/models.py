@@ -190,6 +190,10 @@ MODEL_logout_expect = api.model('logout_expect', {
     "token": fields.String(description='Current access token of the user', required=True)
 })
 
+MODEL_getuser_expect = api.model('getuser_expect', {
+    "email": at_mod_email
+})
+
 # /user/trip
 
 at_mod_uuid = fields.String(description='UUIDs of the trip')
@@ -238,6 +242,7 @@ MODEL_auth_token = api.model('auth_token', {
 
 
 MODEL_trip_user = api.model('trip_user', {
+    "displayname": fields.String(description="Display Name of the invited user"),
     "email": fields.String(description='Email of the invited user'),
     "permission": at_mod_permission
 })
@@ -261,5 +266,6 @@ MODEL_search_user = api.model('search_user', {
 })
 
 MODEL_search_user_result = api.model('search_user_result', {
-    "found": fields.Boolean()
+    "found": fields.Boolean(),
+    "displayname": fields.String(description='Display name')
 })
