@@ -11,28 +11,20 @@ import { Close } from "@material-ui/icons";
 
 import { styles } from "./styles";
 import APIClient from "../../../api/apiClient.js";
-import { encrypt } from "../../../utils/encrypt-decrypt";
-import history from "../../../history";
+import { UserContext } from "../../../UserContext";
 
-class PureLoginModal extends React.Component {
+class PureAddUserModal extends React.Component {
   constructor(props) {
     super(props);
     const emptyData = { data: "" };
     this.state = {
       formData: {
-        email: emptyData,
-        password: emptyData
+        email: emptyData
       },
       success: true
     };
     this.formConfig = {
-      email: { label: "Email", type: "email", autoComplete: "email" },
-      password: {
-        label: "Password",
-        type: "password",
-        onBlur: this.handlePasswordBlur,
-        ref: this.passwordRef
-      }
+      email: { label: "Email", type: "email", autoComplete: "email" }
     };
   }
 
@@ -50,42 +42,72 @@ class PureLoginModal extends React.Component {
     });
   };
 
-  handleSubmit = (e, formData, onSubmit, onClose) => {
+  handleSubmit = (e, formData, isUserOnTrip, onSubmit, onClose) => {
     e.preventDefault();
-    const encryptedPassword = encrypt(this.state.formData.password.data);
+    console.log("Form submitted");
+    console.log(formData);
+    console.log(formData.email);
+    console.log(this.context.user.token);
+    
     this.apiClient = new APIClient();
     this.apiClient
-      .loginUser(formData.email.data, encryptedPassword)
-      .then(resp => {
-        if (resp === 403) {
-          this.setState({ success: false });
-        } else {
-          onSubmit({
-            name: resp.displayname,
-            token: resp.token,
-            email: formData.email.data,
-            password: encryptedPassword,
-            trips: resp.trips
+      .getUser(formData.email.data, this.context.user.token)
+      .then(response => {
+        if (!response.exist) {
+          this.setState({
+            formData: {
+              ...formData,
+              email: {
+                ...formData.email,
+                error: "User does not exist."
+              }
+            }
           });
-          onClose();
-          if (window.location.pathname === "/home") {
-            history.push("/home");
+        } else {
+          // Make sure that user is not already on the trip
+          if (isUserOnTrip(formData.email.data)) {
+            this.setState({
+              formData: {
+                ...formData,
+                email: {
+                  ...formData.email,
+                  error: "User is already added on this trip."
+                }
+              }
+            });
+          } else {
+            this.setState({
+              formData: {
+                ...formData,
+                email: {
+                  ...formData.email,
+                  error: undefined
+                }
+              }
+            });
+  
+            onSubmit({
+              email: formData.email.data,
+              displayname: response.displayname
+            });
+  
+            onClose();
           }
         }
-      });
+      })
   };
 
   render() {
-    const { classes, onClose, onSubmit } = this.props;
+    const { classes, isUserOnTrip, onClose, onSubmit } = this.props;
     const { formData } = this.state;
     const { formConfig } = this;
     return (
       <React.Fragment>
         <div className={classes.darkBackdrop} onClick={onClose} />
-        <form onSubmit={e => this.handleSubmit(e, formData, onSubmit, onClose)}>
+        <form onSubmit={e => this.handleSubmit(e, formData, isUserOnTrip, onSubmit, onClose)}>
           <Paper className={classes.modal}>
-            <Typography variant="h4" className={classes.title}>
-              Sign In
+            <Typography variant="h5" className={classes.title}>
+              Add User to Trip
             </Typography>
             <IconButton className={classes.closeButton} onClick={onClose}>
               <Close />
@@ -120,12 +142,7 @@ class PureLoginModal extends React.Component {
               variant="contained"
             >
               <Typography className={classes.loginText} variant="button">
-                Login
-              </Typography>
-            </Button>
-            <Button className={classes.forgotButton}>
-              <Typography className={classes.forgotButton} variant="button">
-                Forgot password?
+                Add User
               </Typography>
             </Button>
           </Paper>
@@ -135,4 +152,6 @@ class PureLoginModal extends React.Component {
   }
 }
 
-export const LoginModal = withStyles(styles)(PureLoginModal);
+PureAddUserModal.contextType = UserContext;
+
+export const AddUserModal = withStyles(styles)(PureAddUserModal);

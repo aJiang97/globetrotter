@@ -476,10 +476,6 @@ export const cityToISO2 = [
       "iso2": "ZA"
     },
     {
-      "city_ascii": "East London",
-      "iso2": "ZA"
-    },
-    {
       "city_ascii": "Mossel Bay",
       "iso2": "ZA"
     },
@@ -21305,10 +21301,6 @@ export const cityToISO2 = [
     },
     {
       "city_ascii": "Deer Lake",
-      "iso2": "CA"
-    },
-    {
-      "city_ascii": "London",
       "iso2": "CA"
     },
     {

@@ -39,6 +39,7 @@ def run_flask(host, port):
     import routes.details
     import routes.routing
     import routes.auth
+    import routes.trip
     import routes.user
 
     # Set environment

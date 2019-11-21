@@ -3,7 +3,7 @@ import { Route, Router, Switch } from "react-router-dom";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import history from "./history";
-import { Home, Trip, Locations, Preferences, TripView } from "./pages";
+import { Home, Trip, Locations, Preferences, TripView, Test } from "./pages";
 import { UserContext } from "./UserContext";
 import "./App.css";
 
@@ -33,10 +33,17 @@ const theme = createMuiTheme({
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    let tempUser = {
+      email: "sebi@test.com",
+      name: "Sebastian Chua",
+      password: "ff156710984f143b",
+      token: "9e0075c49d434649f6c6e7e30acec862df9e5398e7f234a062fda6087fe3333e"
+    }
+
     this.state = {
       transparent: true,
       places: null,
-      placeToIndex: null,
       user: null,
       logIn: this.logIn,
       logOut: this.logOut
@@ -56,8 +63,8 @@ class App extends React.Component {
     });
   };
 
-  setPlaces = (places, placeToIndex) => {
-    this.setState({ places: places, placeToIndex: placeToIndex });
+  setPlaces = (places) => {
+    this.setState({ places: places });
   };
 
   render() {
@@ -81,10 +88,10 @@ class App extends React.Component {
                   <TripView
                     {...props}
                     places={this.state.places}
-                    placeToIndex={this.state.placeToIndex}
                   />
                 )}
               />
+              <Route path="/test" component={Test} />
             </Switch>
           </Router>
         </MuiThemeProvider>

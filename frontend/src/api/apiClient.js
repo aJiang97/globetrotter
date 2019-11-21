@@ -25,18 +25,98 @@ class APIClient {
     return this.perform("post", `/auth/login`, data);
   }
 
-  generateItinerary(places) {
-    return this.perform("post", `routing/itinerary`, { place_id: places });
-
+  logoutUser(email, token) {
+    const data = { email: email, token: token };
+    return this.perform("post", `/auth/logout`, data);
   }
 
-  async perform(method, resource, data) {
+  getUser(email, token) {
+    const data = { email: email };
+    return this.perform("post", `/user/search`, data, token);
+  }
+
+  generateItinerary(places) {
+    return this.perform("post", `routing/itinerary`, { place_id: places });
+  }
+
+  saveItinerary(token, description, city, start, end, places, orderedPlaces) {
+    const data = {
+      info: {
+        description: description,
+        city: city,
+        tripstart: start,
+        tripend: end
+      },
+      blob: {
+        places: places, // original places passed to routing endpoint
+        orderedPlaces: orderedPlaces // the orderedPlaces from routing endpoint
+      }
+    };
+    return this.perform("post", `trip`, data, token);
+  }
+
+  deleteTrip(token, uuid) {
+    return this.perform("delete", `trip?uuid=${uuid}`, "", token);
+  }
+
+  updateItinerary(
+    token,
+    uuid,
+    description,
+    city,
+    start,
+    end,
+    places,
+    orderedPlaces
+  ) {
+    const data = {
+      info: {
+        description: description,
+        city: city,
+        tripstart: start,
+        tripend: end
+      },
+      blob: {
+        places: places, // original places passed to routing endpoint
+        orderedPlaces: orderedPlaces // the orderedPlaces from routing endpoint
+      }
+    };
+    return this.perform("patch", `trip?uuid=${uuid}`, data, token);
+  }
+
+  getAllTrips(token) {
+    return this.perform("get", `trip/all`, "", token);
+  }
+
+  getItineraryDetail(token, uuid) {
+    return this.perform("get", `trip?uuid=${uuid}`, "", token);
+  }
+
+  getUsersOnTrip(token, uuid) {
+    return this.perform("get", `trip/user?uuid=${uuid}`, "", token);
+  }
+
+  addUserToTrip(token, user, uuid) {
+    const data = {
+      "displayname": user.displayname,
+      "email": user.email,
+      "permission": 2     // Add the new user as an editor
+    }
+    return this.perform("post", `trip/user?uuid=${uuid}`, data, token);
+  }
+
+  deleteUserFromTrip(token, email, uuid) {
+    const data ={ "email": email };
+    return this.perform("delete", `trip/user?uuid=${uuid}`, data, token);
+  }
+
+  async perform(method, resource, data, token) {
     return client({
       method,
       url: resource,
       data,
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "AUTH-TOKEN": token
       }
     })
       .then(function(response) {
