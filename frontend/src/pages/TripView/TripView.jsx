@@ -25,6 +25,8 @@ export class PureTripView extends React.Component {
       saved: false,
       users: [],
       deleted: false,
+      deletedUser: null,
+      addedUser: null,
       redirect: false,
       dateIndex: 0
     };
@@ -102,9 +104,9 @@ export class PureTripView extends React.Component {
     });
   };
 
-  getCurrentUserFromTrip = () => {
+  getUserFromTrip = (email) => {
     for (let user of this.state.users) {
-      if (user.email === this.context.user.email) {
+      if (user.email === email) {
         return user;
       }
     }
@@ -161,6 +163,18 @@ export class PureTripView extends React.Component {
     });
   };
 
+  handleCloseAddUserMessage = e => {
+    this.setState({
+      addedUser: null
+    });
+  }
+
+  handleCloseDeleteUserMessage = e => {
+    this.setState({
+      deletedUser: null
+    });
+  }
+
   handleDeleteTrip = () => {
     this.apiClient
       .deleteTrip(this.context.user.token, this.state.uuid)
@@ -216,6 +230,9 @@ export class PureTripView extends React.Component {
       .addUserToTrip(userToken, user, uuid)
       .then(response => {
         this.updateUsersOnTrip(uuid);
+        this.setState({
+          addedUser: {...user}
+        });
       });
   }
 
@@ -223,10 +240,17 @@ export class PureTripView extends React.Component {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
     const userToken = this.context.user.token;
+    const userToDelete = this.getUserFromTrip(email);
+    console.log(email);
+    console.log(userToDelete);
+
     this.apiClient
       .deleteUserFromTrip(userToken, email, uuid)
       .then(response => {
         this.updateUsersOnTrip(uuid);
+        this.setState({
+          deletedUser: {...userToDelete}
+        });
       });
   }
 
@@ -367,7 +391,7 @@ export class PureTripView extends React.Component {
         )}
 
         <UsersRow 
-          currentUser={this.getCurrentUserFromTrip()}
+          currentUser={this.getUserFromTrip(this.context.user.email)}
           users={this.state.users} 
           handleAdd={this.openAddUserModal}
           handleRemove={this.handleRemoveUser}  
@@ -458,6 +482,16 @@ export class PureTripView extends React.Component {
           open={this.state.deleted}
           onClose={this.handleCloseDeleteMessage}
           message={"Your trip is successfully deleted!"}
+        />
+        <AlertMessage
+          open={this.state.addedUser !== null}
+          onClose={this.handleCloseAddUserMessage}
+          message={`${this.state.addedUser ? this.state.addedUser.displayname : 'User'} was successfully added to this trip.`}
+        />
+        <AlertMessage
+          open={this.state.deletedUser !== null}
+          onClose={this.handleCloseDeleteUserMessage}
+          message={`${this.state.deletedUser ? this.state.deletedUser.displayname : 'User'} was successfully removed from this trip.`}
         />
         {this.state.redirect && <Redirect to="/home" />}
       </div>
