@@ -164,53 +164,108 @@ MODEL_route_matrix = api.model('route_matrix', {
 
 MODEL_route_result = api.model('route_result', {
     "travel_matrix": fields.List(fields.Nested(MODEL_route_matrix)),
-    "path": fields.List(fields.String(description='place_id of ordered location'))
+    "path": fields.List(fields.String(description='place_id of ordered location')),
+    "matrix_places": fields.List(fields.String(description='place id of the index of the travel matrix, same as payload.matrix_places'))
 })
 
 
 # /auth
 # Input
+at_mod_email = fields.String(description='Email of the user', required=True)
+at_mod_hashedpw = fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+
 MODEL_signup_expect = api.model('signup_expect', {
-    "email": fields.String(description='Email of the user. Must be unique.', required=True),
-    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True),
+    "email": at_mod_email,
+    "hashedpw": at_mod_hashedpw,
     "displayname": fields.String(description='Display name of the user. Maximum length is 64')
 })
 
 MODEL_login_expect = api.model('login_expect', {
-    "email": fields.String(description='Email of the user.', required=True),
-    "hashedpw": fields.String(description='Hashed password of the user. Maximum hash length is 128.', required=True)
+    "email": at_mod_email,
+    "hashedpw": at_mod_hashedpw
 })
 
 MODEL_logout_expect = api.model('logout_expect', {
-    "email": fields.String(description='Email of the user.', required=True),
+    "email": at_mod_email,
     "token": fields.String(description='Current access token of the user', required=True)
 })
 
-# Output
-MODEL_auth_token = api.model('auth_token', {
-    "token": fields.String(description='Access token')
+MODEL_getuser_expect = api.model('getuser_expect', {
+    "email": at_mod_email
 })
+
+# /user/trip
+
+at_mod_uuid = fields.String(description='UUIDs of the trip')
 
 MODEL_trip_uuid = api.model('trip_uuid', {
-    "uuid": fields.String(description='UUIDs of your trip')
+    "uuid": at_mod_uuid
 })
 
-MODEL_trips = api.model('trips', {
-    "trips": fields.List(fields.Nested(MODEL_trip_uuid))
-})
-
-MODEL_trip_detail = api.model('detail', {
+MODEL_trip_info = api.model('info', {
     "description": fields.String(description='Description of the trip. Can be empty string',required=True),
-    "location": fields.String(description='Location of the trip', required=True),
+    "city": fields.String(description='City of the trip', required=True),
     "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601', required=True),
     "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip', required=True)
 })
 
 MODEL_trip_payload = api.model('payload', {
-    "details": fields.Nested(MODEL_trip_detail, required=True),
-    "matrix": fields.Raw(description='JSONObject of the matrix', required=True),
-    "matrix_places": fields.Raw(description='JSONObject of the index of the matrix', required=True),
-    "ordered_places": fields.Raw(description='JSONObject of the ordered places', required=True),
-    "calendar": fields.String(description='Calendar in byte array or string format. Backend will store it as-is', required=True)
+    "info": fields.Nested(MODEL_trip_info, required=True),
+    "blob": fields.Raw(description='Your blob', required=True)
 })
 
+at_mod_permission = fields.Integer(description="""
+    Permission identifier. 0 is owner, 1 is admin, 2 is editor, 3 is viewer. Admin can add/modify/delete 2 or 3. Owner can add/modify/delete 1, 2, and 3. No one can delete the trip apart from owner.
+""")
+
+MODEL_trip_info_withid = api.model('info_withid', {
+    "description": fields.String(description='Description of the trip. Can be empty string'),
+    "city": fields.String(description='City of the trip'),
+    "tripstart": fields.DateTime(dt_format='iso8601', description='Start time of the trip, format is ISO8601. Read https://en.wikipedia.org/wiki/ISO_8601'),
+    "tripend": fields.DateTime(dt_format='iso8601', description='End time of the trip'),
+    "modifiedddate": fields.DateTime(dt_format='iso8601', description='Modified date. Only available on get request'),
+    "uuid": at_mod_uuid,
+    "permission": at_mod_permission
+})
+
+at_mod_trips = fields.List(fields.Nested(MODEL_trip_info_withid))
+
+MODEL_trips = api.model('trips', {
+    "trips": at_mod_trips
+})
+
+MODEL_auth_token = api.model('auth_token', {
+    "token": fields.String(description='Access token'),
+    "displayname": fields.String(description='Display name'),
+    "trips": at_mod_trips
+})
+
+
+MODEL_trip_user = api.model('trip_user', {
+    "displayname": fields.String(description="Display Name of the invited user"),
+    "email": fields.String(description='Email of the invited user'),
+    "permission": at_mod_permission
+})
+
+MODEL_trip_user_del = api.model('trip_user_del', {
+    "email": fields.String(description='Email of the invited user')
+})
+
+MODEL_trip_user_list = api.model('trip_user_get', {
+    "email": fields.String(description='Email of the invited user'),
+    "permission": at_mod_permission,
+    "displayname": fields.String(description='Display name')
+})
+
+MODEL_trip_users = api.model('trip_users', {
+    "users": fields.List(fields.Nested(MODEL_trip_user_list))
+})
+
+MODEL_search_user = api.model('search_user', {
+    "email": at_mod_email
+})
+
+MODEL_search_user_result = api.model('search_user_result', {
+    "found": fields.Boolean(),
+    "displayname": fields.String(description='Display name')
+})

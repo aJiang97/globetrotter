@@ -7,30 +7,24 @@ class PureDateTabs extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeDate: 0,
       transparent: true
     };
   }
 
   handleChange = (e, newValue) => {
     this.props.setDateIndex(newValue);
-    this.setState({
-      activeDate: newValue
-    });
   };
 
   scrollListener = e => {
     if (window.scrollY > 100) {
       this.setState(state => {
         return {
-          activeDate: state.activeDate,
           transparent: false
         };
       });
     } else {
       this.setState(state => {
         return {
-          activeDate: state.activeDate,
           transparent: true
         };
       });
@@ -57,9 +51,8 @@ class PureDateTabs extends React.Component {
         }
       >
         <Tabs
-          value={this.state.activeDate}
+          value={this.props.activeDate}
           onChange={this.handleChange}
-          indicatorColor="tertiary"
           textColor="primary"
           variant="scrollable"
           scrollButtons="auto"

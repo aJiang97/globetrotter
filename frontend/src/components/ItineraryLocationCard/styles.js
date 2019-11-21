@@ -52,7 +52,7 @@ export const styles = createStyles(theme => ({
     marginLeft: "10px",
     position: "relative"
   },
-  moreButton: {
+  removeButton: {
     position: "absolute",
     top: 5,
     right: 5

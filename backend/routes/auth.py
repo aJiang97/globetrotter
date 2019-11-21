@@ -19,12 +19,15 @@ class Signup(Resource):
     @auth.expect(MODEL_signup_expect)
     @auth.doc(description='')
     def post(self):
-        content = json.loads(list(request.form.to_dict().keys())[0])
-        email = content['email']
-        hashedpw = content['hashedpw']
-        displayname = content['displayname']
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
 
-        if email is None or hashedpw is None:
+        content = request.get_json()
+        email = content.get('email')
+        hashedpw = content.get('hashedpw')
+        displayname = content.get('displayname')
+
+        if email is None or hashedpw is None or displayname is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
 
         if not db.available_email(email):
@@ -46,16 +49,17 @@ class Login(Resource):
     @auth.expect(MODEL_login_expect)
     @auth.doc(description='')
     def post(self):
-        content = json.loads(list(request.form.to_dict().keys())[0])
-        email = content['email']
-        hashedpw = content['hashedpw']
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
+
+        content = request.get_json()
+        email = content.get('email')
+        hashedpw = content.get('hashedpw')
 
         if email is None or hashedpw is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
         
         login = db.login(email, hashedpw)
-
-        print(login)
         
         if not login:
             abort(403, 'Invalid email/password combination')
@@ -65,10 +69,12 @@ class Login(Resource):
         db.insert_token(email, token)
 
         displayname = db.get_displayname(email, hashedpw)
+        trips = db.retrieve_trips(email)
 
         return {
             "token": token,
-            "displayname": displayname
+            "displayname": displayname,
+            "trips": trips
         }
 
     def generate_token(self):
@@ -102,3 +108,30 @@ class Logout(Resource):
             abort(403, 'Bearer token mismatch. Your token is invalid and you should be signed out from your account')
 
         return
+
+@auth.route('/getuser', strict_slashes=False)
+class Getuser(Resource):
+    @auth.response(200, 'Success')
+    @auth.response(400, 'Malformed request. Missing email')
+    @auth.response(404, 'User not found.')
+    @auth.expect(MODEL_getuser_expect)
+    @auth.doc(desciption='')
+    def get(self):
+        print('Get request received')
+        print(request)
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
+        
+        email = request.get_json().get('email')
+        print(email)
+        if email is None:
+            abort(400, 'Malformed request, missing email')
+
+        print("Request was successful but...")
+
+        if db.available_email(email):
+            abort(404, 'User not found.')
+        
+        return {
+            "displayname": db.get_displayname(email)
+        }

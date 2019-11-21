@@ -1,8 +1,13 @@
-## Frontend:
-### To install
-`cd comp4920-globetrotter`<br>
-`yarn install`
+# Globetrotter
 
-### To run
-`cd comp4920-globetrotter/frontend`<br>
-`yarn start`
+COMP4920 Group project
+
+Tutorial group Friday 1pm
+
+Members:
+- Aldhytha Karina Sari  (z5097492)
+- Natasha Jenny         (z5141492)
+- Sebastian Arthur Chua (z5161468)
+- Alex Jiang            (z5114704)
+- Kevin Liyanto         (z5119615)
+
