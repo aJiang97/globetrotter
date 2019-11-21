@@ -26,6 +26,10 @@ const flexScroll = {
 };
 
 export const styles = createStyles(theme => ({
+  body1: {
+    marginTop: 20,
+    marginLeft: 65
+  },
   section: {
     flexGrow: 1,
     display: "flex",

@@ -65,6 +65,11 @@ class PureLocations extends React.Component {
 
   handleUpdateSearchResult = result => {
     this.setState({ searchResult: result });
+    if (result && result.length !== 0) {
+      this.setState({ selectedLocation: result[0] });
+    } else {
+      this.setState({ selectedLocation: this.state.places[0] });
+    }
   };
 
   handleSubmit = () => {
@@ -95,7 +100,7 @@ class PureLocations extends React.Component {
     var result = [];
     for (let value of Object.keys(types)) {
       if (types[value]) {
-        result.push(value);
+        result.push(value.replace("_", " "));
       }
     }
     return result;
@@ -104,7 +109,6 @@ class PureLocations extends React.Component {
   isAdded = id => {
     const { addedLocations } = this.state;
     for (var key in this.state.addedLocations) {
-      console.log(addedLocations[key]);
       if (addedLocations[key].google.place_id === id) return true;
     }
     return false;
@@ -134,7 +138,7 @@ class PureLocations extends React.Component {
     const { searchResult } = this.state;
     let locationList;
 
-    if (locations && locations.length !== 0) {
+    if (searchResult && locations && locations.length !== 0) {
       var allLocations = [];
       if (searchResult.length !== 0) {
         allLocations = searchResult;
@@ -147,7 +151,7 @@ class PureLocations extends React.Component {
             <Fab
               color="primary"
               onClick={() => {
-                this.handleRemoveLocation(key);
+                this.handleRemoveLocation(loc.google.place_id);
               }}
             >
               <Close />
@@ -171,7 +175,9 @@ class PureLocations extends React.Component {
       ));
     } else {
       locationList = (
-        <Typography variant="body1">No locations found.</Typography>
+        <Typography variant="body1" className={classes.body1}>
+          No locations found.
+        </Typography>
       );
     }
 

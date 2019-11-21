@@ -11,7 +11,7 @@ class PureLocationPane extends React.Component {
     var result = [];
     for (let value of Object.keys(types)) {
       if (types[value]) {
-        result.push(value);
+        result.push(value.replace("_"," "));
       }
     }
     return result;
