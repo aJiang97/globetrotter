@@ -67,8 +67,10 @@ class PureLocations extends React.Component {
     this.setState({ searchResult: result });
     if (result && result.length !== 0) {
       this.setState({ selectedLocation: result[0] });
-    } else {
+    } else if (result) {
       this.setState({ selectedLocation: this.state.places[0] });
+    } else {
+      this.setState({ selectedLocation: null });
     }
   };
 
@@ -108,7 +110,7 @@ class PureLocations extends React.Component {
 
   isAdded = id => {
     const { addedLocations } = this.state;
-    for (var key in this.state.addedLocations) {
+    for (var key in addedLocations) {
       if (addedLocations[key].google.place_id === id) return true;
     }
     return false;
@@ -188,10 +190,12 @@ class PureLocations extends React.Component {
           <Grid container item xs={6} className={classes.flexScroll}>
             {this.state.resultsLoaded ? (
               <div className={classes.leftContainer}>
-                <SearchBar
-                  city={this.state.city}
-                  handleSearchResult={this.handleUpdateSearchResult}
-                />
+                <div className={classes.searchBar}>
+                  <SearchBar
+                    city={this.state.city}
+                    handleSearchResult={this.handleUpdateSearchResult}
+                  />
+                </div>
                 <Typography variant="h5" className={classes.title}>
                   Recommended Locations
                 </Typography>

@@ -6,6 +6,11 @@ const baseButton = {
 };
 
 export const styles = createStyles(theme => ({
+  loadingContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%"
+  },
   title: {
     fontFamily: "Roboto",
     marginBottom: "20px",
@@ -54,10 +59,17 @@ export const styles = createStyles(theme => ({
       borderBottom: `2px solid white !important`
     }
   },
+  smallContainer: {
+    display: "flex",
+    flexDirection: "row"
+  },
   datesContainer: {
     display: "grid",
     gridTemplateColumns: "0.5fr 1fr 0.5fr 1fr",
     width: "45%",
     alignItems: "baseline"
+  },
+  flexDiv: {
+    flexGrow: 1
   }
 }));
