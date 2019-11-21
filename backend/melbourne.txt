@@ -25,7 +25,6 @@ St Silas' Anglican Church                         ;                     4.8;4d8c
 St Kilda Kite Beach                               ;                     4.8;4b14a351f964a5204aa523e3;ChIJg_HEGnFo1moR3Cyv7fnsmhs
 St Jude's Church                                  ;                     4.8;4b54411bf964a520afb527e3;ChIJ43UlCdZC1moRg2-wYrrwphM
 St Brigid Church                                  ;                     4.8;4e743e0952b1c8e518e8e210;ChIJqb4-aSRD1moR3_zXFXmozTg
-Shrine Reserve                                    ;                     4.8;4b05874bf964a5208a8922e3;ChIJGSSIDKZC1moRisWTaYaaq18
 Shrine of Remembrance                             ;                     4.8;4b05874bf964a520988922e3;ChIJGSSIDKZC1moRisWTaYaaq18
 Royal Botanic Gardens                             ;                     4.8;4b19b2c5f964a5203be223e3;ChIJO40p-5ZC1moRwNcxBXZWBA8
 Ripe                                              ;                     4.8;4ba42d06f964a5202f8938e3;ChIJ6cYIzCVo1moRcH9NgoRcymQ
@@ -63,7 +62,6 @@ IFGF GISI Melbourne City Church                   ;                     4.7;4c67
 Hillsong Church                                   ;                     4.7;51aaf403498eedaf198000c0;ChIJkVJuDrZC1moRZz-KdrOCME4
 Gleadell St Market                                ;                     4.7;4be4ba082457a5933cb1aa15;ChIJdY-hEPdC1moRbdpnoyloHOg
 Fire Services Museum Of Victoria                  ;                     4.7;4b05874bf964a520a78922e3;ChIJa2Up5MRC1moRW57TS6-ur-4
-Escher X Nendo                                    ;                     4.7;5c1b021b149946002c70e8c0;ChIJuYNitLFC1moRVB5vMAKPcTM
 Eau de Vie                                        ;                     4.7;4ebcdc6977c8c21dea4746f0;ChIJq_Q3_bdC1moRTK6LBjNhFL4
 Carlton Wine Room                                 ;                     4.7;4de1faa0c65b7a3e21100fd3;ChIJl1h079ZC1moRvDBPl2x_L5Y
 Beneath Driver Lane                               ;                     4.7;59fec94b4c954c21111cf293;ChIJwaJkZLVC1moRdQPhwSG1v_I
@@ -104,8 +102,6 @@ Ian Potter Foundation Children's Garden           ;                     4.6;4b05
 Gewürzhaus                                        ;                     4.6;508b3586e4b0a533e0b56016;ChIJ8W82UrRC1moRQdTeC6g6k_U
 Gasworks Farmers' Market                          ;                     4.6;4b50bffdf964a520c13027e3;ChIJ86Fo6-ln1moRiS26upvBDeg
 Fitzroy Gardens                                   ;                     4.6;4b058754f964a520838c22e3;ChIJX6ytzMNC1moREIYxBXZWBA8
-Finders Keepers Melbourne Markets                 ;                     4.6;4caea9f21463a14389aa8ea9;ChIJcd7_l9lC1moRN3U9OQmxoEQ
-Finders Keepers Market                            ;                     4.6;515e7fe8e4b0428765644111;ChIJcd7_l9lC1moRN3U9OQmxoEQ
 Fawkner Park                                      ;                     4.6;4b0e3522f964a520e85523e3;ChIJ4becPh9o1moRqLXKVo93Up0
 Fawkner Center                                    ;                     4.6;4c2aad8e8ef52d7fcc5230ba;ChIJmYKxDBlo1moRc4a_IqT5E4k
 Farmers Market                                    ;                     4.6;4b1985cff964a520cdde23e3;ChIJTf2ErWZo1moRnRMbpVkdLI4
@@ -132,11 +128,9 @@ Three Bags Full                                   ;                     4.5;4b5c
 The Gin Palace                                    ;                     4.5;4b058745f964a520ef8722e3;ChIJM5KH4slC1moRTmhA0BNZDoo
 The Beer & Burger Bar                             ;                     4.5;50f371d5e4b0dfb46a260969;ChIJnXlpfZJC1moRbk4uxKzcJRc
 Supernormal                                       ;                     4.5;5368ad36498eb3c4cc6e52a8;ChIJNVF8Q7ZC1moRarO5qwt4NOA
-St. Peter's Anglican Church                       ;                     4.5;5163dc07e4b0688f836df7c2;ChIJ87e_-cRC1moRhQDWvdpdDAk
 St. Mary's Catholic Church                        ;                     4.5;4cc25c04806246889a2e292f;ChIJcRh1_jZo1moReYMFNf8v_8I
 St. Joseph Church                                 ;                     4.5;4c5e23329b28d13a20cf5b70;ChIJGeSoE5Vn1moR4vBduton_rg
 St Peter's Cathedral                              ;                     4.5;4d968cb4a2c654810f60c353;ChIJ87e_-cRC1moRhQDWvdpdDAk
-St Kilda By The Sea                               ;                     4.5;4ba967adf964a5200a253ae3;ChIJt-HOTmNo1moR2ps54_HcfpE
 St Kilda Beach                                    ;                     4.5;4b05874af964a520688922e3;ChIJt-HOTmNo1moR2ps54_HcfpE
 Ss Peter & Pauls Ukrainian Catholic Cathedral     ;                     4.5;4cb6bec1589f236aedba393d;ChIJt446TSNd1moRFJgIoxyKdfQ
 Sportsfinda                                       ;                     4.5;5bc52047b9b37b002cbcc844;ChIJ4XK6NCtn1moR_M9KgSBY41A
@@ -188,7 +182,6 @@ Sandridge Life Saving Club                        ;                     4.4;4dfc
 Royal Stacks                                      ;                     4.4;5695f94f38fa3814550e0339;ChIJR79QVkxd1moRr9Dr8Q3RT6I
 Ripponlea Fish Supply                             ;                     4.4;4b95b58cf964a52055b034e3;ChIJiZ8ZGVdo1moR-lGRaRW888c
 Prahran Market                                    ;                     4.4;4b0740daf964a520bdfa22e3;ChIJ08R9xSVo1moRyE4-ltkfD9o
-Periwinkle Fine Seafoods                          ;                     4.4;4e3c921d2271d21e86eb2dda;ChIJ08R9xSVo1moRyE4-ltkfD9o
 Pan Pacific Melbourne                             ;                     4.4;59c06e597269fe1394f1ee95;ChIJ9ZbSnVdd1moR6fwlk1SfPis
 Old Melbourne Gaol                                ;                     4.4;4b05874bf964a520a68922e3;ChIJYUcwasxC1moResepeNQs7Z0
 Nosh                                              ;                     4.4;58ab9296e18e656cc640bb0f;ChIJty5V77RC1moRgiibE9808XQ
@@ -196,10 +189,7 @@ Neighbourhood Wine                                ;                     4.4;5138
 Naked For Satan                                   ;                     4.4;4c73988457b6a143fa76c8cc;ChIJZTxgryBD1moRLY4a4APof1Q
 Mr. Miyagi                                        ;                     4.4;526278ac11d23dd751e19ce6;ChIJzZUzPzpo1moRGsuqZ2eceJY
 Melbourne Star Observation Wheel                  ;                     4.4;4f77c845e4b0c7b6e241b962;ChIJnxO2Q2hd1moRzzPe0yoV9A4
-Melbourne Showgrounds Farmers' Market             ;                     4.4;4bca48d20687ef3bcfc3dbcc;ChIJHVg9LuJc1moR6H3uQ04jtRw
-Melbourne Centre                                  ;                     4.4;4d4a3c465241236ab6d67d04;ChIJybEw5cpC1moRFtDOajNMRFk
 Melbourne Central                                 ;                     4.4;4b08f631f964a5209a1323e3;ChIJybEw5cpC1moRFtDOajNMRFk
-Markit@FedSquare                                  ;                     4.4;4de190507d8b2547eaefb208;ChIJT8T86bZC1moRqw7W6kVH5zg
 Market Lane Coffee                                ;                     4.4;571ea1da498eb72ab0378f81;ChIJYQxRN8ZC1moRZPYsVv8YrEQ
 Le Bon Ton                                        ;                     4.4;52fc6a57498ee6062140f428;ChIJOapygOFC1moR1C-n0kguSgo
 Lazerpig                                          ;                     4.4;531072d8498e0a8b55243152;ChIJR_PesOBC1moR3LEhLKYzk-s
@@ -210,7 +200,6 @@ Heartbreaker                                      ;                     4.4;55a7
 Flight Experience                                 ;                     4.4;4b91cb1ff964a520dad733e3;ChIJU7nft8tC1moR-z7qhbkGUUg
 Flemington Farmers Market                         ;                     4.4;4f5be1a3e4b053fd6824bff6;ChIJHVg9LuJc1moR6H3uQ04jtRw
 Fitzrovia                                         ;                     4.4;4e689912c65be3a565014730;ChIJbX_MwGto1moRF5BXCSyY3rE
-Federation Square Book Market                     ;                     4.4;4b91bc36f964a5208ed333e3;ChIJT8T86bZC1moRqw7W6kVH5zg
 Federation Square                                 ;                     4.4;4b05874af964a520848922e3;ChIJT8T86bZC1moRqw7W6kVH5zg
 Emporium Melbourne                                ;                     4.4;5344b303498efe4f113d6657;ChIJe2e9iMpC1moROAFy3XgYaSM
 Elwood Beach Rotunda                              ;                     4.4;4fcab191e4b0d376cb6468b7;ChIJtTD7Xeto1moRarGTBntPAmE
@@ -241,7 +230,6 @@ The Loft                                          ;                     4.3;4b3f
 The Espy                                          ;                     4.3;522f3eb611d2b01db302d038;ChIJZwv6MGVo1moRnQQHiuprVB0
 St. James Old Cathedral                           ;                     4.3;4dae80568154d1d48867f15f;ChIJr28dSkhd1moR1rNfI5DI0Ww
 St Kilda Esplanade Market                         ;                     4.3;4bf8a4a1b182c9b684e9775a;ChIJT9PZ9m9o1moR8PmC9s8vSvM
-South Melbourne Beach                             ;                     4.3;4b47d9e9f964a5208a4126e3;ChIJaSL3-sBn1moRk-T0HL-sYhE
 Rooftop Cinema                                    ;                     4.3;4b05874ff964a520148b22e3;ChIJA9SLQMpC1moR2-DfIFej1mM
 Rooftop at QT                                     ;                     4.3;5807195938fae340cfd5b3f3;ChIJt7f_wMlC1moR78AaroNklv4
 QV                                                ;                     4.3;4b0a955ff964a520572523e3;ChIJJzQtz8tC1moR72Ai_C59eg0
@@ -254,7 +242,6 @@ Old Melbourne Observatory                         ;                     4.3;4b05
 Naked In The Sky                                  ;                     4.3;50bf0af8e4b0c1b61c76359b;ChIJOUWLpSBD1moROZcWh78Dnoc
 Mountain Goat Brewery                             ;                     4.3;4b0cd4f0f964a520234223e3;ChIJBRJZbVFC1moR_1E8qxjhMT0
 Melbourne Central Clock                           ;                     4.3;4c8185f02f1c236a74dd3043;ChIJdV4x5cpC1moR4xhUFRPKRRc
-Melbourne & Victoria Tourist Guide                ;                     4.3;54a62871498eb8a23a05d526;ChIJdV4x5cpC1moR4xhUFRPKRRc
 Lost & Found Market                               ;                     4.3;4e20df671f6effe84f6bb57d;ChIJTzx3zllD1moRY3OqcQA-xb0
 Kirk's Wine Bar                                   ;                     4.3;53a149a8498ea185a5cf8e5a;ChIJ12Q0M7VC1moRdjoh--8GceA
 Jinda Thai Restaurant                             ;                     4.3;506bdf8ae4b019a598230918;ChIJDfk_keRC1moRqpqxpK7MiH0
@@ -326,7 +313,6 @@ Southern Cross Lane                               ;                       4;4d74
 Shot Tower Museum                                 ;                       4;4b7340bcf964a52069a42de3;ChIJx18s48pC1moRPwB-wTgc7kg
 Pie In The Sky                                    ;                       4;4c91b1a24c19ef3b0a9d87e1;ChIJIbtCOVMk1moRDiH-Ao4uir8
 Ocean Made                                        ;                       4;4b7bfba5f964a52002772fe3;ChIJP55jQuFC1moRg7AyaBK2iSg
-Main Yarra Trail                                  ;                       4;59585a8dee7120157b321a4c;ChIJITp8LrFG1moRi_eaOrMEvdo
 Main Yarra Trail                                  ;                       4;4fe6b2a5e4b0227be07f2455;ChIJITp8LrFG1moRi_eaOrMEvdo
 Luna Park Melbourne                               ;                       4;4b05874af964a520678922e3;ChIJZ_cOG2Ro1moRQbFsJ6rXAL8
 Hot Potatoes                                      ;                       4;4b875785f964a52043bc31e3;ChIJPeC6sspc1moRE9z2XTfBjsE
