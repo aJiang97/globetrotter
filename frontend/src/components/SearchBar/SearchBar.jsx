@@ -19,7 +19,11 @@ class PureSearchBar extends React.Component {
     this.apiClient
       .searchLocation(this.props.city, this.state.searchInput)
       .then(data => {
-        this.props.handleSearchResult(data.locations);
+        if (data.locations.length === 0) {
+          this.props.handleSearchResult(null);
+        } else {
+          this.props.handleSearchResult(data.locations);
+        }
       });
   };
 
