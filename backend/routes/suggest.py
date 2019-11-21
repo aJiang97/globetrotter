@@ -798,7 +798,7 @@ class search(Resource):
         city = request.args.get('city')
         query = request.args.get('query')
         query.strip()
-        city.lower()
+        city = city.lower()
         #only trying to make work for sydney and mel due to lack of api calls
         if city != "sydney" and city != "melbourne":
             return None
@@ -833,7 +833,8 @@ class search(Resource):
             loc = detailedItems[key].get_location()
             if loc is not None:
                 locations.append(loc)
-        return locations
+
+        return {'locations': locations}
 
     def getFSVenues(self, detailedItems):
         parsedtime = date.today().strftime('%Y%m%d')
@@ -845,7 +846,6 @@ class search(Resource):
         )
 
         for key in detailedItems.keys():
-            print(key)
             if check_cache('venue_' + key + '.json', False):
                 cache = retrieve_cache('venue_' + key + '.json', False)
                 parsed = json.loads(cache)
