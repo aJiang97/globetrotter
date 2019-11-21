@@ -2,8 +2,7 @@ import { createStyles } from "@material-ui/core/styles";
 
 const baseButton = {
   width: 80,
-  margin: 5,
-  zIndex: 2
+  margin: 5
 };
 
 export const styles = createStyles(theme => ({
@@ -47,7 +46,7 @@ export const styles = createStyles(theme => ({
   buttonsContainer: {
     position: "absolute",
     top: 110,
-    right: "15%",
+    right: "52%",
     display: "flex",
     flexDirection: "row"
   },
@@ -79,10 +78,7 @@ export const styles = createStyles(theme => ({
   datesContainer: {
     display: "grid",
     gridTemplateColumns: "0.5fr 1fr 0.5fr 1fr",
-    width: "45%",
+    width: "60%",
     alignItems: "baseline"
-  },
-  mapContainer: {
-    zIndex: 1
   }
 }));
