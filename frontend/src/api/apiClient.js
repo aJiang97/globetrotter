@@ -87,6 +87,10 @@ class APIClient {
     return this.perform("get", `trip?uuid=${uuid}`, "", token);
   }
 
+  searchLocation(city, query) {
+    return this.perform("get", `suggest/search?city=${city}&query=${query}`);
+  }
+
   async perform(method, resource, data, token) {
     return client({
       method,
