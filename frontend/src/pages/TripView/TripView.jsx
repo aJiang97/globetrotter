@@ -501,7 +501,6 @@ export class PureTripView extends React.Component {
           <Grid container item xs={6}>
             {this.state.dates && this.state.currentDateItinerary && (
               <MapContainer
-                className={classes.mapContainer}
                 locations={this.state.currentDateItinerary}
               />
             )}
