@@ -21,6 +21,14 @@ class ItineraryAlgorithm(Resource):
                                 "place_id":"place_id:{put_id_here}|place_id{extra_ids}|..."''')
     def post(self):
         locations = request.get_json()
+        locations_id = locations.get("place_id").replace("place_id:","").split("|")
+
+        if len(locations_id) <= 1:
+            return {
+                "travel_matrix":[["0 mins"]],
+                "path":locations_id,
+                "matrix_places": locations.get("place_id")
+            }
 
         #collecting data for algorithm
         #first tries driving mode then bicycling
@@ -29,9 +37,6 @@ class ItineraryAlgorithm(Resource):
             matrix = self.get_distancematrix(locations.get("place_id"),mode='bicycling')
             if matrix is None:
                 abort(403,message="Error with google API request or response")
-
-        #collecting data for algorithm
-        locations_id = locations.get("place_id").replace("place_id:","").split("|")
 
         ordered_locations = self.calculate_path_without_start(matrix["dm"],locations_id)
 

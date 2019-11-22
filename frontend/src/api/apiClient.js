@@ -92,21 +92,25 @@ class APIClient {
     return this.perform("get", `trip?uuid=${uuid}`, "", token);
   }
 
+  searchLocation(city, query) {
+    return this.perform("get", `suggest/search?city=${city}&query=${query}`);
+  }
+
   getUsersOnTrip(token, uuid) {
     return this.perform("get", `trip/user?uuid=${uuid}`, "", token);
   }
 
   addUserToTrip(token, user, uuid) {
     const data = {
-      "displayname": user.displayname,
-      "email": user.email,
-      "permission": 2     // Add the new user as an editor
-    }
+      displayname: user.displayname,
+      email: user.email,
+      permission: 2 // Add the new user as an editor
+    };
     return this.perform("post", `trip/user?uuid=${uuid}`, data, token);
   }
 
   deleteUserFromTrip(token, email, uuid) {
-    const data ={ "email": email };
+    const data = { email: email };
     return this.perform("delete", `trip/user?uuid=${uuid}`, data, token);
   }
 

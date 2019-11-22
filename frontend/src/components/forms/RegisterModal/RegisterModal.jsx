@@ -52,7 +52,7 @@ export class UserRegister extends React.Component {
         resp === 409
           ? this.setState({ success: false })
           : this.setState({ success: true });
-      })
+      });
   };
 
   render() {
@@ -97,7 +97,11 @@ export class UserRegister extends React.Component {
               color="primary"
               variant="contained"
             >
-              <Typography className={classes.loginText} variant="button">
+              <Typography
+                className={classes.loginText}
+                variant="button"
+                disabled={() => this.errorsDisplayed()}
+              >
                 Register
               </Typography>
             </Button>
@@ -128,6 +132,14 @@ export class UserRegister extends React.Component {
     PasswordField.oninput = this.validatePassword;
     ConfirmPasswordField.oninput = this.validateConfirmPassword;
   }
+
+  errorsDisplayed = () => {
+    const errors = this.state.formData.filter(field => {
+      console.log(field);
+      return field.error !== undefined;
+    });
+    return errors.length > 0 ? true : false;
+  };
 
   passwordsMatch = (password, confirmPassword) => {
     return password === confirmPassword ? true : false;
