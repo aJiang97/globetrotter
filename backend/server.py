@@ -35,7 +35,6 @@ def run(host, port):
 
 def run_flask(host, port):
     from app import app
-    
     import routes.suggest
     import routes.details
     import routes.routing

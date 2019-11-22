@@ -23,22 +23,32 @@ const flexScroll = {
   overflow: "auto",
   maxHeight: "100%",
   marginTop: "64px"
-}
+};
 
 export const styles = createStyles(theme => ({
+  body1: {
+    marginTop: 20,
+    marginLeft: 65
+  },
   section: {
     flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    boxSizing: 'border-box',
-    height: '100vh',
-    width: '100%'
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    boxSizing: "border-box",
+    height: "100vh",
+    width: "100%"
   },
   flexScroll: {
     ...flexScroll,
-    paddingLeft: "40px",
-    paddingRight: "80px"
+    display: "flex",
+    flexDirection: "column"
+  },
+  leftContainer: {
+    display: "flex",
+    flexDirection: "column",
+    marginLeft: "2.5%",
+    width: "95%"
   },
   locationPane: {
     ...flexScroll,
@@ -52,10 +62,10 @@ export const styles = createStyles(theme => ({
   },
   title: {
     fontWeight: "bold",
-    marginTop: "20px",
-    fontSize: "30px",
+    marginTop: 10,
+    fontSize: 30,
     width: "100%",
-    textAlign: "center"
+    marginLeft: 65
   },
   loadingContainer: {
     margin: "auto",
@@ -76,5 +86,9 @@ export const styles = createStyles(theme => ({
   viewButtonOut: {
     ...viewButton,
     right: 0
+  },
+  searchBar: {
+    marginLeft: "5%",
+    width: "90%"
   }
 }));

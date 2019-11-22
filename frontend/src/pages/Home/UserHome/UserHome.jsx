@@ -25,7 +25,9 @@ export class PureUserHome extends React.Component {
   }
 
   getISO2 = location => {
-    const pair = cityToISO2.filter(city => city.city_ascii === location);
+    const pair = cityToISO2.filter(
+      city => city.city_ascii.toLowerCase() === location.toLowerCase()
+    );
     return pair[0].iso2.toLowerCase();
   };
 
