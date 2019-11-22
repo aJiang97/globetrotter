@@ -47,3 +47,5 @@ def handle_message(message):
 @socketio.on('json')
 def handle_json(json):
     print('Received JSON: ' + str(json))
+
+@socketio.on()
