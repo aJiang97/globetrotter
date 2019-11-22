@@ -427,6 +427,11 @@ export class PureTripView extends React.Component {
     return (
       <div className={classes.container}>
         <NavBar />
+        {!this.state.places && (
+          <div className={classes.loadingContainer}>
+            <ReactLoading type={"spin"} color={"black"} />
+          </div>
+        )}
         <Grid className={classes.section}>
           <Grid container item xs={6} className={classes.subSection}>
               {this.state.isEditableTitle ? (
@@ -451,7 +456,7 @@ export class PureTripView extends React.Component {
                 {this.state.title}
               </Typography>
             )}
-            {this.context.user && 
+            {this.state.places && this.context.user && 
               <UsersRow 
                 currentUser={this.getUserFromTrip(this.context.user.email)}
                 users={this.state.users} 
@@ -459,7 +464,7 @@ export class PureTripView extends React.Component {
                 handleRemove={this.handleRemoveUser}  
               />
             }
-            {this.context.user && (
+            {this.context.user && this.state.places && (
               <div className={classes.buttonsContainer}>
                 <Button
                   variant="contained"
@@ -482,7 +487,8 @@ export class PureTripView extends React.Component {
               </div>
             )}
             {this.state.dates &&
-              <div className={classes.datesContainer}>
+              <div className={classes.smallContainer}>
+                <div className={classes.datesContainer}>
                 From
                 <TextField
                   type="date"
@@ -511,6 +517,15 @@ export class PureTripView extends React.Component {
                   }}
                   onChange={this.handleEndDateChange}
                 />
+              </div>
+              <div className={classes.flexDiv} />
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={this.handleOpenAddLocationModal}
+              >
+                New Location
+              </Button>
               </div>
             }
             {this.state.dates && (
@@ -556,6 +571,14 @@ export class PureTripView extends React.Component {
               onClose={this.handleCloseDeleteUserMessage}
               message={`${this.state.deletedUser ? this.state.deletedUser.displayname : 'User'} was successfully removed from this trip.`}
             />
+            {this.state.openAddLocationModal && (
+              <AddLocationModal
+                city={this.state.city}
+                onSubmit={this.handleSubmitLocation}
+                onClose={this.handleCloseAddLocationModal}
+                existingLocations={this.state.places}
+              />
+            )}
             {this.state.redirect && <Redirect to="/home" />}
           </Grid>
           <Grid container item xs={6}>
