@@ -797,11 +797,7 @@ class search(Resource):
     def get(self):
         city = request.args.get('city')
         query = request.args.get('query')
-<<<<<<< HEAD
         query = query.strip()
-=======
-        query.strip()
->>>>>>> WIP
         city = city.lower()
         #only trying to make work for sydney and mel due to lack of api calls
         if city != "sydney" and city != "melbourne":
