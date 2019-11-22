@@ -24,7 +24,6 @@ The Cenotaph                                      ;                     4.7;4df9
 The Baxter Inn                                    ;                     4.7;4ed4896c775b45f6ed7b0182;ChIJ10M4PT-uEmsRMeqvCIcacXo
 Tamarama Beach                                    ;                     4.7;4b058763f964a520788f22e3;ChIJobeFboatEmsRrw6FDA9lXNc
 Sze Yup Kwan Ti Temple                            ;                     4.7;4d0ef07b38bb6ea8d949bcaa;ChIJady4htGvEmsRJVpDDfJfxVk
-Sydney Opera House - Concert Hall                 ;                     4.7;502d0f6fe4b047ef99541af2;ChIJ3S-JXmauEmsRUcIaWtf4MzE
 Sydney Opera House                                ;                     4.7;4b058762f964a5201b8f22e3;ChIJ3S-JXmauEmsRUcIaWtf4MzE
 Sydney Harbour Bridge                             ;                     4.7;4b058762f964a5201c8f22e3;ChIJ49XqJV2uEmsRPsTAF7eOlGg
 Susannah Place Museum                             ;                     4.7;4b058765f964a520349022e3;ChIJkeoK_UKuEmsRe-UTnQNgyK0
@@ -95,7 +94,6 @@ Grifter Brewing Company                           ;                     4.6;5667
 Experiment Farm Cottage                           ;                     4.6;4b058762f964a520208f22e3;ChIJd5cBNT2jEmsR21sjsLuovaw
 Essence Coffee                                    ;                     4.6;4cd8712815d8b60c14fc650e;ChIJGcaIHJiuEmsRHuArGW-23Ws
 Elizabeth Bay House                               ;                     4.6;4b058762f964a5201f8f22e3;ChIJnyv_mHOuEmsRj_N1sIPsmN0
-Darling Quarter Water Park                        ;                     4.6;4eae2e5461af352e5d6e35f7;ChIJt9trB0euEmsR8NbepO14j3M
 Darling Harbour Carousel                          ;                     4.6;4ba57fabf964a520f70c39e3;ChIJt9trB0euEmsR8NbepO14j3M
 Clovelly Beach                                    ;                     4.6;4b058763f964a520918f22e3;ChIJ22eaL3CyEmsRQ1nKBWsK_EU
 Chinese Garden of Friendship                      ;                     4.6;4b9af88af964a5200ee835e3;ChIJFTfQPjuuEmsREP3x-Wh9AQ8
@@ -130,7 +128,6 @@ Powerhouse Museum                                 ;                     4.5;4da8
 Organic Food Markets                              ;                     4.5;4b11af8ef964a5203b8223e3;ChIJ_Uo6EWqwEmsRbDvZLl5oA_0
 Old Government House                              ;                     4.5;4b058765f964a5202d9022e3;ChIJeUoR4-CiEmsRiJk1m-TrJ90
 Nomad Restaurant                                  ;                     4.5;5246b40e498eac323b64db5c;ChIJVyiVBxiuEmsRvRl_kNMT5-A
-Museum of Applied Arts & Sciences                 ;                     4.5;4b058765f964a520339022e3;ChIJwbKbCiWuEmsRgBXuDPx5lJ0
 Mjølner                                           ;                     4.5;58dfa6da14f8f401b3c72678;ChIJx9SlCt-xEmsRmMws7kMi-2Q
 Lyne Park                                         ;                     4.5;4b05bef8f964a5204ee222e3;ChIJWzI0r7CtEmsRE_ukTxH1mZM
 Love Tilly Devine                                 ;                     4.5;4cb80600dd41a35da3a6d7a0;ChIJ-TcyDxSuEmsRvdjonUu_TvU
@@ -200,7 +197,6 @@ Featherdale Wildlife Park                         ;                     4.4;4b05
 Eveleigh Market                                   ;                     4.4;4b19ac25f964a520aae123e3;ChIJSaOAhtKxEmsR0isoiLlaYqU
 Elizabeth Farm                                    ;                     4.4;4b058765f964a5202e9022e3;ChIJ9yRE4D2jEmsRIDFgk_Mnn4w
 El Jannah                                         ;                     4.4;4b754c17f964a52002052ee3;ChIJZXwMEi6jEmsRFpWwH6Kh4iY
-Carriageworks                                     ;                     4.4;4b058765f964a520219022e3;ChIJSaOAhtKxEmsR0isoiLlaYqU
 Café Sydney                                       ;                     4.4;4b15b9a4f964a52053b323e3;ChIJOahrAxKuEmsRiJOniUNkOZY
 Buffalo Dining Club                               ;                     4.4;4f227cb5e4b05160ace20587;ChIJx_ISAg6uEmsR0OAJjTiFFA0
 Bourke Street Bakery                              ;                     4.4;52f03cf311d2ea0d855ae4b8;ChIJWzVPYPKuEmsRqY82K_j6BcU
@@ -220,7 +216,6 @@ The Glenmore Rooftop Hotel                        ;                     4.3;4b05
 The Galeries                                      ;                     4.3;4b0e297cf964a5207b5523e3;ChIJRzzaXz6uEmsRi70PiJd9VzE
 The Boathouse                                     ;                     4.3;4b747f61f964a5202ee02de3;ChIJGRbs_1RNDWsRICuGASTCFQ0
 Sylvania Fruit World                              ;                     4.3;4b63bef2f964a520858f2ae3;ChIJTTEO42O4EmsRIqTcLGXrjms
-Sydney Tower Eye Observation Deck                 ;                     4.3;59ed67c70d173f1d25fb4da9;ChIJy6BwuD-uEmsRyiRskH1UG-I
 Sydney Tower Eye                                  ;                     4.3;4b0cc6e4f964a520c64123e3;ChIJy6BwuD-uEmsRyiRskH1UG-I
 Stockland                                         ;                     4.3;4ba44e3cf964a520a59438e3;ChIJ5yNzVvqWEmsRsC_z-Wh9AQ8
 Stitch Bar                                        ;                     4.3;4d675ae3fd1b8cfaf0a61cf0;ChIJ7wJDokCuEmsRKSA5MEOEf2E
@@ -272,15 +267,12 @@ Chatswood Chase                                   ;                     4.2;4b19
 Central Park                                      ;                     4.2;4bea16686295c9b6fc1a8608;ChIJ1aNVUSauEmsRz_XRx26IZbc
 Castle Towers                                     ;                     4.2;4b071794f964a52015f722e3;ChIJK-OXAAyhEmsRcCjz-Wh9AQ8
 Cadman's Cottage                                  ;                     4.2;4b058763f964a5209e8f22e3;ChIJC1xdt0KuEmsRJBu0VW98EKY
-Bondi Markets                                     ;                     4.2;4b05876cf964a520049222e3;ChIJaXfeKJ6tEmsRyjeMgc9onq8
 Bondi Farmers Market                              ;                     4.2;4de039f28877aab7fe459e56;ChIJaXfeKJ6tEmsRyjeMgc9onq8
 Black Star Pastry                                 ;                     4.2;4b10ba7af964a520247523e3;ChIJgwF71jawEmsRWUOXoYpNxjM
 Birkenhead Point Outlet Centre                    ;                     4.2;4b05876ef964a5209f9222e3;ChIJ8Qs6JZWvEmsRctI3c-cOHVU
-Wild Mouse                                        ;                     4.1;4e1a8fdbaeb7eb0120df911a;ChIJ384_FGCuEmsRFAbHLAWVPGg
 Westfield Burwood                                 ;                     4.1;4b07c8d4f964a520020023e3;ChIJGVaXxtq6EmsRhKtNOKjZ76c
 Wannabees Family Play Town                        ;                     4.1;4eaa23d561af01ea2a3e69a1;ChIJadCegxiqEmsRtLLcBnSv130
 Uniqlo                                            ;                     4.1;546410e9498e63f85ab385b0;ChIJzb2bSkCuEmsRf47JvDhvUOk
-The Rotor                                         ;                     4.1;4eab52f58b8180c90bcd0343;ChIJ384_FGCuEmsRFAbHLAWVPGg
 The Grounds Of Alexandria                         ;                     4.1;4f79423a1081186a21dbf3a9;ChIJFbIJpLaxEmsRSrzMZif-DK8
 The Four In Hand Hotel                            ;                     4.1;4b05875ff964a5205e8e22e3;ChIJbWYckeKtEmsR6VClka_7NQ0
 The Coca-Cola Billboard                           ;                     4.1;4b74c423f964a520e5f02de3;ChIJPTuRdhKuEmsRcHzsaHXwIyU
@@ -290,11 +282,9 @@ Sydney Family Show                                ;                     4.1;4bb4
 Stockland Balgowlah                               ;                     4.1;4b7e4968f964a52065e82fe3;ChIJI_2ztLurEmsRzTBEfWjelTA
 Rozelle Markets                                   ;                     4.1;4b089cf3f964a520740f23e3;ChIJp4FjtMavEmsRFCpBbybLkno
 Rocks Brewing Co                                  ;                     4.1;52a6ae9911d25b96d7c89019;ChIJoWF87K2xEmsR02elLIfuP5s
-Ranger                                            ;                     4.1;4e1a96e9e4cd49a7e3fe00ce;ChIJ384_FGCuEmsRFAbHLAWVPGg
 Queen Victoria's Statue                           ;                     4.1;4bddfa786198c9b6be7612ff;ChIJx3csNBWuEmsRaN7O_qNUr8k
 Pasticceria Papa                                  ;                     4.1;539acd0a498e718f89970541;ChIJVfTaf5mtEmsRKT0s0XdF0gI
 Paddy's Markets                                   ;                     4.1;4d55e218a05c370456a1be87;ChIJtSxTkCSuEmsR-vGr9RrZSko
-Mystery Manor                                     ;                     4.1;5b35a31216fa04002ce109c8;ChIJ384_FGCuEmsRFAbHLAWVPGg
 MLC Centre                                        ;                     4.1;4b05876cf964a520f69122e3;ChIJT_ROGECuEmsRUcmClsa6o1A
 Mid City Centre                                   ;                     4.1;4b05876bf964a520bb9122e3;ChIJy0Q0lj-uEmsReEdC90ytHWI
 Market City                                       ;                     4.1;4b05876bf964a520bd9122e3;ChIJBxtMiSSuEmsR2M3ilXxI44Y
@@ -305,7 +295,6 @@ Harbourside Shopping Centre                       ;                     4.1;4b05
 Fairfield Market                                  ;                     4.1;4b072f07f964a52011f922e3;ChIJ1f3zJ_SWEmsRA1Jh7EyJNc8
 Evangelical Free Church of Australia              ;                     4.1;4eb5b561dab4fe5111c82663;ChIJBxIOAwKpEmsRqqpqBWvyJX8
 EQ Village Food Markets                           ;                     4.1;4bad5b9af964a520c5493be3;ChIJ3z8sVPyxEmsRLX2dQjq3_g8
-Dodgem City                                       ;                     4.1;4eab84b9b6347a596a85aacd;ChIJ384_FGCuEmsRFAbHLAWVPGg
 Chinatown Night Market                            ;                     4.1;4b7e551ff964a520c7e92fe3;ChIJCaVSoSSuEmsRkbcrAEE_6BY
 Atom Thai                                         ;                     4.1;4b10f291f964a520e97623e3;ChIJObUKfjKwEmsRZEodhVhoNzw
 Winston Hills Mall                                ;                       4;4b281afff964a520138f24e3;ChIJZdZtRG6iEmsROmievamPMFQ
