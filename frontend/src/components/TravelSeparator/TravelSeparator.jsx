@@ -3,9 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Typography, Grid } from "@material-ui/core";
 import { styles } from "./styles";
 
-import DirectionsWalkIcon from '@material-ui/icons/DirectionsWalk';
-import DriveEtaIcon from '@material-ui/icons/DriveEta';
-import DirectionsBusIcon from '@material-ui/icons/DirectionsBus';
+import DriveEtaIcon from "@material-ui/icons/DriveEta";
 
 /**
  * Separator providing information regarding Travel Time
@@ -15,42 +13,31 @@ import DirectionsBusIcon from '@material-ui/icons/DirectionsBus';
  */
 export class PureTravelSeparator extends React.Component {
   render() {
-    const { walkTime, driveTime, publicTime, classes } = this.props;
+    const { time, classes } = this.props;
     return (
-        <div className={classes.container}>
-            <Grid container>
-                <Grid item xs={3} />
+      <div className={classes.container}>
+        <Grid container>
+          <Grid item xs={3} />
 
-                <Grid item xs={9} className={classes.contentColumn}>
-                    <div className={classes.etaRow}>
-                        <div className={classes.etaRowContents}>
-                            <a className={classes.etaRowLink} href="https://www.google.com" target="_blank" rel="noopener noreferrer">
-                                <Grid container spacing={3}>
-                                    <Grid item>
-                                        <Typography>
-                                            <DirectionsWalkIcon className={classes.etaIcon} />
-                                            <span className={classes.etaText}>{walkTime}</span>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item> 
-                                        <Typography>
-                                            <DriveEtaIcon className={classes.etaIcon} />
-                                            <span className={classes.etaText}>{driveTime}</span>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography>
-                                            <DirectionsBusIcon className={classes.etaIcon} />
-                                            <span className={classes.etaText}>{publicTime}</span>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                            </a>
-                        </div>
-                    </div>
-                </Grid>
-            </Grid>
-        </div>
+          <Grid item xs={9} className={classes.contentColumn}>
+            <div className={classes.etaRow}>
+              <div className={classes.etaRowContents}>
+                <a
+                  className={classes.etaRowLink}
+                  href="https://www.google.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Typography>
+                    <DriveEtaIcon className={classes.etaIcon} />
+                    <span className={classes.etaText}>{time}</span>
+                  </Typography>
+                </a>
+              </div>
+            </div>
+          </Grid>
+        </Grid>
+      </div>
     );
   }
 }

@@ -30,7 +30,7 @@ class PureLocationListWindow extends React.Component {
             <CardActions disableSpacing>
               <IconButton
                 className={classes.closeButton}
-                onClick={() => onRemove(key)}
+                onClick={() => onRemove(location.google.place_id)}
               >
                 <Close />
               </IconButton>
