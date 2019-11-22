@@ -1,8 +1,8 @@
 import os
-from flask import Flask
+from flask import Flask, request
 from flask_restplus import Api
 from flask_cors import CORS
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 
 from util.model_interpret import ModelProc
 from db.interface import DB
@@ -38,14 +38,44 @@ if 'HOST' in os.environ:
     print('***')
     print()
 
+
 # SocketIO Routes
-@socketio.on('message')
-def handle_message(message):
-    print('Message: ' + message)
-    send(message, broadcast=True)
 
-@socketio.on('json')
-def handle_json(json):
-    print('Received JSON: ' + str(json))
 
-@socketio.on()
+@socketio.on('join')
+def on_join(data):
+    userid = data['user']
+    room = data['room']
+    join_room(room)
+    send(request.sid + ' has entered room ' + room, room=room)
+
+@socketio.on('leave')
+def on_leave(data):
+    userid = data['user']
+    room = data['room']
+    leave_room(room)
+    send(request.sid + ' has left room ' + room, room=room)
+
+@socketio.on('edit_title')
+def handle_edit_title(new_title):
+    print('Title Edited')
+    print(new_title)
+    emit("editTitle", new_title)
+
+@socketio.on('edit_dates')
+def handle_edit_dates(new_date):
+    print('Date Edited')
+    print(new_date)
+    emit('editDates', new_date)
+
+@socketio.on('edit_locations')
+def handle_edit_locations(new_locations):
+    print('Locations Edited')
+    print(new_locations)
+    emit('editLocations', new_locations)
+
+@socketio.on('edit_users')
+def handle_edit_users(new_users):
+    print('Users Edited')
+    print(new_users)
+    emit('editUsers', new_users)
