@@ -11,6 +11,7 @@ from app import api, mp
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
 from requests_futures.sessions import FuturesSession
+from pathlib import Path
 
 from util.models import *
 from util.caching import *
@@ -652,8 +653,7 @@ class DetailedPrefSuggest(Resource):
             if check_cache('venue_' + key + '.json', False):
                 cached.append(key)
             else:
-                futures.append(session.get(
-                    'https://api.foursquare.com/v2/venues/' + key, params=params))
+                futures.append(session.get('https://api.foursquare.com/v2/venues/' + key, params=params))
 
         for venueId in cached:
             cache = retrieve_cache('venue_' + venueId + '.json', False)
@@ -788,6 +788,110 @@ class DetailedPrefSuggest(Resource):
         # store_cache(resp.text, 'explore_' + location + '.json')
 
         return resp.text
+
+@suggest.route('/search', strict_slashes=False)
+class search(Resource):
+    @suggest.param('city','city the user is searching',required=True)
+    @suggest.param('query','Term the user wants to search',required=True)
+    @suggest.response(200, description='Success', model=MODEL_locations)
+    def get(self):
+        city = request.args.get('city')
+        query = request.args.get('query')
+        query.strip()
+        city = city.lower()
+        #only trying to make work for sydney and mel due to lack of api calls
+        if city != "sydney" and city != "melbourne":
+            return None
+
+        path = Path(__file__).parent.parent
+        f = open(str(path)+"/"+city+".txt","r")
+
+        lines = []
+        for line in f:
+            if query.lower() in line.lower():
+                lines.append(line)
+                if len(lines)> 15:
+                    break
+        f.close()
+
+        detailedItems = dict()
+
+        for venue in lines:
+            col = venue.split(';')
+            id = col[2].strip()
+            name = col[0].strip()
+            detail = Detailed(id, name)
+            detail.set_placeid(col[3].strip())
+            detailedItems[id] = detail
+
+        detailedItems = self.getFSVenues(detailedItems)
+        detailedItems = self.getGoogleVenues(detailedItems)
+
+        #send info
+        locations = []
+        for key in detailedItems.keys():
+            loc = detailedItems[key].get_location()
+            if loc is not None:
+                locations.append(loc)
+
+        return {'locations': locations}
+
+    def getFSVenues(self, detailedItems):
+        parsedtime = date.today().strftime('%Y%m%d')
+
+        params = dict(
+            client_id=config.FOURSQUARE_CLIENT_ID,
+            client_secret=config.FOURSQUARE_CLIENT_SECRET,
+            v=parsedtime
+        )
+
+        for key in detailedItems.keys():
+            if check_cache('venue_' + key + '.json', False):
+                cache = retrieve_cache('venue_' + key + '.json', False)
+                parsed = json.loads(cache)
+                fsvenueobj = mp.f_location(parsed)
+                detailedItems[key].set_fslocation(fsvenueobj)
+            else:
+                pass
+                url = 'https://api.foursquare.com/v2/venues/'+key
+                response = requests.get(url=url, params=params)
+                if response.status_code != 200:
+                    continue
+                content = response.text
+                parsed = json.loads(content)
+                store_cache(content, 'venue_' + key + '.json')
+                fsvenueobj = mp.f_location(parsed)
+                detailedItems[key].set_fslocation(fsvenueobj)
+        return detailedItems
+        
+    def getGoogleVenues(self, detailedItems):
+        
+        for key in detailedItems.keys():
+            place_id = detailedItems[key].get_placeid()
+            if check_cache('place_' + place_id + '.json', False):
+                cache = retrieve_cache('place_' + place_id + '.json', False)
+                dets = json.loads(cache)
+                googlelocationobj = mp.g_location(dets, place_id)
+                detailedItems[key].set_googlelocation(googlelocationobj)
+            else:
+                payload = {
+                    'place_id': place_id,
+                    'key': config.GOOGLE_WS_API_KEY,
+                    'fields': 'url,rating,review'
+                }
+
+                response = requests.get(url=google_details_url,params=payload)
+                if response.status_code != 200:
+                    continue
+                content = response.text
+                dets = json.loads(content)
+                store_cache(content, 'place_' + place_id + '.json')
+                googlelocationobj = mp.g_location(dets, place_id)
+                detailedItems[key].set_googlelocation(googlelocationobj)
+
+        return detailedItems
+
+        
 
 
 class Detailed:
