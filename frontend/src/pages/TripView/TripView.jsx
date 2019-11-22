@@ -2,10 +2,11 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, TextField, Typography } from "@material-ui/core";
-
 import { styles } from "./styles";
 import { AlertMessage, CalendarGrid, DateTabs, NavBar, UsersRow, AddUserModal } from "../../components";
 import APIClient from "../../api/apiClient";
+import Grid from '@material-ui/core/Grid';
+import MapContainer from "../../components/MapContainer/MapContainer";
 import { UserContext } from "../../UserContext";
 
 export class PureTripView extends React.Component {
@@ -367,133 +368,144 @@ export class PureTripView extends React.Component {
     return (
       <div className={classes.container}>
         <NavBar />
-        {this.state.isEditableTitle ? (
-          <TextField
-            InputProps={{
-              classes: {
-                input: classes.resize
-              }
-            }}
-            onBlur={this.handleNonEditableTitle}
-            onChange={this.handleChangeTitle}
-            onMouseOut={this.handleNonEditableTitle}
-            value={this.state.title}
-            className={classes.title}
-          />
-        ) : (
-          <Typography
-            variant="h2"
-            className={classes.title}
-            onMouseOver={this.handleEditableTitle}
-          >
-            {this.state.title}
-          </Typography>
-        )}
+        <Grid className={classes.section}>
+          <Grid container item xs={6} className={classes.subSection}>
+              {this.state.isEditableTitle ? (
+              <TextField
+                InputProps={{
+                  classes: {
+                    input: classes.resize
+                  }
+                }}
+                onBlur={this.handleNonEditableTitle}
+                onChange={this.handleChangeTitle}
+                onMouseOut={this.handleNonEditableTitle}
+                value={this.state.title}
+                className={classes.title}
+              />
+            ) : (
+              <Typography
+                variant="h2"
+                className={classes.title}
+                onMouseOver={this.handleEditableTitle}
+              >
+                {this.state.title}
+              </Typography>
+            )}
 
-        <UsersRow 
-          currentUser={this.getUserFromTrip(this.context.user.email)}
-          users={this.state.users} 
-          handleAdd={this.openAddUserModal}
-          handleRemove={this.handleRemoveUser}  
-        />
-        {this.context.user && (
-          <div className={classes.buttonsContainer}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={this.handleDeleteTrip}
-              className={classes.DeleteButton}
-              disabled={this.state.uuid === null}
-            >
-              Delete
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSaveItinerary}
-              className={classes.SaveButton}
-              disabled={this.state.place && this.state.places.length === null}
-            >
-              Save
-            </Button>
-          </div>
-        )}
-        {this.state.dates &&
-          <div className={classes.datesContainer}>
-            From
-            <TextField
-              type="date"
-              value={this.state.startDate}
-              InputLabelProps={{
-                shrink: true
-              }}
-              InputProps={{
-                classes: {
-                  root: classes.underline
-                }
-              }}
-              onChange={this.handleStartDateChange}
+            <UsersRow 
+              currentUser={this.getUserFromTrip(this.context.user.email)}
+              users={this.state.users} 
+              handleAdd={this.openAddUserModal}
+              handleRemove={this.handleRemoveUser}  
             />
-            to
-            <TextField
-              type="date"
-              value={this.state.endDate}
-              InputLabelProps={{
-                shrink: true
-              }}
-              InputProps={{
-                classes: {
-                  root: classes.underline
-                }
-              }}
-              onChange={this.handleEndDateChange}
+            {this.context.user && (
+              <div className={classes.buttonsContainer}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={this.handleDeleteTrip}
+                  className={classes.DeleteButton}
+                  disabled={this.state.uuid === null}
+                >
+                  Delete
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={this.handleSaveItinerary}
+                  className={classes.SaveButton}
+                  disabled={this.state.place && this.state.places.length === null}
+                >
+                  Save
+                </Button>
+              </div>
+            )}
+            {this.state.dates &&
+              <div className={classes.datesContainer}>
+                From
+                <TextField
+                  type="date"
+                  value={this.state.startDate}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  InputProps={{
+                    classes: {
+                      root: classes.underline
+                    }
+                  }}
+                  onChange={this.handleStartDateChange}
+                />
+                to
+                <TextField
+                  type="date"
+                  value={this.state.endDate}
+                  InputLabelProps={{
+                    shrink: true
+                  }}
+                  InputProps={{
+                    classes: {
+                      root: classes.underline
+                    }
+                  }}
+                  onChange={this.handleEndDateChange}
+                />
+              </div>
+            }
+            {this.state.dates && (
+              <DateTabs
+                activeDate={this.state.dateIndex}
+                tabLabels={this.state.dates}
+                setDateIndex={this.setDateIndex}
+              />
+            )}
+            <CalendarGrid
+              itinerary={this.state.currentDateItinerary}
+              travelTimes={this.state.travelTimes}
+              placeToIndex={this.state.placeToIndex}
+              handleDeleteLocation={this.handleDeleteLocation}
             />
-          </div>
-        }
-        {this.state.dates && (
-          <DateTabs
-            activeDate={this.state.dateIndex}
-            tabLabels={this.state.dates}
-            setDateIndex={this.setDateIndex}
-          />
-        )}
-        <CalendarGrid
-          itinerary={this.state.currentDateItinerary}
-          travelTimes={this.state.travelTimes}
-          placeToIndex={this.state.placeToIndex}
-          handleDeleteLocation={this.handleDeleteLocation}
-        />
 
-        {/* Form for adding users to the trip  */}
-        {this.state.isAddUserOpen && (
-          <AddUserModal
-            isUserOnTrip={this.isUserOnTrip}
-            onClose={this.closeAddUserModal}
-            onSubmit={this.handleAddUserToTrip}
-          />
-        )}
+            {/* Form for adding users to the trip  */}
+            {this.state.isAddUserOpen && (
+              <AddUserModal
+                isUserOnTrip={this.isUserOnTrip}
+                onClose={this.closeAddUserModal}
+                onSubmit={this.handleAddUserToTrip}
+              />
+            )}
 
-        <AlertMessage
-          open={this.state.saved}
-          onClose={this.handleCloseSaveMessage}
-          message={"Your trip is successfully saved!"}
-        />
-        <AlertMessage
-          open={this.state.deleted}
-          onClose={this.handleCloseDeleteMessage}
-          message={"Your trip is successfully deleted!"}
-        />
-        <AlertMessage
-          open={this.state.addedUser !== null}
-          onClose={this.handleCloseAddUserMessage}
-          message={`${this.state.addedUser ? this.state.addedUser.displayname : 'User'} was successfully added to this trip.`}
-        />
-        <AlertMessage
-          open={this.state.deletedUser !== null}
-          onClose={this.handleCloseDeleteUserMessage}
-          message={`${this.state.deletedUser ? this.state.deletedUser.displayname : 'User'} was successfully removed from this trip.`}
-        />
-        {this.state.redirect && <Redirect to="/home" />}
+            <AlertMessage
+              open={this.state.saved}
+              onClose={this.handleCloseSaveMessage}
+              message={"Your trip is successfully saved!"}
+            />
+            <AlertMessage
+              open={this.state.deleted}
+              onClose={this.handleCloseDeleteMessage}
+              message={"Your trip is successfully deleted!"}
+            />
+            <AlertMessage
+              open={this.state.addedUser !== null}
+              onClose={this.handleCloseAddUserMessage}
+              message={`${this.state.addedUser ? this.state.addedUser.displayname : 'User'} was successfully added to this trip.`}
+            />
+            <AlertMessage
+              open={this.state.deletedUser !== null}
+              onClose={this.handleCloseDeleteUserMessage}
+              message={`${this.state.deletedUser ? this.state.deletedUser.displayname : 'User'} was successfully removed from this trip.`}
+            />
+            {this.state.redirect && <Redirect to="/home" />}
+          </Grid>
+          <Grid container item xs={6}>
+            {this.state.dates && this.state.currentDateItinerary && (
+              <MapContainer
+                locations={this.state.currentDateItinerary}
+              />
+            )}
+          </Grid>
+        </Grid>
       </div>
     );
   }

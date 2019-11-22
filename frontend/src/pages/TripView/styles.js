@@ -6,15 +6,36 @@ const baseButton = {
 };
 
 export const styles = createStyles(theme => ({
+  section: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    boxSizing: "border-box",
+    height: "100vh",
+    width: "100%",
+    // marginLeft: "15%",
+    // margin: "100px 10%"
+  },
+  subSection:{
+    display: "block",
+    flexGrow: 1,
+    overflow: "auto",
+    maxHeight: "100%",
+    paddingRight: "30px"
+  },
+  flexScroll: {
+    // paddingLeft: "30px",
+    // marginTop: "75px"
+  },
   title: {
     fontFamily: "Roboto",
     marginBottom: "20px",
-    width: "80%"
+    marginTop: "30px"
   },
   container: {
-    margin: "100px 10%",
-    width: "70%",
-    marginLeft: "15%"
+    margin: "63px 5%",
+    width: "90%"
   },
   dateTabs: {
     marginTop: "500px"
@@ -25,16 +46,16 @@ export const styles = createStyles(theme => ({
   buttonsContainer: {
     position: "absolute",
     top: 110,
-    right: "15%",
+    right: "52%",
     display: "flex",
     flexDirection: "row"
   },
   SaveButton: {
-    ...baseButton
+    ...baseButton,
   },
   DeleteButton: {
     ...baseButton,
-    color: "white"
+    color: "white",
   },
   resize: {
     fontSize: 57,
@@ -57,7 +78,7 @@ export const styles = createStyles(theme => ({
   datesContainer: {
     display: "grid",
     gridTemplateColumns: "0.5fr 1fr 0.5fr 1fr",
-    width: "45%",
+    width: "60%",
     alignItems: "baseline"
   }
 }));
