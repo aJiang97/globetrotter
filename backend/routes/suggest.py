@@ -797,7 +797,11 @@ class search(Resource):
     def get(self):
         city = request.args.get('city')
         query = request.args.get('query')
+<<<<<<< HEAD
+        query = query.strip()
+=======
         query.strip()
+>>>>>>> WIP
         city = city.lower()
         #only trying to make work for sydney and mel due to lack of api calls
         if city != "sydney" and city != "melbourne":
@@ -810,8 +814,8 @@ class search(Resource):
         for line in f:
             if query.lower() in line.lower():
                 lines.append(line)
-                if len(lines)> 15:
-                    break
+                # if len(lines)> 15:
+                #     break
         f.close()
 
         detailedItems = dict()
@@ -856,6 +860,9 @@ class search(Resource):
                 url = 'https://api.foursquare.com/v2/venues/'+key
                 response = requests.get(url=url, params=params)
                 if response.status_code != 200:
+                    if response.status_code == 429:
+                        print("quota exceeded on "+key)
+                        break
                     continue
                 content = response.text
                 parsed = json.loads(content)
