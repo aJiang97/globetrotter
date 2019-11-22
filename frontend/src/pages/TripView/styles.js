@@ -1,15 +1,46 @@
 import { createStyles } from "@material-ui/core/styles";
 
+const baseButton = {
+  width: 80,
+  margin: 5
+};
+
 export const styles = createStyles(theme => ({
+  loadingContainer: {
+    position: "absolute",
+    top: "50%",
+    left: "50%"
+  },
+  section: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    boxSizing: "border-box",
+    height: "100vh",
+    width: "100%",
+    // marginLeft: "15%",
+    // margin: "100px 10%"
+  },
+  subSection:{
+    display: "block",
+    flexGrow: 1,
+    overflow: "auto",
+    maxHeight: "100%",
+    paddingRight: "30px"
+  },
+  flexScroll: {
+    // paddingLeft: "30px",
+    // marginTop: "75px"
+  },
   title: {
     fontFamily: "Roboto",
     marginBottom: "20px",
-    width: "80%"
+    marginTop: "30px"
   },
   container: {
-    margin: "100px 10%",
-    width: "70%",
-    marginLeft: "15%"
+    margin: "63px 5%",
+    width: "90%"
   },
   dateTabs: {
     marginTop: "500px"
@@ -17,17 +48,49 @@ export const styles = createStyles(theme => ({
   itinerary: {
     paddingTop: "30px"
   },
-  saveButton: {
+  buttonsContainer: {
     position: "absolute",
-    top: 118,
-    right: 150
+    top: 110,
+    right: "52%",
+    display: "flex",
+    flexDirection: "row"
+  },
+  SaveButton: {
+    ...baseButton,
+  },
+  DeleteButton: {
+    ...baseButton,
+    color: "white",
   },
   resize: {
     fontSize: 57,
     fontWeight: "bold"
   },
-  captionContainer: {},
   green: {
     color: "green"
+  },
+  underline: {
+    "&:before": {
+      borderBottom: "1px solid white !important"
+    },
+    "&:after": {
+      borderBottom: `2px solid white !important`
+    },
+    "&:hover:not($disabled):not($focused):not($error):before": {
+      borderBottom: `2px solid white !important`
+    }
+  },
+  smallContainer: {
+    display: "flex",
+    flexDirection: "row"
+  },
+  datesContainer: {
+    display: "grid",
+    gridTemplateColumns: "0.5fr 1fr 0.5fr 1fr",
+    width: "100%",
+    alignItems: "baseline"
+  },
+  flexDiv: {
+    flexGrow: 1
   }
 }));

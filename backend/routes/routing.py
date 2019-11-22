@@ -1,15 +1,10 @@
 import requests
 import json
 import config
-from datetime import date, timedelta
-
-
-from concurrent.futures import ThreadPoolExecutor
 
 from app import api
 from flask_restplus import Resource, abort, reqparse, fields
 from flask import request, jsonify
-from requests_futures.sessions import FuturesSession
 
 from util.models import *
 
@@ -26,40 +21,27 @@ class ItineraryAlgorithm(Resource):
                                 "place_id":"place_id:{put_id_here}|place_id{extra_ids}|..."''')
     def post(self):
         locations = request.get_json()
-
-        payload = {
-            'key': config.GOOGLE_WS_API_KEY,
-            'origins':locations.get("place_id"),
-            'destinations':locations.get("place_id")
-        }
-
-        query = requests.get(url="https://maps.googleapis.com/maps/api/distancematrix/json?", params=payload)
-        response = json.loads(query.text)
-        print(query)
-        if query.status_code != 200:
-            abort(403,message=response['error_message'])
-
-        #collecting data for algorithm
         locations_id = locations.get("place_id").replace("place_id:","").split("|")
 
-        distance_matrix = []
-        time_matrix = []
-        rows = response["rows"]
-        for row in rows:
-            dm_row = []
-            time_row = []
-            for col in row["elements"]:
-                dm_row.append(col["distance"]["value"])
-                time_row.append(col["duration"]["text"])
-            distance_matrix.append(dm_row)
-            time_matrix.append(time_row)
+        if len(locations_id) <= 1:
+            return {
+                "travel_matrix":[["0 mins"]],
+                "path":locations_id,
+                "matrix_places": locations.get("place_id")
+            }
 
-        # print(distance_matrix,locations_id)
-        # print(time_matrix)
+        #collecting data for algorithm
+        #first tries driving mode then bicycling
+        matrix = self.get_distancematrix(locations.get("place_id"))
+        if matrix is None:
+            matrix = self.get_distancematrix(locations.get("place_id"),mode='bicycling')
+            if matrix is None:
+                abort(403,message="Error with google API request or response")
 
-        ordered_locations = self.calculate_path_without_start(distance_matrix,locations_id)
+        ordered_locations = self.calculate_path_without_start(matrix["dm"],locations_id)
+
         return {
-            "travel_matrix":time_matrix,
+            "travel_matrix":matrix["tm"],
             "path":ordered_locations,
             "matrix_places": locations.get("place_id")      # This is for /user/trip endpoint
         }
@@ -112,3 +94,43 @@ class ItineraryAlgorithm(Resource):
             path.append(next_loc)
             cost += smallest_distance
         return path
+
+    # request distance matrix from google api
+    #   locations are string of place_ids from google places
+    #   mode is one of: driving,walking,bicycling,transit
+    def get_distancematrix(self,locations,mode='driving'):
+
+        payload = {
+            'key': config.GOOGLE_WS_API_KEY,
+            'origins':locations,
+            'destinations':locations,
+            'mode':mode
+        }
+
+        query = requests.get(url="https://maps.googleapis.com/maps/api/distancematrix/json?", params=payload)
+        response = json.loads(query.text)
+        
+        if query.status_code != 200:
+            return None
+        
+        rows = response["rows"]
+        distance_matrix = []
+        travel_matrix = []
+        
+        for row in rows:
+            dm_row = []
+            travel_row = []
+            for col in row["elements"]:
+                try:
+                    dm_row.append(col["distance"]["value"])
+                    travel_row.append(col["duration"]["text"])
+                except KeyError:
+                    return None
+            distance_matrix.append(dm_row)
+            travel_matrix.append(travel_row)
+
+        return {
+            'dm':distance_matrix,
+            'tm':travel_matrix,
+        }
+

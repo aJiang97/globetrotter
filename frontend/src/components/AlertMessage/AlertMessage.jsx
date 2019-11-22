@@ -5,12 +5,7 @@ import { CheckCircle, Close } from "@material-ui/icons";
 
 import { styles } from "./styles";
 
-export class PureSaveMessage extends React.Component {
-  handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
-    this.setState({ open: false });
-  };
-
+export class PureAlertMessage extends React.Component {
   render() {
     const { classes, open, onClose } = this.props;
     return (
@@ -28,7 +23,7 @@ export class PureSaveMessage extends React.Component {
           message={
             <span id="client-snackbar" className={classes.message}>
               <CheckCircle className={classes.iconVariant} />
-              Your trip is successfully saved!
+              {this.props.message}
             </span>
           }
           action={[
@@ -47,4 +42,4 @@ export class PureSaveMessage extends React.Component {
   }
 }
 
-export const SaveMessage = withStyles(styles)(PureSaveMessage);
+export const AlertMessage = withStyles(styles)(PureAlertMessage);

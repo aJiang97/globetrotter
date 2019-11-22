@@ -23,11 +23,11 @@ class Signup(Resource):
             abort(400, 'Malformed request, format is not application/json')
 
         content = request.get_json()
-        email = content['email']
-        hashedpw = content['hashedpw']
-        displayname = content['displayname']
+        email = content.get('email')
+        hashedpw = content.get('hashedpw')
+        displayname = content.get('displayname')
 
-        if email is None or hashedpw is None:
+        if email is None or hashedpw is None or displayname is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
 
         if not db.available_email(email):
@@ -53,8 +53,8 @@ class Login(Resource):
             abort(400, 'Malformed request, format is not application/json')
 
         content = request.get_json()
-        email = content['email']
-        hashedpw = content['hashedpw']
+        email = content.get('email')
+        hashedpw = content.get('hashedpw')
 
         if email is None or hashedpw is None:
             abort(400, 'Malformed request, email and hashedpw is not supplied')
@@ -108,3 +108,30 @@ class Logout(Resource):
             abort(403, 'Bearer token mismatch. Your token is invalid and you should be signed out from your account')
 
         return
+
+@auth.route('/getuser', strict_slashes=False)
+class Getuser(Resource):
+    @auth.response(200, 'Success')
+    @auth.response(400, 'Malformed request. Missing email')
+    @auth.response(404, 'User not found.')
+    @auth.expect(MODEL_getuser_expect)
+    @auth.doc(desciption='')
+    def get(self):
+        print('Get request received')
+        print(request)
+        if not request.json:
+            abort(400, 'Malformed request, format is not application/json')
+        
+        email = request.get_json().get('email')
+        print(email)
+        if email is None:
+            abort(400, 'Malformed request, missing email')
+
+        print("Request was successful but...")
+
+        if db.available_email(email):
+            abort(404, 'User not found.')
+        
+        return {
+            "displayname": db.get_displayname(email)
+        }
