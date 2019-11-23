@@ -9,10 +9,7 @@ const client = axios.create({
 
 class APIClient {
   getLocations(city, preferences) {
-    return this.perform(
-      "get",
-      `/suggest/fs_google/prefs?city=${city}&types=${preferences}`
-    );
+    return this.perform("get", `/suggest/fs_google/prefs?city=${city}&types=${preferences}`);
   }
 
   registerUser(name, email, password) {
