@@ -15,6 +15,7 @@ import { UserContext } from "../../../UserContext";
 import { cityToISO2 } from "../../../utils/city-to-ISO2.js";
 import bg from "../../../assets/user-bg.jpg";
 import history from "../../../history";
+import APIClient from "../../../api/apiClient";
 
 export class PureUserHome extends React.Component {
   constructor(props) {
@@ -22,6 +23,7 @@ export class PureUserHome extends React.Component {
     this.state = {
       trips: null
     };
+    this.apiClient = new APIClient();
   }
 
   getISO2 = location => {
@@ -42,19 +44,35 @@ export class PureUserHome extends React.Component {
   };
 
   componentDidMount = () => {
-    this.setState({
-      trips: this.context.user.trips
-        .map(trip => {
-          const iso2 = this.getISO2(trip.city.split(",")[0]);
-          return {
-            ...trip,
-            iso2: iso2,
-            url: `https://lipis.github.io/flag-icon-css/flags/4x3/${iso2}.svg`,
-            alt: `${iso2}.svg`
-          };
+    this.apiClient.getAllTrips(this.context.user.token)
+      .then(data => {
+        this.setState({
+          trips: data.trips.map(trip => {
+            const iso2 = this.getISO2(trip.city.split(",")[0]);
+            return {
+              ...trip,
+              iso2: iso2,
+              url: `https://lipis.github.io/flag-icon-css/flags/4x3/${iso2}.svg`,
+              alt: `${iso2}.svg`
+            };
+          })
+          .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
         })
-        .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
-    });
+      })
+    
+    // this.setState({
+    //   trips: this.context.user.trips
+    //     .map(trip => {
+    //       const iso2 = this.getISO2(trip.city.split(",")[0]);
+    //       return {
+    //         ...trip,
+    //         iso2: iso2,
+    //         url: `https://lipis.github.io/flag-icon-css/flags/4x3/${iso2}.svg`,
+    //         alt: `${iso2}.svg`
+    //       };
+    //     })
+    //     .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
+    // });
   };
 
   render() {

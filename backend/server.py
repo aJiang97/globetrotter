@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys
+from app import run_app
 
 from db.dbinit import start_db 
 
@@ -45,7 +46,9 @@ def run_flask(host, port):
     os.environ['HOST'] = host
     os.environ['PORT'] = str(port)
 
-    app.run(debug=True, host=host, port=port)
+    # app.run(debug=True, host=host, port=port)
+    # Use SocketIO here to wrap around app
+    run_app(host=host, port=port)
 
 def usage():
     print('Usage:', sys.argv[0], '[host]', '[port]')
