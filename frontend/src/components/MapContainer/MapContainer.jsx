@@ -15,9 +15,7 @@ export class MapContainer extends React.Component {
     showingInfoWindow: false,
     activeMarker: {},
     selectedPlace: {},
-    directions: {},
-    start: {},
-    end: {}
+    directions: {}
   };
 
   createCoordinatesList() {
