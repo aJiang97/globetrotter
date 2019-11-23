@@ -15,19 +15,8 @@ export class MapContainer extends React.Component {
     showingInfoWindow: false,
     activeMarker: {},
     selectedPlace: {},
-    directions: {}
+    directions: null
   };
-
-  createCoordinatesList() {
-    var names = ['lat', 'lng'], coordinates = [];
-    this.props.locations.map(loc => {
-      var array = {};
-      array[names[0]] = parseFloat(loc.foursquare.coordinate.latitude);
-      array[names[1]] = parseFloat(loc.foursquare.coordinate.longitude);
-      coordinates.push(array);
-    })
-    return coordinates;
-  }
 
   onMarkerClick = (props, marker, e) => {
     this.setState({
@@ -47,38 +36,27 @@ export class MapContainer extends React.Component {
   };
 
   componentDidMount() {
-    const coordinates = this.createCoordinatesList();
-    var waypoints = [];
-    var start = new google.maps.LatLng(coordinates[0].lat, coordinates[0].lng);
-    var end = new google.maps.LatLng(coordinates[coordinates.length - 1].lat, coordinates[coordinates.length - 1].lng);;
-    // if there's more than 2 locations on the map
-    if (coordinates.length > 2) {
-      // get locations inbetween
-      for (var i = 1; i < coordinates.length - 1; i++) {
-        var array = {};
-        array['location'] = new google.maps.LatLng(coordinates[i].lat, coordinates[i].lng);
-        waypoints.push(array);
-      }
-    }
+    const waypoints = this.props.locations.map(loc => ({
+      location: {lat: parseFloat(loc.foursquare.coordinate.latitude),
+      lng: parseFloat(loc.foursquare.coordinate.longitude)},
+      stopover: true
+    }))
+    const origin = waypoints.shift().location;
+    const destination = waypoints.pop().location;
 
     const DirectionsService = new google.maps.DirectionsService();
     DirectionsService.route(
       {
-        origin: start,
-        destination: end,
+        origin: origin,
+        destination: destination,
         travelMode: google.maps.TravelMode.DRIVING,
         waypoints: waypoints
       },
       (result, status) => {
-        console.log(result);
-        console.log(status);
         if (status === google.maps.DirectionsStatus.OK) {
           this.setState({
             directions: result
           });
-          // console.log(this.state.directions);
-          // console.log(start);
-          // console.log(end);
         } else {
           console.error('error fetching directions ${result}');
         }
@@ -121,7 +99,7 @@ export class MapContainer extends React.Component {
             </div>
           </InfoWindow>}
           {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
-        {/* {console.log(this.createCoordinatesList())} */}
+        {console.log(this.state.directions)}
         </Map>
       </div>
     )
