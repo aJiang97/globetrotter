@@ -35,7 +35,7 @@ export class MapContainer extends React.Component {
     }
   };
 
-  apiIsLoaded = (map, maps) => {
+  componentDidMount() {
     const waypoints = this.props.locations.map(loc => ({
       location: {lat: parseFloat(loc.foursquare.coordinate.latitude),
       lng: parseFloat(loc.foursquare.coordinate.longitude)},
@@ -44,9 +44,8 @@ export class MapContainer extends React.Component {
     const origin = waypoints.shift().location;
     const destination = waypoints.pop().location;
 
-    const directionsService = new maps.DirectionsService();
-    const directionsRenderer = new maps.DirectionsRenderer();
-    directionsService.route(
+    const DirectionsService = new google.maps.DirectionsService();
+    DirectionsService.route(
       {
         origin: origin,
         destination: destination,
@@ -55,11 +54,9 @@ export class MapContainer extends React.Component {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-          directionsRenderer.setDirections(result);
-          const routePolyline = new google.maps.Polyline({
-            path: result.routes[0].overview_path
+          this.setState({
+            directions: result
           });
-          routePolyline.setMap(map);
         } else {
           console.error('error fetching directions ${result}');
         }
@@ -81,8 +78,6 @@ export class MapContainer extends React.Component {
             lat: this.props.locations[0].foursquare.coordinate.latitude,
             lng: this.props.locations[0].foursquare.coordinate.longitude
           }}
-          yesIWantToUseGoogleMapApiInternals 
-          onGoogleApiLoaded={({ map, maps }) => this.apiIsLoaded(map, maps)}
         >
           {this.props.locations.map((loc,key) => (
               <Marker
@@ -103,8 +98,8 @@ export class MapContainer extends React.Component {
               <h2>{this.state.selectedPlace.name}</h2>
             </div>
           </InfoWindow>}
-          {/* {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
-        {console.log(this.state.directions)} */}
+        {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
+        {console.log(this.state.directions)}
         </Map>
       </div>
     )
@@ -114,4 +109,3 @@ export class MapContainer extends React.Component {
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyB376cyeRoqfXHQXE-Zhl45CP8sPSK4MV0'
 })(MapContainer);
-
