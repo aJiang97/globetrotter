@@ -4,7 +4,8 @@ export const styles = createStyles(theme => ({
   card: {
     display: "flex",
     // width: "65vw",
-    borderRadius: "15px"
+    borderRadius: "15px",
+    marginBottom: "10px"
   },
 
   // Time Section
@@ -51,7 +52,7 @@ export const styles = createStyles(theme => ({
     marginLeft: "10px",
     position: "relative"
   },
-  moreButton: {
+  removeButton: {
     position: "absolute",
     top: 5,
     right: 5

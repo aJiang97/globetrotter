@@ -2,7 +2,7 @@ import { createStyles } from "@material-ui/core/styles";
 
 export const styles = createStyles(theme => ({
   card: {
-    width: "70%",
+    width: "90%",
     margin: 20
   },
   expand: {
@@ -18,7 +18,7 @@ export const styles = createStyles(theme => ({
   media: {
     height: "50",
     paddingTop: "33%",
-    width:"100%",
+    width: "100%"
   },
   title: {
     fontWeight: "bold",
@@ -31,6 +31,17 @@ export const styles = createStyles(theme => ({
     paddingLeft: "65px"
   },
   root: {
-    flexGrow: 1,
+    flexGrow: 1
+  },
+  typesContainer: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start"
+  },
+  typeContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center"
   }
 }));
