@@ -1,51 +1,71 @@
 /* global google */
-import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
-import { DirectionsRenderer } from 'react-google-maps';
+// import { Map, GoogleApiWrapper, InfoWindow, Marker } from "google-maps-react";
+import {
+  DirectionsRenderer,
+  GoogleMap,
+  withGoogleMap
+} from "react-google-maps";
 import * as React from "react";
 
 const style = {
-  width: "50%",
-  height: "100%",
-  overflow: "auto"
-}
+  width: "100%",
+  height: "100%"
+};
 
-
-export class MapContainer extends React.Component {
+class MapContainer extends React.Component {
   state = {
-    showingInfoWindow: false,
-    activeMarker: {},
-    selectedPlace: {},
-    directions: null
+    // showingInfoWindow: false,
+    // activeMarker: {},
+    // selectedPlace: {},
+    directions: null,
+    waypoints: null,
+    locations: null
   };
 
-  onMarkerClick = (props, marker, e) => {
-    this.setState({
-      selectedPlace: props,
-      activeMarker: marker,
-      showingInfoWindow: true,
+  // onMarkerClick = (props, marker, e) => {
+  //   this.setState({
+  //     selectedPlace: props,
+  //     activeMarker: marker,
+  //     showingInfoWindow: true
+  //   });
+  // };
+
+  // onMapClicked = props => {
+  //   if (this.state.showingInfoWindow) {
+  //     this.setState({
+  //       showingInfoWindow: false,
+  //       activeMarker: null
+  //     });
+  //   }
+  // };
+
+  apiIsLoaded = () => {
+    var origin;
+    var destination;
+    const waypoints = this.props.locations.map((loc, key) => {
+      if (key === 0) {
+        origin = new google.maps.LatLng(
+          parseFloat(loc.foursquare.coordinate.latitude),
+          parseFloat(loc.foursquare.coordinate.longitude)
+        );
+      }
+      if (key === this.props.locations.length - 1) {
+        destination = new google.maps.LatLng(
+          parseFloat(loc.foursquare.coordinate.latitude),
+          parseFloat(loc.foursquare.coordinate.longitude)
+        );
+      }
+      return {
+        location: {
+          lat: parseFloat(loc.foursquare.coordinate.latitude),
+          lng: parseFloat(loc.foursquare.coordinate.longitude)
+        },
+        stopover: true
+      };
     });
-  }
 
-  onMapClicked = (props) => {
-    if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: null
-      })
-    }
-  };
-
-  apiIsLoaded = (map, maps) => {
-    const waypoints = this.props.locations.map(loc => ({
-      location: {lat: parseFloat(loc.foursquare.coordinate.latitude),
-      lng: parseFloat(loc.foursquare.coordinate.longitude)},
-      stopover: true
-    }))
-    const origin = waypoints.shift().location;
-    const destination = waypoints.pop().location;
-
-    const directionsService = new maps.DirectionsService();
-    const directionsRenderer = new maps.DirectionsRenderer();
+    const directionsService = new google.maps.DirectionsService();
+    // const directionsRenderer = new maps.DirectionsRenderer();
     directionsService.route(
       {
         origin: origin,
@@ -55,63 +75,68 @@ export class MapContainer extends React.Component {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-          directionsRenderer.setDirections(result);
-          const routePolyline = new google.maps.Polyline({
-            path: result.routes[0].overview_path
+          console.log(result);
+          this.setState({
+            directions: result,
+            waypoints: waypoints,
+            locations: this.props.locations
           });
-          routePolyline.setMap(map);
         } else {
-          console.error('error fetching directions ${result}');
+          console.error(`error fetching directions ${result}`);
         }
       }
     );
-  }
+  };
+
+  isEqual = (oldArray, newArray) => {
+    if (!oldArray || !newArray) return false;
+    if (oldArray.length !== newArray.length) return false;
+    var i = 0;
+    while (i < oldArray.length) {
+      if (oldArray[i] !== newArray[i]) return false;
+      i++;
+    }
+    return true;
+  };
+
+  shouldComponentUpdate = (nextProps, nextState) => {
+    if (!this.isEqual(this.props.locations, nextProps.locations)) {
+      this.apiIsLoaded();
+      return true;
+    } else if (
+      JSON.stringify(this.state.directions) !==
+      JSON.stringify(nextState.directions)
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  componentDidMount = () => {
+    this.apiIsLoaded();
+  };
 
   render() {
-    return (
-      <div>
-        <Map
-          google={this.props.google}
-          onClick = {this.onMapClicked}
-          style={style}
-          zoom={12}
-          disableDefaultUI= {true}
-          // This is Sydney centre coordinates
-          initialCenter={{
-            lat: this.props.locations[0].foursquare.coordinate.latitude,
-            lng: this.props.locations[0].foursquare.coordinate.longitude
-          }}
-          yesIWantToUseGoogleMapApiInternals 
-          onGoogleApiLoaded={({ map, maps }) => this.apiIsLoaded(map, maps)}
-        >
-          {this.props.locations.map((loc,key) => (
-              <Marker
-                key={key}
-                onClick={this.onMarkerClick}
-                position={{
-                  lat: loc.foursquare.coordinate.latitude,
-                  lng: loc.foursquare.coordinate.longitude
-                }}
-                name={loc.foursquare.venue_name} 
-              />
-          ))}
-          {this.state.activeMarker && <InfoWindow
-            marker={this.state.activeMarker}
-            visible={this.state.showingInfoWindow}
+    this.apiIsLoaded();
+    const GoogleMapWrapper = withGoogleMap(props => {
+      return (
+        this.state.directions && (
+          <GoogleMap
+            defaultZoom={7}
+            defaultCenter={this.state.directions.request.origin}
           >
-            <div>
-              <h2>{this.state.selectedPlace.name}</h2>
-            </div>
-          </InfoWindow>}
-          {/* {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
-        {console.log(this.state.directions)} */}
-        </Map>
-      </div>
-    )
+            <DirectionsRenderer directions={this.state.directions} />
+          </GoogleMap>
+        )
+      );
+    });
+    return (
+      <GoogleMapWrapper
+        containerElement={<div style={style} />}
+        mapElement={<div style={{ height: `100%` }} />}
+      />
+    );
   }
 }
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyB376cyeRoqfXHQXE-Zhl45CP8sPSK4MV0'
-})(MapContainer);
-
+export default MapContainer;
