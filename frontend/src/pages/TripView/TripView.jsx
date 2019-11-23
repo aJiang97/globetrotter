@@ -10,6 +10,7 @@ import APIClient from "../../api/apiClient";
 import Grid from '@material-ui/core/Grid';
 import MapContainer from "../../components/MapContainer/MapContainer";
 import { UserContext } from "../../UserContext";
+import io from "socket.io-client";
 
 export class PureTripView extends React.Component {
   constructor(props) {
@@ -36,8 +37,18 @@ export class PureTripView extends React.Component {
       places: null
     };
     this.apiClient = new APIClient();
+    this.socket = io.connect('http://127.0.0.1:5000/');
   }
 
+  getElementOrder = (path, id) => {
+    for (var i = 0; i < path.length; i++) {
+      if (path[i] === id) {
+        return i;
+      }
+    }
+  }; 
+
+  // #region Date Functions
   getDates = (start, end) => {
     var dates = [];
     const startDate = new Date(start);
@@ -70,20 +81,93 @@ export class PureTripView extends React.Component {
     });
   };
 
-  getElementOrder = (path, id) => {
-    for (var i = 0; i < path.length; i++) {
-      if (path[i] === id) {
-        return i;
-      }
-    }
+  handleStartDateChange = e => {
+    const newDates = this.getDates(e.target.value, this.state.endDate);
+    this.setDateIndex(0);
+    this.setState({
+      startDate: e.target.value,
+      dates: newDates,
+      currentDateItinerary: this.getCurrentDateItinerary(
+        this.state.itinerary,
+        0,
+        newDates.length
+      )
+    });
   };
 
-  handleOpenAddLocationModal = () => {
-    this.setState({ openAddLocationModal: true });
+  handleEndDateChange = e => {
+    const newDates = this.getDates(this.state.startDate, e.target.value);
+    this.setDateIndex(0);
+    this.setState({
+      endDate: e.target.value,
+      dates: newDates,
+      currentDateItinerary: this.getCurrentDateItinerary(
+        this.state.itinerary,
+        0,
+        newDates.length
+      )
+    });
+  };
+  // #endregion
+
+  // #region Title Functions
+  handleEditableTitle = () => {
+    this.setState({ isEditableTitle: true });
   };
 
-  handleCloseAddLocationModal = () => {
-    this.setState({ openAddLocationModal: false });
+  handleNonEditableTitle = () => {
+    this.setState({ isEditableTitle: false });
+
+    // Send title change to other users
+    this.socket.emit('edit_title', this.state.title, this.state.uuid);
+  };
+
+  handleChangeTitle = e => {
+    this.setState({ title: e.target.value });
+  };
+  // #endregion
+
+  // #region Alert Message Controller Functions
+  handleCloseSaveMessage = e => {
+    this.setState({ saved: false });
+  };
+
+  handleCloseDeleteMessage = e => {
+    this.setState({
+      deleted: false
+    });
+  };
+  // #endregion
+
+  // #region Add/Delete Locations
+  handleSubmitLocation = newLocations => {
+    const places = this.state.places.concat(newLocations);
+    const placeToIndex = {};
+    places.map((place, i) => (placeToIndex[place.google.place_id] = i));
+    const placeIDs = places
+      .map(place => `place_id:${place.google.place_id}`)
+      .join("|");
+    this.apiClient = new APIClient();
+    this.apiClient.generateItinerary(placeIDs).then(data => {
+      const detailedPath = places
+        .map(place => ({
+          ...place,
+          order: this.getElementOrder(data.path, place.google.place_id)
+        }))
+        .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+      this.setState({
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: this.getCurrentDateItinerary(
+          detailedPath,
+          this.state.dateIndex,
+          this.state.dates.length
+        ),
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix,
+        openAddLocationModal: false
+      });
+    });
   };
 
   handleDeleteLocation = g_id => {
@@ -117,107 +201,16 @@ export class PureTripView extends React.Component {
     });
   };
 
-  getUserFromTrip = (email) => {
-    for (let user of this.state.users) {
-      if (user.email === email) {
-        return user;
-      }
-    }
-    return null;
-  }
-
-  handleEditableTitle = () => {
-    this.setState({ isEditableTitle: true });
+  handleOpenAddLocationModal = () => {
+    this.setState({ openAddLocationModal: true });
   };
 
-  handleNonEditableTitle = () => {
-    this.setState({ isEditableTitle: false });
+  handleCloseAddLocationModal = () => {
+    this.setState({ openAddLocationModal: false });
   };
+  // #endregion
 
-  handleChangeTitle = e => {
-    this.setState({ title: e.target.value });
-  };
-
-  handleStartDateChange = e => {
-    const newDates = this.getDates(e.target.value, this.state.endDate);
-    this.setDateIndex(0);
-    this.setState({
-      startDate: e.target.value,
-      dates: newDates,
-      currentDateItinerary: this.getCurrentDateItinerary(
-        this.state.itinerary,
-        0,
-        newDates.length
-      )
-    });
-  };
-
-  handleEndDateChange = e => {
-    const newDates = this.getDates(this.state.startDate, e.target.value);
-    this.setDateIndex(0);
-    this.setState({
-      endDate: e.target.value,
-      dates: newDates,
-      currentDateItinerary: this.getCurrentDateItinerary(
-        this.state.itinerary,
-        0,
-        newDates.length
-      )
-    });
-  };
-
-  handleCloseSaveMessage = e => {
-    this.setState({ saved: false });
-  };
-
-  handleCloseDeleteMessage = e => {
-    this.setState({
-      deleted: false
-    });
-  };
-
-  handleSubmitLocation = newLocations => {
-    const places = this.state.places.concat(newLocations);
-    const placeToIndex = {};
-    places.map((place, i) => (placeToIndex[place.google.place_id] = i));
-    const placeIDs = places
-      .map(place => `place_id:${place.google.place_id}`)
-      .join("|");
-    this.apiClient = new APIClient();
-    this.apiClient.generateItinerary(placeIDs).then(data => {
-      const detailedPath = places
-        .map(place => ({
-          ...place,
-          order: this.getElementOrder(data.path, place.google.place_id)
-        }))
-        .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-      this.setState({
-        itinerary: detailedPath,
-        places: places,
-        currentDateItinerary: this.getCurrentDateItinerary(
-          detailedPath,
-          this.state.dateIndex,
-          this.state.dates.length
-        ),
-        placeToIndex: placeToIndex,
-        travelTimes: data.travel_matrix,
-        openAddLocationModal: false
-      });
-    });
-  };
-
-  handleCloseAddUserMessage = e => {
-    this.setState({
-      addedUser: null
-    });
-  }
-
-  handleCloseDeleteUserMessage = e => {
-    this.setState({
-      deletedUser: null
-    });
-  }
-
+  // #region Saving/Deleting Trips
   handleDeleteTrip = () => {
     this.apiClient
       .deleteTrip(this.context.user.token, this.state.uuid)
@@ -281,7 +274,9 @@ export class PureTripView extends React.Component {
         });
     }
   };
+  // #endregion
 
+  // #region Multi-User Collaboration Functions
   handleAddUserToTrip = (user) => {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
@@ -316,6 +311,25 @@ export class PureTripView extends React.Component {
 
   updateUsersOnTrip = (uuid) => {
     const userToken = this.context.user.token;
+
+    console.log('Current User');
+    console.log(this.context.user);
+
+    // {name: "Sebastian Chua", token: "06df15cb7da564eb4284ccb136559dd0b80bbb95cc971b1c450a594d25e829fe", email: "sebi@test.com", password: "ff156710984f143b", trips: Array(1)}
+    // email: "sebi@test.com"
+    // name: "Sebastian Chua"
+    // password: "ff156710984f143b"
+    // token: "06df15cb7da564eb4284ccb136559dd0b80bbb95cc971b1c450a594d25e829fe"
+    // trips: Array(1)
+    // 0: {description: "Business Trip", city: "New York", tripstart: "2019-12-12 00:00:00+00:00", tripend: "2019-12-16 00:00:00+00:00", modifieddate: "2019-11-20 16:04:11.797981+00:00", …}
+    // length: 1
+
+    // Setup socket for this user using uuid as a room
+    this.socket.emit('join', {
+      user: this.context.user,
+      room: uuid
+    }, () => { console.log('Successfully joined room.') });
+
     this.apiClient
       .getUsersOnTrip(userToken, uuid)
       .then(response => {
@@ -323,6 +337,36 @@ export class PureTripView extends React.Component {
           users: response
         })
       });
+  }
+
+  listenForChanges = () => {
+    this.socket.on('editTitle', (new_title) => {
+      this.setState({ title: new_title });
+    });
+
+    this.socket.on('message', (msg) => {
+      console.log('Received Message: ' + msg);
+    })
+  }
+
+  handleCloseAddUserMessage = e => {
+    this.setState({
+      addedUser: null
+    });
+  }
+
+  handleCloseDeleteUserMessage = e => {
+    this.setState({
+      deletedUser: null
+    });
+  }
+
+  openAddUserModal = () => {
+    this.setState({ isAddUserOpen: true });
+  }
+  
+  closeAddUserModal = () => {
+    this.setState({ isAddUserOpen: false });
   }
 
   isUserOnTrip = (email) => {
@@ -334,18 +378,17 @@ export class PureTripView extends React.Component {
     return false;
   }
 
-  componentWillUnmount() {
-    clearTimeout(this.id);
+  getUserFromTrip = (email) => {
+    for (let user of this.state.users) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return null;
   }
-
-  openAddUserModal = () => {
-    this.setState({ isAddUserOpen: true });
-  }
-  
-  closeAddUserModal = () => {
-    this.setState({ isAddUserOpen: false });
-  }
-
+  // #endregion
+   
+  // #region React Lifecycle Methods
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
@@ -386,6 +429,7 @@ export class PureTripView extends React.Component {
         });
 
         this.updateUsersOnTrip(uuid);
+        this.listenForChanges();
 
     } else if (this.props.places) {
       const location = urlParams.get("location").replace("_", " ");
@@ -421,6 +465,17 @@ export class PureTripView extends React.Component {
       });
     }
   };
+
+  componentWillUnmount() {
+    // Closes socket connection
+    this.socket.emit('leave', {
+      user: this.context.user, 
+      room: this.state.uuid
+    }, () => { console.log('Successfully left room') });
+
+    clearTimeout(this.id);
+  }
+  // #endregion
 
   render() {
     const { classes } = this.props;

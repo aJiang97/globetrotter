@@ -44,23 +44,30 @@ if 'HOST' in os.environ:
 
 @socketio.on('join')
 def on_join(data):
-    userid = data['user']
+    user = data['user']
     room = data['room']
     join_room(room)
-    send(request.sid + ' has entered room ' + room, room=room)
+    print('in on-join')
+    print(data)
+    print(user)
+    print(room)
+    send(user['name'] + ' has entered room ' + room, room=room)
 
 @socketio.on('leave')
 def on_leave(data):
-    userid = data['user']
+    user = data['user']
     room = data['room']
     leave_room(room)
-    send(request.sid + ' has left room ' + room, room=room)
+    print('in on-leave')
+    print(user)
+    print(room)
+    send(user['name'] + ' has left room ' + room, room=room)
 
 @socketio.on('edit_title')
-def handle_edit_title(new_title):
+def handle_edit_title(new_title, room):
     print('Title Edited')
     print(new_title)
-    emit("editTitle", new_title)
+    emit("editTitle", new_title, room=room)
 
 @socketio.on('edit_dates')
 def handle_edit_dates(new_date):
@@ -79,3 +86,7 @@ def handle_edit_users(new_users):
     print('Users Edited')
     print(new_users)
     emit('editUsers', new_users)
+
+@socketio.on('send_to_room')
+def handle_send_to_room(message, room):
+    send(message, room=room)

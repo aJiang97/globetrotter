@@ -21,17 +21,14 @@ export class PureTest extends React.Component {
         console.log(data);
       });
 
-      // this.socket.on('editTitle', (data) => {
-      //   console.log(data);
-      // });
-
-      // this.socket.on('editTitle', (data) => {
-      //   console.log(data);
-      // });
-
-      // this.socket.on('editTitle', (data) => {
-      //   console.log(data);
-      // });
+      this.socket.on('message', (message) => {
+        const newContent = [...this.state.content];
+        newContent.push(message);
+        console.log('Message Received: ' + message)
+        this.setState({
+          content: newContent
+        });
+      });
     });
   }
 
@@ -46,22 +43,22 @@ export class PureTest extends React.Component {
     this.socket.emit("edit_title", { newTitle: "Business Trip" }, (data) => {
       console.log(data);
     });
-    
-    // this.socket.emit("edit_dates", { newStart: "16/06/99" }, (data) => {
-    //   console.log(data);
-    // });
+  }
 
-    // this.socket.emit("edit_locations", { locations: ["opera", "museum", "food"] }, (data) => {
-    //   console.log(data);
-    // });
+  sendToRoom = () => {
+    this.socket.emit("send_to_room", this.state.inputMsg, 'testRoom');
   }
 
   joinRoom = () => {
-    this.socket.join('testRoom');
+    this.socket.emit('join', {
+      room: 'testRoom'
+    }, () => { console.log('Successfully Joined Room') });
   }
 
   leaveRoom = () => {
-    this.socket.leave('testRoom');
+    this.socket.emit('leave', {
+      room: 'testRoom'
+    }, () => { console.log('Successfully left room') });
   }
 
   onInputChange = e => {
@@ -83,6 +80,7 @@ export class PureTest extends React.Component {
         <button onClick={this.emitMessage}>Emit Title</button>
         <button onClick={this.joinRoom}>Join Room</button>
         <button onClick={this.leaveRoom}>Leave Room</button>
+        <button onClick={this.sendToRoom}>Send to Room</button>
       </div>
     );
   }
