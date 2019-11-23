@@ -60,8 +60,11 @@ export class PurePreferences extends React.Component {
       const location = urlParams.get("location");
       const startDate = urlParams.get("start_date");
       const endDate = urlParams.get("end_date");
+      const parsedPreferences = preferences.map(preference =>
+        preference.replace(" ", "_")
+      );
       history.push(
-        `/locations?location=${location}&start_date=${startDate}&end_date=${endDate}&preferences=${preferences}`
+        `/locations?location=${location}&start_date=${startDate}&end_date=${endDate}&preferences=${parsedPreferences}`
       );
     }
   };

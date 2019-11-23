@@ -30,7 +30,7 @@ class PureLocationListWindow extends React.Component {
             <CardActions disableSpacing>
               <IconButton
                 className={classes.closeButton}
-                onClick={() => onRemove(key)}
+                onClick={() => onRemove(location.google.place_id)}
               >
                 <Close />
               </IconButton>
@@ -40,7 +40,7 @@ class PureLocationListWindow extends React.Component {
                 {location.foursquare.venue_name}
               </Typography>
               <Typography variant="caption" color="textSecondary" component="p">
-                {this.props.getTypes(location.foursquare.location_types)}
+                {this.props.getTypes(location.foursquare.location_types).join(", ")}
               </Typography>
             </CardContent>
           </Card>

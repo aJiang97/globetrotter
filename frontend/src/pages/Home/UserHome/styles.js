@@ -7,7 +7,7 @@ export const styles = createStyles(theme => ({
     minHeight: "100%",
     bottom: 0,
     left: 0,
-    position: "absolute"
+    position: "fixed"
   },
   bg_layer: {
     zIndex: 1110,
@@ -24,6 +24,17 @@ export const styles = createStyles(theme => ({
     width: "70%",
     marginLeft: "15%"
   },
+  centerContainer: {
+    padding: 50,
+    width: "70%",
+    marginLeft: "10%",
+    display: "flex",
+    flexDirection: "column"
+  },
+  cardContainer: {
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr"
+  },
   contentContainer: {
     zIndex: 1111,
     left: 0,
@@ -31,11 +42,6 @@ export const styles = createStyles(theme => ({
     width: "100%",
     display: "flex",
     flexDirection: "column"
-  },
-  uiContainer: {
-    display: "flex",
-    flexDirection: "row",
-    padding: "50px"
   },
   title: {
     textAlign: "center",
@@ -45,14 +51,6 @@ export const styles = createStyles(theme => ({
     color: "white",
     padding: 10
   },
-  verticalLine: {
-    borderLeft: "3px solid white",
-    top: "27%",
-    height: "50vh",
-    position: "absolute",
-    left: "50%",
-    marginLeft: -3
-  },
   card: {
     flexDirection: "row",
     display: "flex",
@@ -60,7 +58,7 @@ export const styles = createStyles(theme => ({
     opacity: 0.8
   },
   media: {
-    height: 122,
+    height: "auto",
     width: 160
   }
 }));

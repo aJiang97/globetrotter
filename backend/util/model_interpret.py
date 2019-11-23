@@ -76,9 +76,11 @@ class ModelProc:
         pics = []
 
         # Add best photo
-        bp = jsonobject['response']['venue']['bestPhoto']
-        pics.append(bp['prefix'] + str(bp['width']) +
-                    'x' + str(bp['height']) + bp['suffix'])
+        try:
+            bp = jsonobject['response']['venue']['bestPhoto']
+            pics.append(bp['prefix'] + str(bp['width']) +'x' + str(bp['height']) + bp['suffix'])
+        except KeyError:
+            pass
 
         coords = {
             "latitude": jsonobject['response']['venue']['location']['lat'],
@@ -106,7 +108,7 @@ class ModelProc:
         if jsonobject['result'].get('rating') != None:
             rating = jsonobject['result']['rating']
         else:
-            rating = None
+            rating = 0
 
         #get user reviews
         user_reviews = []

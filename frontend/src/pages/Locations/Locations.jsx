@@ -4,12 +4,18 @@ import { withStyles } from "@material-ui/core/styles";
 import { Button, Fab, Typography, Badge, Grid } from "@material-ui/core";
 import { Add, Close, ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 
-import { LocationCard, LocationListWindow, LocationPane, NavBar } from "../../components";
+import {
+  LocationCard,
+  LocationListWindow,
+  LocationPane,
+  NavBar,
+  SearchBar
+} from "../../components";
 import { styles } from "./styles";
 import history from "../../history.js";
 import APIClient from "../../api/apiClient";
 
-export class PureLocations extends React.Component {
+class PureLocations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,13 +24,19 @@ export class PureLocations extends React.Component {
       addedLocations: [],
       displayError: false,
       selectedLocation: null,
-      resultsLoaded: false
+      resultsLoaded: false,
+      city: "",
+      searchResult: []
     };
   }
 
   handleAddLocation = key => {
     this.setState(state => {
-      const addedLocations = state.addedLocations.concat(key);
+      const addedLocations = state.addedLocations.concat(
+        state.searchResult.length !== 0
+          ? state.searchResult[key]
+          : this.state.places[key]
+      );
       return {
         ...state,
         addedLocations,
@@ -33,10 +45,10 @@ export class PureLocations extends React.Component {
     });
   };
 
-  handleRemoveLocation = key => {
+  handleRemoveLocation = id => {
     this.setState(state => {
       const addedLocations = state.addedLocations.filter(
-        (locationKey, i) => locationKey !== key
+        location => location.google.place_id !== id
       );
       return {
         ...state,
@@ -51,8 +63,20 @@ export class PureLocations extends React.Component {
     });
   };
 
+  handleUpdateSearchResult = result => {
+    this.setState({ searchResult: result });
+    if (result && result.length !== 0) {
+      this.setState({ selectedLocation: result[0] });
+    } else if (result) {
+      this.setState({ selectedLocation: this.state.places[0] });
+    } else {
+      this.setState({ selectedLocation: null });
+    }
+  };
+
   handleSubmit = () => {
     const urlParams = new URLSearchParams(window.location.search);
+    const location = urlParams.get("location");
     const startDate = urlParams.get("start_date");
     const endDate = urlParams.get("end_date");
 
@@ -61,19 +85,12 @@ export class PureLocations extends React.Component {
         displayError: true
       });
     } else {
-      var placesToIndex = {};
-      const locations = this.getAddedLocations();
-      locations.map(
-        (location, i) => (placesToIndex[location.google.place_id] = i)
+      this.props.setPlaces(this.state.addedLocations);
+      history.push(
+        `/tripview?location=${location}&start_date=${startDate}&end_date=${endDate}`
       );
-      this.props.setPlaces(locations, placesToIndex);
-      history.push(`/tripview?start_date=${startDate}&end_date=${endDate}`);
     }
   };
-
-  handleClickLocation = () => {
-    console.log(this.props.location);
-  }
 
   updateLocationPane(location) {
     this.setState({
@@ -81,23 +98,28 @@ export class PureLocations extends React.Component {
     });
   }
 
-  getAddedLocations = () => {
-    return this.state.places.filter(
-      (value, key) => this.state.addedLocations.indexOf(key) !== -1
-    );
+  getTypes = types => {
+    var result = [];
+    for (let value of Object.keys(types)) {
+      if (types[value]) {
+        result.push(value.replace("_", " "));
+      }
+    }
+    return result;
   };
 
-  getTypes = types => {
-    return Object.keys(types).filter(type => type === true);
+  isAdded = id => {
+    const { addedLocations } = this.state;
+    for (var key in addedLocations) {
+      if (addedLocations[key].google.place_id === id) return true;
+    }
+    return false;
   };
 
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const city = urlParams.get("location");
-    const preferences = urlParams
-      .get("preferences")
-      .toLowerCase()
-      .replace(" ", "_");
+    const city = urlParams.get("location").replace("_", " ");
+    const preferences = urlParams.get("preferences").toLowerCase();
     this.apiClient = new APIClient();
     this.apiClient.getLocations(city, preferences).then(places => {
       places.locations.sort(
@@ -106,7 +128,8 @@ export class PureLocations extends React.Component {
       this.setState({
         places: places.locations,
         selectedLocation: places.locations[0],
-        resultsLoaded: true
+        resultsLoaded: true,
+        city: city
       });
     });
   };
@@ -114,19 +137,34 @@ export class PureLocations extends React.Component {
   render() {
     const { classes } = this.props;
     const locations = this.state.places;
+    const { searchResult } = this.state;
     let locationList;
 
-    if (locations && locations.length !== 0) {
-      locationList = this.state.places.map((loc, key) => (
+    if (searchResult && locations && locations.length !== 0) {
+      var allLocations = [];
+      if (searchResult.length !== 0) {
+        allLocations = searchResult;
+      } else {
+        allLocations = this.state.places;
+      }
+      locationList = allLocations.map((loc, key) => (
         <div key={key} className={classes.locationCardContainer}>
-          {this.state.addedLocations.indexOf(key) !== -1 ? (
-            <Fab color="primary"
-                 onClick={() => { this.handleRemoveLocation(key) }}>
+          {this.isAdded(loc.google.place_id) ? (
+            <Fab
+              color="primary"
+              onClick={() => {
+                this.handleRemoveLocation(loc.google.place_id);
+              }}
+            >
               <Close />
             </Fab>
           ) : (
-            <Fab color="primary"
-                 onClick={() => { this.handleAddLocation(key) }}>
+            <Fab
+              color="primary"
+              onClick={() => {
+                this.handleAddLocation(key);
+              }}
+            >
               <Add />
             </Fab>
           )}
@@ -138,7 +176,11 @@ export class PureLocations extends React.Component {
         </div>
       ));
     } else {
-      locationList = <Typography variant="body1">No locations found.</Typography>
+      locationList = (
+        <Typography variant="body1" className={classes.body1}>
+          No locations found.
+        </Typography>
+      );
     }
 
     return (
@@ -146,15 +188,24 @@ export class PureLocations extends React.Component {
         <NavBar />
         <Grid className={classes.section}>
           <Grid container item xs={6} className={classes.flexScroll}>
-            <Typography variant="h5" className={classes.title}>
-              Recommended Locations
-            </Typography>
-            {this.state.resultsLoaded ? 
-              locationList :
+            {this.state.resultsLoaded ? (
+              <div className={classes.leftContainer}>
+                <div className={classes.searchBar}>
+                  <SearchBar
+                    city={this.state.city}
+                    handleSearchResult={this.handleUpdateSearchResult}
+                  />
+                </div>
+                <Typography variant="h5" className={classes.title}>
+                  Recommended Locations
+                </Typography>
+                {locationList}
+              </div>
+            ) : (
               <div className={classes.loadingContainer}>
                 <ReactLoading type={"spin"} color={"black"} />
               </div>
-            }
+            )}
 
             {/* Location Basket Drawer */}
             <Button
@@ -167,13 +218,21 @@ export class PureLocations extends React.Component {
               }
               onClick={this.handleOpenListWindow}
             >
-              <Badge showZero badgeContent={this.state.addedLocations.length} color="error">
-                {this.state.isOpenListWindow ? <ArrowForwardIos /> : <ArrowBackIos />}
+              <Badge
+                showZero
+                badgeContent={this.state.addedLocations.length}
+                color="error"
+              >
+                {this.state.isOpenListWindow ? (
+                  <ArrowForwardIos />
+                ) : (
+                  <ArrowBackIos />
+                )}
               </Badge>
             </Button>
             <LocationListWindow
               isOpen={this.state.isOpenListWindow}
-              locations={this.getAddedLocations()}
+              locations={this.state.addedLocations}
               onRemove={this.handleRemoveLocation}
               getTypes={this.getTypes}
               displayError={this.state.displayError}
@@ -192,7 +251,9 @@ export class PureLocations extends React.Component {
             </Button>
           </Grid>
           <Grid container item xs={6} className={classes.locationPane}>
-            {this.state.selectedLocation && <LocationPane location={this.state.selectedLocation} />}
+            {this.state.selectedLocation && (
+              <LocationPane location={this.state.selectedLocation} />
+            )}
           </Grid>
         </Grid>
       </div>

@@ -13,29 +13,47 @@ export class PureTrip extends React.Component {
     this.state = {
       location: "",
       start_date: "",
-      end_date: ""
+      end_date: "",
+      displayError: ""
     };
   }
   handleInputChange = event => {
     this.setState({
-      location: event.target.value
+      location: event.target.value,
+      displayError: ""
     });
   };
   handleStartDateChange = event => {
     this.setState({
-      start_date: event.target.value
+      start_date: event.target.value,
+      displayError: ""
     });
   };
   handleEndDateChange = event => {
     this.setState({
-      end_date: event.target.value
+      end_date: event.target.value,
+      displayError: ""
     });
   };
   handleSubmit = () => {
     const { location, start_date, end_date } = this.state;
-    history.push(
-      `/preferences?location=${location}&start_date=${start_date}&end_date=${end_date}`
-    );
+    if (location === "" || start_date === "" || end_date === "") {
+      this.setState({ displayError: "Some fields are missing." })
+    } else if (new Date(end_date) - new Date(start_date) < 0) {
+      this.setState({ displayError: "End date cannot be earlier than start date." })
+    }
+    const parsedLocation = location.replace(" ", "_");
+    if (location === "" || start_date === "" || end_date === "") {
+      this.setState({ displayError: "Some fields are missing." });
+    } else if (new Date(end_date) - new Date(start_date) < 0) {
+      this.setState({
+        displayError: "End date cannot be earlier than start date."
+      });
+    } else {
+      history.push(
+        `/preferences?location=${parsedLocation}&start_date=${start_date}&end_date=${end_date}`
+      );
+    }
   };
   render() {
     const { classes } = this.props;
@@ -102,6 +120,11 @@ export class PureTrip extends React.Component {
               onChange={this.handleEndDateChange}
             />
           </div>
+          {this.state.displayError !== "" && (
+            <Typography variant="caption" color="error">
+              {this.state.displayError}
+            </Typography>
+          )}
           <IconButton
             type="submit"
             color="primary"

@@ -28,12 +28,9 @@ export class PureDefaultHome extends React.Component {
             variant="extended"
             color="primary"
             className={classes.start_button}
+            onClick={this.handleSubmit}
           >
-            <Typography
-              variant="body2"
-              className={classes.start_text}
-              onClick={this.handleSubmit}
-            >
+            <Typography variant="body2" className={classes.start_text}>
               Start Planning
             </Typography>
           </Fab>
