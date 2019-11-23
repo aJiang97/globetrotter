@@ -83,20 +83,33 @@ export class PureTripView extends React.Component {
 
   handleStartDateChange = e => {
     const newDates = this.getDates(e.target.value, this.state.endDate);
+    const currentDateItinerary = this.getCurrentDateItinerary(this.state.itinerary, 0, newDates.length);
+    
     this.setDateIndex(0);
     this.setState({
       startDate: e.target.value,
       dates: newDates,
-      currentDateItinerary: this.getCurrentDateItinerary(
-        this.state.itinerary,
-        0,
-        newDates.length
-      )
+      currentDateItinerary: currentDateItinerary
     });
+
+    const new_dates = {
+      startDate: e.target.value,
+      endDate: this.state.endDate,
+      dates: newDates,
+      dateIndex: 0,
+      currentDateItinerary: currentDateItinerary
+    };
+
+    console.log(this.context.user.name + ' is changing dates');
+    console.log(new_dates);
+
+    this.socket.emit('edit_dates', new_dates, this.state.uuid);
   };
 
   handleEndDateChange = e => {
     const newDates = this.getDates(this.state.startDate, e.target.value);
+    const currentDateItinerary = this.getCurrentDateItinerary(this.state.itinerary, 0, newDates.length);
+
     this.setDateIndex(0);
     this.setState({
       endDate: e.target.value,
@@ -107,6 +120,16 @@ export class PureTripView extends React.Component {
         newDates.length
       )
     });
+
+    const new_dates = {
+      startDate: this.state.startDate,
+      endDate: e.target.value,
+      dates: newDates,
+      dateIndex: 0,
+      currentDateItinerary: currentDateItinerary
+    };
+
+    this.socket.emit('edit_dates', new_dates, this.state.uuid);
   };
   // #endregion
 
@@ -312,9 +335,7 @@ export class PureTripView extends React.Component {
   updateUsersOnTrip = (uuid) => {
     const userToken = this.context.user.token;
 
-    console.log('Current User');
-    console.log(this.context.user);
-
+    // #region this.context.user
     // {name: "Sebastian Chua", token: "06df15cb7da564eb4284ccb136559dd0b80bbb95cc971b1c450a594d25e829fe", email: "sebi@test.com", password: "ff156710984f143b", trips: Array(1)}
     // email: "sebi@test.com"
     // name: "Sebastian Chua"
@@ -323,12 +344,7 @@ export class PureTripView extends React.Component {
     // trips: Array(1)
     // 0: {description: "Business Trip", city: "New York", tripstart: "2019-12-12 00:00:00+00:00", tripend: "2019-12-16 00:00:00+00:00", modifieddate: "2019-11-20 16:04:11.797981+00:00", …}
     // length: 1
-
-    // Setup socket for this user using uuid as a room
-    this.socket.emit('join', {
-      user: this.context.user,
-      room: uuid
-    }, () => { console.log('Successfully joined room.') });
+    // #endregion
 
     this.apiClient
       .getUsersOnTrip(userToken, uuid)
@@ -336,12 +352,34 @@ export class PureTripView extends React.Component {
         this.setState({
           users: response
         })
+
+        this.socket.emit('edit_users', this.state.users, this.state.uuid);
       });
   }
 
-  listenForChanges = () => {
+  listenForChanges = (uuid) => {
+    // Setup socket for this user using uuid as a room
+    this.socket.emit('join', {
+      user: this.context.user,
+      room: uuid
+    }, () => { console.log('Successfully joined room.') });
+    
     this.socket.on('editTitle', (new_title) => {
       this.setState({ title: new_title });
+    });
+
+    this.socket.on('editUsers', (new_users) => {
+      this.setState({ users: new_users });
+    });
+
+    this.socket.on('editDates', (new_dates) => {
+      this.setState({
+        startDate: new_dates.startDate,
+        endDate: new_dates.endDate,
+        dates: new_dates.dates,
+        dateIndex: new_dates.dateIndex,
+        currentDateItinerary: new_dates.currentDateItinerary
+      });
     });
 
     this.socket.on('message', (msg) => {
@@ -429,7 +467,7 @@ export class PureTripView extends React.Component {
         });
 
         this.updateUsersOnTrip(uuid);
-        this.listenForChanges();
+        this.listenForChanges(uuid);
 
     } else if (this.props.places) {
       const location = urlParams.get("location").replace("_", " ");
