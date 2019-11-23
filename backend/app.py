@@ -70,10 +70,10 @@ def handle_edit_title(new_title, room):
     emit("editTitle", new_title, room=room)
 
 @socketio.on('edit_dates')
-def handle_edit_dates(new_date):
+def handle_edit_dates(new_dates, room):
     print('Date Edited')
-    print(new_date)
-    emit('editDates', new_date)
+    print(new_dates)
+    emit('editDates', new_dates, room=room)
 
 @socketio.on('edit_locations')
 def handle_edit_locations(new_locations):
@@ -82,10 +82,10 @@ def handle_edit_locations(new_locations):
     emit('editLocations', new_locations)
 
 @socketio.on('edit_users')
-def handle_edit_users(new_users):
+def handle_edit_users(new_users, room):
     print('Users Edited')
     print(new_users)
-    emit('editUsers', new_users)
+    emit('editUsers', new_users, room=room)
 
 @socketio.on('send_to_room')
 def handle_send_to_room(message, room):
