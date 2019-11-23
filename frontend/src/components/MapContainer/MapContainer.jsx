@@ -1,5 +1,6 @@
 /* global google */
-import { Map, GoogleApiWrapper, InfoWindow, DirectionsRenderer, Marker } from 'google-maps-react';
+import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
+import { DirectionsRenderer } from 'react-google-maps';
 import * as React from "react";
 
 const style = {
@@ -14,7 +15,9 @@ export class MapContainer extends React.Component {
     showingInfoWindow: false,
     activeMarker: {},
     selectedPlace: {},
-    directions: {}
+    directions: {},
+    start: {},
+    end: {}
   };
 
   createCoordinatesList() {
@@ -45,42 +48,45 @@ export class MapContainer extends React.Component {
     }
   };
 
-  // getDirections() {
-  //   const coordinates = this.createCoordinatesList();
-  //   var waypoints = [];
-  //   var start = null;
-  //   var end = null;
-  //   for (var i = 0; i < coordinates.length; i++) {
-  //     var array = {};
-  //     array['location'] = new google.maps.LatLng(coordinates[i].lat, coordinates[i].lng);
-  //     if (i === 0) {
-  //       start = array['location'];
-  //     } else if (i === coordinates.length - 1) {
-  //       end = array['location'];
-  //     }
-  //     waypoints.push(array);
-  //   }
+  componentDidMount() {
+    const coordinates = this.createCoordinatesList();
+    var waypoints = [];
+    var start = new google.maps.LatLng(coordinates[0].lat, coordinates[0].lng);
+    var end = new google.maps.LatLng(coordinates[coordinates.length - 1].lat, coordinates[coordinates.length - 1].lng);;
+    // if there's more than 2 locations on the map
+    if (coordinates.length > 2) {
+      // get locations inbetween
+      for (var i = 1; i < coordinates.length - 1; i++) {
+        var array = {};
+        array['location'] = new google.maps.LatLng(coordinates[i].lat, coordinates[i].lng);
+        waypoints.push(array);
+      }
+    }
 
-  //   const DirectionsService = new google.maps.DirectionsService();
-  //   DirectionsService.route(
-  //     {
-  //       origin: start,
-  //       destination: end,
-  //       travelMode: google.maps.TravelMode.DRIVING,
-  //       waypoints: waypoints
-  //     },
-  //     (result, status) => {
-  //       console.log(status);
-  //       if (status === google.maps.DirectionsStatus.OK) {
-  //         this.setState({
-  //           directions: result
-  //         });
-  //       } else {
-  //         console.error('error fetching directions ${result}');
-  //       }
-  //     }
-  //   );
-  // }
+    const DirectionsService = new google.maps.DirectionsService();
+    DirectionsService.route(
+      {
+        origin: start,
+        destination: end,
+        travelMode: google.maps.TravelMode.DRIVING,
+        waypoints: waypoints
+      },
+      (result, status) => {
+        console.log(result);
+        console.log(status);
+        if (status === google.maps.DirectionsStatus.OK) {
+          this.setState({
+            directions: result
+          });
+          // console.log(this.state.directions);
+          // console.log(start);
+          // console.log(end);
+        } else {
+          console.error('error fetching directions ${result}');
+        }
+      }
+    );
+  }
 
   render() {
     return (
@@ -116,8 +122,7 @@ export class MapContainer extends React.Component {
               <h2>{this.state.selectedPlace.name}</h2>
             </div>
           </InfoWindow>}
-          {/* {this.getDirections()}
-          {this.props.directions && <DirectionsRenderer directions = {this.props.directions} />} */}
+          {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
         {/* {console.log(this.createCoordinatesList())} */}
         </Map>
       </div>
