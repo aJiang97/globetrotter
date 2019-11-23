@@ -35,7 +35,7 @@ export class MapContainer extends React.Component {
     }
   };
 
-  componentDidMount() {
+  apiIsLoaded = (map, maps) => {
     const waypoints = this.props.locations.map(loc => ({
       location: {lat: parseFloat(loc.foursquare.coordinate.latitude),
       lng: parseFloat(loc.foursquare.coordinate.longitude)},
@@ -44,8 +44,9 @@ export class MapContainer extends React.Component {
     const origin = waypoints.shift().location;
     const destination = waypoints.pop().location;
 
-    const DirectionsService = new google.maps.DirectionsService();
-    DirectionsService.route(
+    const directionsService = new maps.DirectionsService();
+    const directionsRenderer = new maps.DirectionsRenderer();
+    directionsService.route(
       {
         origin: origin,
         destination: destination,
@@ -54,9 +55,11 @@ export class MapContainer extends React.Component {
       },
       (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
-          this.setState({
-            directions: result
+          directionsRenderer.setDirections(result);
+          const routePolyline = new google.maps.Polyline({
+            path: result.routes[0].overview_path
           });
+          routePolyline.setMap(map);
         } else {
           console.error('error fetching directions ${result}');
         }
@@ -78,6 +81,8 @@ export class MapContainer extends React.Component {
             lat: this.props.locations[0].foursquare.coordinate.latitude,
             lng: this.props.locations[0].foursquare.coordinate.longitude
           }}
+          yesIWantToUseGoogleMapApiInternals 
+          onGoogleApiLoaded={({ map, maps }) => this.apiIsLoaded(map, maps)}
         >
           {this.props.locations.map((loc,key) => (
               <Marker
@@ -98,8 +103,8 @@ export class MapContainer extends React.Component {
               <h2>{this.state.selectedPlace.name}</h2>
             </div>
           </InfoWindow>}
-          {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
-        {console.log(this.state.directions)}
+          {/* {this.state.directions && <DirectionsRenderer directions = {this.state.directions} />}
+        {console.log(this.state.directions)} */}
         </Map>
       </div>
     )
