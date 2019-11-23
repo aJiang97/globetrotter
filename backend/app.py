@@ -63,6 +63,12 @@ def on_leave(data):
     print(room)
     send(user['name'] + ' has left room ' + room, room=room)
 
+@socketio.on('save')
+def on_save(user, room):
+    print(user['name'] + ' saved trip ' + room)
+    emit('userSave', user['name'], room=room)
+
+
 @socketio.on('edit_title')
 def handle_edit_title(new_title, room):
     print('Title Edited')
@@ -76,10 +82,10 @@ def handle_edit_dates(new_dates, room):
     emit('editDates', new_dates, room=room)
 
 @socketio.on('edit_locations')
-def handle_edit_locations(new_locations):
+def handle_edit_locations(new_locations, room):
     print('Locations Edited')
-    print(new_locations)
-    emit('editLocations', new_locations)
+    print_location_helper(new_locations['itinerary'])
+    emit('editLocations', new_locations, room=room)
 
 @socketio.on('edit_users')
 def handle_edit_users(new_users, room):
@@ -90,3 +96,9 @@ def handle_edit_users(new_users, room):
 @socketio.on('send_to_room')
 def handle_send_to_room(message, room):
     send(message, room=room)
+
+
+
+
+def print_location_helper(locations):
+    map(lambda location: print(location['foursquare']['venue_name']), locations)

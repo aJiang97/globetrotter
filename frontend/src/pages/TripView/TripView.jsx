@@ -27,6 +27,7 @@ export class PureTripView extends React.Component {
       isAddUserOpen: false,
       title: "",
       saved: false,
+      whoSaved: "User",
       users: [],
       deleted: false,
       deletedUser: null,
@@ -99,9 +100,6 @@ export class PureTripView extends React.Component {
       dateIndex: 0,
       currentDateItinerary: currentDateItinerary
     };
-
-    console.log(this.context.user.name + ' is changing dates');
-    console.log(new_dates);
 
     this.socket.emit('edit_dates', new_dates, this.state.uuid);
   };
@@ -178,18 +176,33 @@ export class PureTripView extends React.Component {
           order: this.getElementOrder(data.path, place.google.place_id)
         }))
         .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+
+      const currentDateItinerary = this.getCurrentDateItinerary(
+                                      detailedPath,
+                                      this.state.dateIndex,
+                                      this.state.dates.length
+                                    );
+
       this.setState({
         itinerary: detailedPath,
         places: places,
-        currentDateItinerary: this.getCurrentDateItinerary(
-          detailedPath,
-          this.state.dateIndex,
-          this.state.dates.length
-        ),
+        currentDateItinerary: currentDateItinerary,
         placeToIndex: placeToIndex,
         travelTimes: data.travel_matrix,
         openAddLocationModal: false
       });
+
+      const newLocationState = {
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: currentDateItinerary,
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix,
+        openAddLocationModal: false
+      }
+
+      this.socket.emit('edit_locations', newLocationState, this.state.uuid);
+
     });
   };
 
@@ -210,17 +223,30 @@ export class PureTripView extends React.Component {
           order: this.getElementOrder(data.path, place.google.place_id)
         }))
         .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+
+      const currentDateItinerary = this.getCurrentDateItinerary(
+                                      detailedPath,
+                                      this.state.dateIndex,
+                                      this.state.dates.length
+                                    );
+      
       this.setState({
         itinerary: detailedPath,
         places: places,
-        currentDateItinerary: this.getCurrentDateItinerary(
-          detailedPath,
-          this.state.dateIndex,
-          this.state.dates.length
-        ),
+        currentDateItinerary: currentDateItinerary,
         placeToIndex: placeToIndex,
         travelTimes: data.travel_matrix
       });
+
+      const newLocationState = {
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: currentDateItinerary,
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix
+      }
+
+      this.socket.emit('edit_locations', newLocationState, this.state.uuid);
     });
   };
 
@@ -269,8 +295,11 @@ export class PureTripView extends React.Component {
             user.trips = data.trips;
             this.context.logIn(user);
             this.setState({
-              saved: true
+              saved: true,
+              whoSaved: user.name
             });
+
+            this.socket.emit('save', user, uuid);
           });
         });
     } else {
@@ -291,6 +320,7 @@ export class PureTripView extends React.Component {
             this.context.logIn(user);
             this.setState({
               saved: true,
+              whoSaved: user.name,
               uuid: result.uuid
             });
           });
@@ -381,6 +411,26 @@ export class PureTripView extends React.Component {
         currentDateItinerary: new_dates.currentDateItinerary
       });
     });
+
+    this.socket.on('editLocations', (new_data) => {
+      this.setState({
+        itinerary: new_data.itinerary,
+        places: new_data.places,
+        currentDateItinerary: new_data.currentDateItinerary,
+        placeToIndex: new_data.placeToIndex,
+        travelTimes: new_data.travelTimes,
+        openAddLocationModal: new_data.openAddLocationModal
+      })
+    });
+
+    this.socket.on('userSave', (user) => {
+      console.log('SAVING SOCKET RECEIVED');
+      console.log(user);
+      this.setState({
+        saved: true,
+        whoSaved: user
+      });
+    })
 
     this.socket.on('message', (msg) => {
       console.log('Received Message: ' + msg);
@@ -647,7 +697,7 @@ export class PureTripView extends React.Component {
             <AlertMessage
               open={this.state.saved}
               onClose={this.handleCloseSaveMessage}
-              message={"Your trip is successfully saved!"}
+              message={`${this.state.whoSaved} saved the trip.`}
             />
             <AlertMessage
               open={this.state.deleted}
@@ -675,7 +725,10 @@ export class PureTripView extends React.Component {
             {this.state.redirect && <Redirect to="/home" />}
           </Grid>
           <Grid container item xs={6}>
-            {this.state.dates && this.state.currentDateItinerary && (
+            {this.state.dates && 
+             this.state.currentDateItinerary && 
+             this.state.currentDateItinerary.length !== 0 &&
+             (
               <MapContainer
                 locations={this.state.currentDateItinerary}
               />
