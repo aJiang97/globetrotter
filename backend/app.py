@@ -40,17 +40,11 @@ if 'HOST' in os.environ:
 
 
 # SocketIO Routes
-
-
 @socketio.on('join')
 def on_join(data):
     user = data['user']
     room = data['room']
     join_room(room)
-    print('in on-join')
-    print(data)
-    print(user)
-    print(room)
     send(user['name'] + ' has entered room ' + room, room=room)
 
 @socketio.on('leave')
@@ -58,16 +52,12 @@ def on_leave(data):
     user = data['user']
     room = data['room']
     leave_room(room)
-    print('in on-leave')
-    print(user)
-    print(room)
     send(user['name'] + ' has left room ' + room, room=room)
 
 @socketio.on('save')
 def on_save(user, room):
     print(user['name'] + ' saved trip ' + room)
     emit('userSave', user['name'], room=room)
-
 
 @socketio.on('edit_title')
 def handle_edit_title(new_title, room):
@@ -84,7 +74,7 @@ def handle_edit_dates(new_dates, room):
 @socketio.on('edit_locations')
 def handle_edit_locations(new_locations, room):
     print('Locations Edited')
-    print_location_helper(new_locations['itinerary'])
+    map(lambda location: print(location['foursquare']['venue_name']), new_locations['itinerary'])
     emit('editLocations', new_locations, room=room)
 
 @socketio.on('edit_users')
@@ -92,13 +82,3 @@ def handle_edit_users(new_users, room):
     print('Users Edited')
     print(new_users)
     emit('editUsers', new_users, room=room)
-
-@socketio.on('send_to_room')
-def handle_send_to_room(message, room):
-    send(message, room=room)
-
-
-
-
-def print_location_helper(locations):
-    map(lambda location: print(location['foursquare']['venue_name']), locations)

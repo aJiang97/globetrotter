@@ -59,20 +59,6 @@ export class PureUserHome extends React.Component {
           .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
         })
       })
-    
-    // this.setState({
-    //   trips: this.context.user.trips
-    //     .map(trip => {
-    //       const iso2 = this.getISO2(trip.city.split(",")[0]);
-    //       return {
-    //         ...trip,
-    //         iso2: iso2,
-    //         url: `https://lipis.github.io/flag-icon-css/flags/4x3/${iso2}.svg`,
-    //         alt: `${iso2}.svg`
-    //       };
-    //     })
-    //     .sort((a, b) => new Date(b.modifieddate) - new Date(a.modifieddate))
-    // });
   };
 
   render() {
