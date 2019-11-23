@@ -269,3 +269,14 @@ MODEL_search_user_result = api.model('search_user_result', {
     "found": fields.Boolean(),
     "displayname": fields.String(description='Display name')
 })
+
+
+MODEL_event = api.model('event',{
+    "name":fields.String(description='name of event'),
+    "start":fields.String(description='start time of event'),
+    "duration":fields.String(description='duration of event')
+})
+
+MODEL_calendar = api.model('calendar',{
+    'itinerary':fields.List(fields.Nested(MODEL_event))
+})
