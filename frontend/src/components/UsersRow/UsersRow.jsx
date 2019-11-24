@@ -40,14 +40,16 @@ export class PureUsersRow extends React.Component {
 						</li>
 					);
 				})}
-				<li className={classes.listElem}>
-					<Tooltip title="Add User to Trip">
-						<Fab className={classes.addButton} size="small" 
-									aria-label="add" onClick={handleAdd}>
-							<Add />
-						</Fab>
-					</Tooltip>
-				</li>
+				{(currentUser.permission === 0 || currentUser.permission === 1) &&
+					<li className={classes.listElem}>
+						<Tooltip title="Add User to Trip">
+							<Fab className={classes.addButton} size="small" 
+								 aria-label="add" onClick={handleAdd}>
+								<Add />
+							</Fab>
+						</Tooltip>
+					</li>
+				}
 			</ul>
       </div>
     );
