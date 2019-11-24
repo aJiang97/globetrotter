@@ -11,6 +11,7 @@ import { AlertMessage, CalendarGrid, DateTabs, NavBar, UsersRow, AddUserModal } 
 import APIClient from "../../api/apiClient";
 import MapContainer from "../../components/MapContainer/MapContainer";
 import { UserContext } from "../../UserContext";
+import io from "socket.io-client";
 
 export class PureTripView extends React.Component {
   constructor(props) {
@@ -27,6 +28,7 @@ export class PureTripView extends React.Component {
       isAddUserOpen: false,
       title: "",
       saved: false,
+      whoSaved: "User",
       users: [],
       deleted: false,
       deletedUser: null,
@@ -37,8 +39,18 @@ export class PureTripView extends React.Component {
       places: null
     };
     this.apiClient = new APIClient();
+    this.socket = io.connect('http://127.0.0.1:5000/');
   }
 
+  getElementOrder = (path, id) => {
+    for (var i = 0; i < path.length; i++) {
+      if (path[i] === id) {
+        return i;
+      }
+    }
+  }; 
+
+  // #region Date Functions
   getDates = (start, end) => {
     var dates = [];
     const startDate = new Date(start);
@@ -84,90 +96,32 @@ export class PureTripView extends React.Component {
     return result
   };
 
-  getElementOrder = (path, id) => {
-    for (var i = 0; i < path.length; i++) {
-      if (path[i] === id) {
-        return i;
-      }
-    }
-  };
-
-  handleOpenAddLocationModal = () => {
-    this.setState({ openAddLocationModal: true });
-  };
-
-  handleCloseAddLocationModal = () => {
-    this.setState({ openAddLocationModal: false });
-  };
-
-  handleDeleteLocation = g_id => {
-    const places = this.state.itinerary.filter(
-      place => place.google.place_id !== g_id
-    );
-    const placeToIndex = {};
-    places.map((place, i) => (placeToIndex[place.google.place_id] = i));
-    const placeIDs = places
-      .map(place => `place_id:${place.google.place_id}`)
-      .join("|");
-    this.apiClient = new APIClient();
-    this.apiClient.generateItinerary(placeIDs).then(data => {
-      const detailedPath = places
-        .map(place => ({
-          ...place,
-          order: this.getElementOrder(data.path, place.google.place_id)
-        }))
-        .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
-      this.setState({
-        itinerary: detailedPath,
-        places: places,
-        currentDateItinerary: this.getCurrentDateItinerary(
-          detailedPath,
-          this.state.dateIndex,
-          this.state.dates.length
-        ),
-        placeToIndex: placeToIndex,
-        travelTimes: data.travel_matrix
-      });
-    });
-  };
-
-  getUserFromTrip = (email) => {
-    for (let user of this.state.users) {
-      if (user.email === email) {
-        return user;
-      }
-    }
-    return null;
-  }
-
-  handleEditableTitle = () => {
-    this.setState({ isEditableTitle: true });
-  };
-
-  handleNonEditableTitle = () => {
-    this.setState({ isEditableTitle: false });
-  };
-
-  handleChangeTitle = e => {
-    this.setState({ title: e.target.value });
-  };
-
   handleStartDateChange = e => {
     const newDates = this.getDates(e.target.value, this.state.endDate);
+    const currentDateItinerary = this.getCurrentDateItinerary(this.state.itinerary, 0, newDates.length);
+    
     this.setDateIndex(0);
     this.setState({
       startDate: e.target.value,
       dates: newDates,
-      currentDateItinerary: this.getCurrentDateItinerary(
-        this.state.itinerary,
-        0,
-        newDates.length
-      )
+      currentDateItinerary: currentDateItinerary
     });
+
+    const new_dates = {
+      startDate: e.target.value,
+      endDate: this.state.endDate,
+      dates: newDates,
+      dateIndex: 0,
+      currentDateItinerary: currentDateItinerary
+    };
+
+    this.socket.emit('edit_dates', new_dates, this.state.uuid);
   };
 
   handleEndDateChange = e => {
     const newDates = this.getDates(this.state.startDate, e.target.value);
+    const currentDateItinerary = this.getCurrentDateItinerary(this.state.itinerary, 0, newDates.length);
+
     this.setDateIndex(0);
     this.setState({
       endDate: e.target.value,
@@ -178,8 +132,37 @@ export class PureTripView extends React.Component {
         newDates.length
       )
     });
+
+    const new_dates = {
+      startDate: this.state.startDate,
+      endDate: e.target.value,
+      dates: newDates,
+      dateIndex: 0,
+      currentDateItinerary: currentDateItinerary
+    };
+
+    this.socket.emit('edit_dates', new_dates, this.state.uuid);
+  };
+  // #endregion
+
+  // #region Title Functions
+  handleEditableTitle = () => {
+    this.setState({ isEditableTitle: true });
   };
 
+  handleNonEditableTitle = () => {
+    this.setState({ isEditableTitle: false });
+
+    // Send title change to other users
+    this.socket.emit('edit_title', this.state.title, this.state.uuid);
+  };
+
+  handleChangeTitle = e => {
+    this.setState({ title: e.target.value });
+  };
+  // #endregion
+
+  // #region Alert Message Controller Functions
   handleCloseSaveMessage = e => {
     this.setState({ saved: false });
   };
@@ -189,7 +172,9 @@ export class PureTripView extends React.Component {
       deleted: false
     });
   };
+  // #endregion
 
+  // #region Add/Delete Locations
   handleSubmitLocation = newLocations => {
     const places = this.state.places.concat(newLocations);
     const placeToIndex = {};
@@ -205,18 +190,33 @@ export class PureTripView extends React.Component {
           order: this.getElementOrder(data.path, place.google.place_id)
         }))
         .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
+
+      const currentDateItinerary = this.getCurrentDateItinerary(
+                                      detailedPath,
+                                      this.state.dateIndex,
+                                      this.state.dates.length
+                                    );
+
       this.setState({
         itinerary: detailedPath,
         places: places,
-        currentDateItinerary: this.getCurrentDateItinerary(
-          detailedPath,
-          this.state.dateIndex,
-          this.state.dates.length
-        ),
+        currentDateItinerary: currentDateItinerary,
         placeToIndex: placeToIndex,
         travelTimes: data.travel_matrix,
         openAddLocationModal: false
       });
+
+      const newLocationState = {
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: currentDateItinerary,
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix,
+        openAddLocationModal: false
+      }
+
+      this.socket.emit('edit_locations', newLocationState, this.state.uuid);
+
     });
   };
   
@@ -267,18 +267,60 @@ export class PureTripView extends React.Component {
     })
   }
 
-  handleCloseAddUserMessage = e => {
-    this.setState({
-      addedUser: null
-    });
-  }
+  handleDeleteLocation = g_id => {
+    const places = this.state.itinerary.filter(
+      place => place.google.place_id !== g_id
+    );
+    const placeToIndex = {};
+    places.map((place, i) => (placeToIndex[place.google.place_id] = i));
+    const placeIDs = places
+      .map(place => `place_id:${place.google.place_id}`)
+      .join("|");
+    this.apiClient = new APIClient();
+    this.apiClient.generateItinerary(placeIDs).then(data => {
+      const detailedPath = places
+        .map(place => ({
+          ...place,
+          order: this.getElementOrder(data.path, place.google.place_id)
+        }))
+        .sort((a, b) => parseFloat(a.order) - parseFloat(b.order));
 
-  handleCloseDeleteUserMessage = e => {
-    this.setState({
-      deletedUser: null
-    });
-  }
+      const currentDateItinerary = this.getCurrentDateItinerary(
+                                      detailedPath,
+                                      this.state.dateIndex,
+                                      this.state.dates.length
+                                    );
+      
+      this.setState({
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: currentDateItinerary,
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix
+      });
 
+      const newLocationState = {
+        itinerary: detailedPath,
+        places: places,
+        currentDateItinerary: currentDateItinerary,
+        placeToIndex: placeToIndex,
+        travelTimes: data.travel_matrix
+      }
+
+      this.socket.emit('edit_locations', newLocationState, this.state.uuid);
+    });
+  };
+
+  handleOpenAddLocationModal = () => {
+    this.setState({ openAddLocationModal: true });
+  };
+
+  handleCloseAddLocationModal = () => {
+    this.setState({ openAddLocationModal: false });
+  };
+  // #endregion
+
+  // #region Saving/Deleting Trips
   handleDeleteTrip = () => {
     this.apiClient
       .deleteTrip(this.context.user.token, this.state.uuid)
@@ -314,8 +356,11 @@ export class PureTripView extends React.Component {
             user.trips = data.trips;
             this.context.logIn(user);
             this.setState({
-              saved: true
+              saved: true,
+              whoSaved: user.name
             });
+
+            this.socket.emit('save', user, uuid);
           });
         });
     } else {
@@ -336,13 +381,16 @@ export class PureTripView extends React.Component {
             this.context.logIn(user);
             this.setState({
               saved: true,
+              whoSaved: user.name,
               uuid: result.uuid
             });
           });
         });
     }
   };
+  // #endregion
 
+  // #region Multi-User Collaboration Functions
   handleAddUserToTrip = (user) => {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
@@ -375,13 +423,97 @@ export class PureTripView extends React.Component {
 
   updateUsersOnTrip = (uuid) => {
     const userToken = this.context.user.token;
+
+    // #region this.context.user
+    // {name: "Sebastian Chua", token: "06df15cb7da564eb4284ccb136559dd0b80bbb95cc971b1c450a594d25e829fe", email: "sebi@test.com", password: "ff156710984f143b", trips: Array(1)}
+    // email: "sebi@test.com"
+    // name: "Sebastian Chua"
+    // password: "ff156710984f143b"
+    // token: "06df15cb7da564eb4284ccb136559dd0b80bbb95cc971b1c450a594d25e829fe"
+    // trips: Array(1)
+    // 0: {description: "Business Trip", city: "New York", tripstart: "2019-12-12 00:00:00+00:00", tripend: "2019-12-16 00:00:00+00:00", modifieddate: "2019-11-20 16:04:11.797981+00:00", …}
+    // length: 1
+    // #endregion
+
     this.apiClient
       .getUsersOnTrip(userToken, uuid)
       .then(response => {
         this.setState({
           users: response
         })
+
+        this.socket.emit('edit_users', this.state.users, this.state.uuid);
       });
+  }
+
+  listenForChanges = (uuid) => {
+    // Setup socket for this user using uuid as a room
+    this.socket.emit('join', {
+      user: this.context.user,
+      room: uuid
+    }, () => { console.log('Successfully joined room.') });
+    
+    this.socket.on('editTitle', (new_title) => {
+      this.setState({ title: new_title });
+    });
+
+    this.socket.on('editUsers', (new_users) => {
+      this.setState({ users: new_users });
+    });
+
+    this.socket.on('editDates', (new_dates) => {
+      this.setState({
+        startDate: new_dates.startDate,
+        endDate: new_dates.endDate,
+        dates: new_dates.dates,
+        dateIndex: new_dates.dateIndex,
+        currentDateItinerary: new_dates.currentDateItinerary
+      });
+    });
+
+    this.socket.on('editLocations', (new_data) => {
+      this.setState({
+        itinerary: new_data.itinerary,
+        places: new_data.places,
+        currentDateItinerary: new_data.currentDateItinerary,
+        placeToIndex: new_data.placeToIndex,
+        travelTimes: new_data.travelTimes,
+        openAddLocationModal: new_data.openAddLocationModal
+      })
+    });
+
+    this.socket.on('userSave', (user) => {
+      console.log('SAVING SOCKET RECEIVED');
+      console.log(user);
+      this.setState({
+        saved: true,
+        whoSaved: user
+      });
+    })
+
+    this.socket.on('message', (msg) => {
+      console.log('Received Message: ' + msg);
+    })
+  }
+
+  handleCloseAddUserMessage = e => {
+    this.setState({
+      addedUser: null
+    });
+  }
+
+  handleCloseDeleteUserMessage = e => {
+    this.setState({
+      deletedUser: null
+    });
+  }
+
+  openAddUserModal = () => {
+    this.setState({ isAddUserOpen: true });
+  }
+  
+  closeAddUserModal = () => {
+    this.setState({ isAddUserOpen: false });
   }
 
   isUserOnTrip = (email) => {
@@ -393,18 +525,17 @@ export class PureTripView extends React.Component {
     return false;
   }
 
-  componentWillUnmount() {
-    clearTimeout(this.id);
+  getUserFromTrip = (email) => {
+    for (let user of this.state.users) {
+      if (user.email === email) {
+        return user;
+      }
+    }
+    return null;
   }
-
-  openAddUserModal = () => {
-    this.setState({ isAddUserOpen: true });
-  }
-  
-  closeAddUserModal = () => {
-    this.setState({ isAddUserOpen: false });
-  }
-
+  // #endregion
+   
+  // #region React Lifecycle Methods
   componentDidMount = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
@@ -445,6 +576,7 @@ export class PureTripView extends React.Component {
         });
 
         this.updateUsersOnTrip(uuid);
+        this.listenForChanges(uuid);
 
     } else if (this.props.places) {
       const location = urlParams.get("location").replace("_", " ");
@@ -480,6 +612,17 @@ export class PureTripView extends React.Component {
       });
     }
   };
+
+  componentWillUnmount() {
+    // Closes socket connection
+    this.socket.emit('leave', {
+      user: this.context.user, 
+      room: this.state.uuid
+    }, () => { console.log('Successfully left room') });
+
+    clearTimeout(this.id);
+  }
+  // #endregion
 
   render() {
     const { classes } = this.props;
@@ -628,7 +771,7 @@ export class PureTripView extends React.Component {
             <AlertMessage
               open={this.state.saved}
               onClose={this.handleCloseSaveMessage}
-              message={"Your trip is successfully saved!"}
+              message={`${this.state.whoSaved} saved the trip.`}
             />
             <AlertMessage
               open={this.state.deleted}
@@ -656,7 +799,10 @@ export class PureTripView extends React.Component {
             {this.state.redirect && <Redirect to="/home" />}
           </Grid>
           <Grid container item xs={6}>
-            {this.state.dates && this.state.currentDateItinerary && (
+            {this.state.dates && 
+             this.state.currentDateItinerary && 
+             this.state.currentDateItinerary.length !== 0 &&
+             (
               <MapContainer
                 locations={this.state.currentDateItinerary}
               />
