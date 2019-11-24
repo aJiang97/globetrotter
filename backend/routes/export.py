@@ -57,7 +57,7 @@ class exportTrip(Resource):
         for event in itinerary:
             e = Event()
             e.name = event['name']
-            e.begin = datetime.strptime(event['start'],'%Y-%m-%dT%H:%M:%S.000Z')+timedelta(hours=-11) #account for tz
+            e.begin = datetime.strptime(event['start'],'%Y-%m-%dT%H:%M:%S.000Z')#+timedelta(hours=-11) #account for tz
             e.duration = timedelta(minutes=event['duration'])
             c.events.add(e)
         # with open('my.ics', 'w') as f:
