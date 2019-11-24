@@ -4,7 +4,7 @@ import {
   DirectionsRenderer,
   GoogleMap,
   withGoogleMap,
-  Marker,
+  Marker
 } from "react-google-maps";
 import * as React from "react";
 
@@ -19,7 +19,6 @@ class MapContainer extends React.Component {
     waypoints: null,
     locations: null
   };
-
 
   apiIsLoaded = () => {
     var origin;
@@ -94,44 +93,45 @@ class MapContainer extends React.Component {
   };
 
   componentDidMount = () => {
-    this.apiIsLoaded();
+    this.props.locations && this.apiIsLoaded();
   };
 
   render() {
-    this.apiIsLoaded();
+    this.props.locations && this.apiIsLoaded();
     const GoogleMapWrapper = withGoogleMap(props => {
       return (
         this.state.directions && (
           <GoogleMap
             defaultZoom={7}
             defaultCenter={this.state.directions.request.origin}
-            disableDefaultUI = {true}
+            disableDefaultUI={true}
           >
             <DirectionsRenderer
               directions={this.state.directions}
-              options={
-                {
-                  suppressInfoWindows:true,
-                  suppressMarkers:true
-                }
-              }
+              options={{
+                suppressInfoWindows: true,
+                suppressMarkers: true
+              }}
             />
-            {this.props.locations.map((loc,key) => (
-                <Marker
-                  key={key}
-                  position={{
-                    lat: loc.foursquare.coordinate.latitude,
-                    lng: loc.foursquare.coordinate.longitude
-                  }}
-                  name={loc.foursquare.venue_name}
-                  icon={new google.maps.MarkerImage('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|276df0')}
-                >
-                </Marker>
+            {this.props.locations.map((loc, key) => (
+              <Marker
+                key={key}
+                position={{
+                  lat: loc.foursquare.coordinate.latitude,
+                  lng: loc.foursquare.coordinate.longitude
+                }}
+                name={loc.foursquare.venue_name}
+                icon={
+                  new google.maps.MarkerImage(
+                    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|276df0"
+                  )
+                }
+              ></Marker>
             ))}
           </GoogleMap>
         )
-        );
-      });
+      );
+    });
     return (
       <GoogleMapWrapper
         containerElement={<div style={style} />}

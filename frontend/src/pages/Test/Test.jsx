@@ -1,11 +1,9 @@
 import React from "react";
-import { withStyles } from "@material-ui/core/styles";
 
-import { styles } from "./styles";
 import { Typography } from "@material-ui/core";
 import io from "socket.io-client";
 
-export class PureTest extends React.Component {
+export class Test extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -105,5 +103,3 @@ export class PureTest extends React.Component {
     );
   }
 }
-
-export const Test = withStyles(styles)(PureTest);

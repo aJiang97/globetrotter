@@ -85,7 +85,7 @@ export class PureTripView extends React.Component {
       i += index * (nPlacesPerDate + 1)
       totalPlaces = nPlacesPerDate + 1
     } else {
-      i += remainder * (nPlacesPerDate + 1) + (remainder - index) * nPlacesPerDate;
+      i += remainder * (nPlacesPerDate + 1) + Math.abs(remainder - index) * nPlacesPerDate;
       totalPlaces = nPlacesPerDate
     }
     var result = [];
@@ -715,25 +715,25 @@ export class PureTripView extends React.Component {
                 />
               </div>
             }
-            {this.state.places && this.context.user && 
+            {this.state.places &&
               <div className={classes.smallContainer}>
-                <UsersRow 
-                  currentUser={this.getUserFromTrip(this.context.user.email)}
-                  users={this.state.users} 
-                  handleAdd={this.openAddUserModal}
-                  handleRemove={this.handleRemoveUser}  
-                />
+                {this.context.user && this.state.uuid &&
+                  <UsersRow 
+                    currentUser={this.getUserFromTrip(this.context.user.email)}
+                    users={this.state.users} 
+                    handleAdd={this.openAddUserModal}
+                    handleRemove={this.handleRemoveUser}  
+                  />
+                }
                 <div className={classes.flexDiv} />
                 <div className={classes.secondRowButtons}>
                   <Button
-                    // variant="contained"
                     color="primary"
                     onClick={this.handleOpenAddLocationModal}
                   >
                     Add Location
                   </Button>
                   <Button
-                    // variant="contained"
                     color="primary"
                     onClick={this.handleExportTrip}
                   >
