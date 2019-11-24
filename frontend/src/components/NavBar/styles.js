@@ -2,7 +2,7 @@ import { createStyles } from "@material-ui/core/styles";
 import { deepOrange } from "@material-ui/core/colors";
 
 const appBar = {
-  zIndex: 5000,
+  zIndex: 1200,
   boxShadow: "0px 0px"
 };
 

@@ -86,8 +86,9 @@ class PureNavBar extends React.Component {
         onClose={this.handleMenuClose}
         className={classes.menu}
       >
-        <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
-        <MenuItem onClick={this.handleUserLogOut}>Log out</MenuItem>
+        <MenuItem onClick={this.handleUserLogOut} style={{ zIndex: 10000 }}>
+          Log out
+        </MenuItem>
       </Menu>
     );
     return (
