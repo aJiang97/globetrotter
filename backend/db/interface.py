@@ -26,6 +26,8 @@ class DB:
         try:
             c.execute("SELECT COUNT(*) FROM creds WHERE email = %s;", (email,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -63,6 +65,8 @@ class DB:
             c.execute(
                 "SELECT COUNT(*) FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -84,6 +88,8 @@ class DB:
             c.execute(
                 "SELECT displayname FROM creds WHERE email = %s AND hashedpw = %s;", (email, hashedpw))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -103,6 +109,8 @@ class DB:
         try:
             c.execute("SELECT displayname FROM creds WHERE email = %s;", (email,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -117,6 +125,8 @@ class DB:
         try:
             c.execute("SELECT COUNT(*) FROM creds WHERE token = %s;", (token,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -154,6 +164,8 @@ class DB:
             c.execute(
                 "SELECT COUNT(*) FROM creds WHERE email = %s AND token = %s;", (email, token))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -208,6 +220,8 @@ class DB:
             c.execute(
                 "SELECT photo_link FROM photos WHERE photo_reference = %s;", (photo_reference,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -224,6 +238,8 @@ class DB:
         try:
             c.execute("SELECT email FROM creds WHERE token = %s;", (token,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -266,6 +282,8 @@ class DB:
             c.execute(
                 "SELECT description, city, tripstart, tripend, blob, modifieddate FROM trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -305,6 +323,8 @@ class DB:
             c.execute("DELETE FROM user_trip WHERE tripid = %s;", (uuid_r,))
             c.execute("DELETE FROM trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             raise e
@@ -322,6 +342,8 @@ class DB:
             c.execute(
                 "SELECT trip.description, trip.city, trip.tripstart, trip.tripend, trip.modifieddate, trip.tripid, user_trip.permission FROM trip, user_trip WHERE trip.tripid = user_trip.tripid AND user_trip.email = %s;", (email,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -401,6 +423,8 @@ class DB:
         try:
             c.execute("SELECT user_trip.email, user_trip.permission, creds.displayname FROM user_trip INNER JOIN creds ON user_trip.email = creds.email WHERE user_trip.tripid = %s;", (uuid_r,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -426,6 +450,8 @@ class DB:
         try:
             c.execute("SELECT COUNT(*) FROM user_trip WHERE tripid = %s;", (uuid_r,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -438,6 +464,8 @@ class DB:
         try:
             c.execute("SELECT permission FROM user_trip WHERE email = %s AND tripid = %s;", (email, uuid_r))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
@@ -457,6 +485,8 @@ class DB:
         try:
             c.execute("SELECT COUNT(*) FROM creds WHERE email = %s;", (email,))
         except Exception as e:
+            c.execute("ROLLBACK")
+            self.__conn.commit()
             print(e)
             c.close()
             return None
