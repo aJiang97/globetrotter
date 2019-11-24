@@ -5,7 +5,8 @@ export const styles = createStyles(theme => ({
         // backgroundColor: "red"
     },
     avatarList: {
-        "list-style-type": "none"
+        "list-style-type": "none",
+        marginLeft: "-40px"
     },
     listElem: {
         display: "inline-block",

@@ -60,5 +60,9 @@ export const styles = createStyles(theme => ({
   media: {
     height: "auto",
     width: 160
+  },
+  tripDescription: {
+    textAlign: "left",
+    fontWeight: "bold"
   }
 }));
