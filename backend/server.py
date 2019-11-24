@@ -41,6 +41,7 @@ def run_flask(host, port):
     import routes.auth
     import routes.trip
     import routes.user
+    import routes.export
 
     # Set environment
     os.environ['HOST'] = host
