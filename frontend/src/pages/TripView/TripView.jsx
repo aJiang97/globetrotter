@@ -385,6 +385,7 @@ export class PureTripView extends React.Component {
               uuid: result.uuid
             });
             this.updateUsersOnTrip(result.uuid)
+            this.listenForChanges(uuid);
           })
         });
     }
@@ -393,8 +394,7 @@ export class PureTripView extends React.Component {
 
   // #region Multi-User Collaboration Functions
   handleAddUserToTrip = (user) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uuid = urlParams.get("uuid");
+    const uuid = this.state.uuid;
     const userToken = this.context.user.token;
     this.apiClient
       .addUserToTrip(userToken, user, uuid)
@@ -407,8 +407,7 @@ export class PureTripView extends React.Component {
   }
 
   handleRemoveUser = (email) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uuid = urlParams.get("uuid");
+    const uuid = this.state.uuid;
     const userToken = this.context.user.token;
     const userToDelete = this.getUserFromTrip(email);
 
