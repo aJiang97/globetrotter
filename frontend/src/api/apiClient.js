@@ -111,6 +111,10 @@ class APIClient {
     return this.perform("delete", `trip/user?uuid=${uuid}`, data, token);
   }
 
+  exportTrip(data) {
+    return this.perform("post", `export`, { itinerary: data });
+  }
+
   async perform(method, resource, data, token) {
     return client({
       method,

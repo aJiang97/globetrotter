@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   AppBar,
-  Fab,
+  Avatar,
   Menu,
   MenuItem,
   Toolbar,
@@ -86,8 +86,9 @@ class PureNavBar extends React.Component {
         onClose={this.handleMenuClose}
         className={classes.menu}
       >
-        <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
-        <MenuItem onClick={this.handleUserLogOut}>Log out</MenuItem>
+        <MenuItem onClick={this.handleUserLogOut} style={{ zIndex: 10000 }}>
+          Log out
+        </MenuItem>
       </Menu>
     );
     return (
@@ -111,9 +112,9 @@ class PureNavBar extends React.Component {
             <div className={classes.grow} />
             {this.context.user ? (
               <div className={classes.account}>
-                <Fab size="small" color="secondary">
+                <Avatar className={classes.avatar}>
                   {this.getInitial(this.context.user.name)}
-                </Fab>
+                </Avatar>
                 <Button
                   edge="end"
                   aria-haspopup="true"

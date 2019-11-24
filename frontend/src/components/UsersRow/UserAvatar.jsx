@@ -41,6 +41,13 @@ export class UserAvatar extends React.Component {
         return currentUser.permission === 0 || currentUser.permission === 1;
     }
 
+    isBadgeInvisible(currentUser, user) {
+        return !this.currentUserCanRemove(currentUser) || 
+               user.permission === 0 || 
+               user.permission === 1 || 
+               this.state.hover;
+    }
+
     render() {
         const { user, currentUser, color, handleRemove } = this.props;
 
@@ -50,8 +57,8 @@ export class UserAvatar extends React.Component {
                      onMouseLeave={this.toggleHover}>
                     {/* Owner cannot delete himself from the trip */}
                     <Badge badgeContent={<Close style={{fontSize: "10px"}}/>} color="secondary" 
-                        onClick={() => handleRemove(user.email)}
-                        invisible={!this.currentUserCanRemove(currentUser) || user.permission === 0 || user.permission === 1 || this.state.hover}>
+                        onClick={this.isBadgeInvisible(currentUser, user) ? () => {} : () => handleRemove(user.email)}
+                        invisible={this.isBadgeInvisible(currentUser, user)}>
                         <Avatar style={{backgroundColor: color}}>
                             {this.getInitials(user.displayname)}
                         </Avatar>

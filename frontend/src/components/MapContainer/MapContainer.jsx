@@ -1,131 +1,144 @@
 /* global google */
-import { Map, GoogleApiWrapper, InfoWindow, DirectionsRenderer, Marker } from 'google-maps-react';
+// import { Map, GoogleApiWrapper, InfoWindow, Marker } from "google-maps-react";
+import {
+  DirectionsRenderer,
+  GoogleMap,
+  withGoogleMap,
+  Marker
+} from "react-google-maps";
 import * as React from "react";
 
 const style = {
-  width: "50%",
-  height: "100%",
-  overflow: "auto"
-}
+  width: "100%",
+  height: "100%"
+};
 
-
-export class MapContainer extends React.Component {
+class MapContainer extends React.Component {
   state = {
-    showingInfoWindow: false,
-    activeMarker: {},
-    selectedPlace: {},
-    directions: {}
+    directions: null,
+    waypoints: null,
+    locations: null
   };
 
-  createCoordinatesList() {
-    var names = ['lat', 'lng'], coordinates = [];
-    this.props.locations.map(loc => {
-      var array = {};
-      array[names[0]] = parseFloat(loc.foursquare.coordinate.latitude);
-      array[names[1]] = parseFloat(loc.foursquare.coordinate.longitude);
-      coordinates.push(array);
-    })
-    return coordinates;
-  }
-
-  onMarkerClick = (props, marker, e) => {
-    this.setState({
-      selectedPlace: props,
-      activeMarker: marker,
-      showingInfoWindow: true,
+  apiIsLoaded = () => {
+    var origin;
+    var destination;
+    const waypoints = this.props.locations.map((loc, key) => {
+      if (key === 0) {
+        origin = new google.maps.LatLng(
+          parseFloat(loc.foursquare.coordinate.latitude),
+          parseFloat(loc.foursquare.coordinate.longitude)
+        );
+      }
+      if (key === this.props.locations.length - 1) {
+        destination = new google.maps.LatLng(
+          parseFloat(loc.foursquare.coordinate.latitude),
+          parseFloat(loc.foursquare.coordinate.longitude)
+        );
+      }
+      return {
+        location: {
+          lat: parseFloat(loc.foursquare.coordinate.latitude),
+          lng: parseFloat(loc.foursquare.coordinate.longitude)
+        },
+        stopover: true
+      };
     });
-  }
 
-  onMapClicked = (props) => {
-    if (this.state.showingInfoWindow) {
-      this.setState({
-        showingInfoWindow: false,
-        activeMarker: null
-      })
-    }
+    const directionsService = new google.maps.DirectionsService();
+
+    directionsService.route(
+      {
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+        waypoints: waypoints
+      },
+      (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          console.log(result);
+          this.setState({
+            directions: result,
+            waypoints: waypoints,
+            locations: this.props.locations
+          });
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      }
+    );
   };
 
-  // getDirections() {
-  //   const coordinates = this.createCoordinatesList();
-  //   var waypoints = [];
-  //   var start = null;
-  //   var end = null;
-  //   for (var i = 0; i < coordinates.length; i++) {
-  //     var array = {};
-  //     array['location'] = new google.maps.LatLng(coordinates[i].lat, coordinates[i].lng);
-  //     if (i === 0) {
-  //       start = array['location'];
-  //     } else if (i === coordinates.length - 1) {
-  //       end = array['location'];
-  //     }
-  //     waypoints.push(array);
-  //   }
+  isEqual = (oldArray, newArray) => {
+    if (!oldArray || !newArray) return false;
+    if (oldArray.length !== newArray.length) return false;
+    var i = 0;
+    while (i < oldArray.length) {
+      if (oldArray[i] !== newArray[i]) return false;
+      i++;
+    }
+    return true;
+  };
 
-  //   const DirectionsService = new google.maps.DirectionsService();
-  //   DirectionsService.route(
-  //     {
-  //       origin: start,
-  //       destination: end,
-  //       travelMode: google.maps.TravelMode.DRIVING,
-  //       waypoints: waypoints
-  //     },
-  //     (result, status) => {
-  //       console.log(status);
-  //       if (status === google.maps.DirectionsStatus.OK) {
-  //         this.setState({
-  //           directions: result
-  //         });
-  //       } else {
-  //         console.error('error fetching directions ${result}');
-  //       }
-  //     }
-  //   );
-  // }
+  shouldComponentUpdate = (nextProps, nextState) => {
+    if (!this.isEqual(this.props.locations, nextProps.locations)) {
+      return true;
+    } else if (
+      JSON.stringify(this.state.directions) !==
+      JSON.stringify(nextState.directions)
+    ) {
+      return true;
+    }
+    return false;
+  };
+
+  componentDidMount = () => {
+    this.props.locations && this.apiIsLoaded();
+  };
 
   render() {
-    return (
-      <div>
-        <Map
-          google={this.props.google}
-          onClick = {this.onMapClicked}
-          style={style}
-          zoom={12}
-          disableDefaultUI= {true}
-          // This is Sydney centre coordinates
-          initialCenter={{
-            lat: this.props.locations[0].foursquare.coordinate.latitude,
-            lng: this.props.locations[0].foursquare.coordinate.longitude
-          }}
-        >
-          {this.props.locations.map((loc,key) => (
+    this.props.locations && this.apiIsLoaded();
+    const GoogleMapWrapper = withGoogleMap(props => {
+      return (
+        this.state.directions && (
+          <GoogleMap
+            defaultZoom={7}
+            defaultCenter={this.state.directions.request.origin}
+            disableDefaultUI={true}
+          >
+            <DirectionsRenderer
+              directions={this.state.directions}
+              options={{
+                suppressInfoWindows: true,
+                suppressMarkers: true
+              }}
+            />
+            {this.props.locations.map((loc, key) => (
               <Marker
                 key={key}
-                onClick={this.onMarkerClick}
                 position={{
                   lat: loc.foursquare.coordinate.latitude,
                   lng: loc.foursquare.coordinate.longitude
                 }}
-                name={loc.foursquare.venue_name} 
-              />
-          ))}
-          {this.state.activeMarker && <InfoWindow
-            marker={this.state.activeMarker}
-            visible={this.state.showingInfoWindow}
-          >
-            <div>
-              <h2>{this.state.selectedPlace.name}</h2>
-            </div>
-          </InfoWindow>}
-          {/* {this.getDirections()}
-          {this.props.directions && <DirectionsRenderer directions = {this.props.directions} />} */}
-        {/* {console.log(this.createCoordinatesList())} */}
-        </Map>
-      </div>
-    )
+                name={loc.foursquare.venue_name}
+                icon={
+                  new google.maps.MarkerImage(
+                    "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|276df0"
+                  )
+                }
+              ></Marker>
+            ))}
+          </GoogleMap>
+        )
+      );
+    });
+    return (
+      <GoogleMapWrapper
+        containerElement={<div style={style} />}
+        mapElement={<div style={{ height: `100%` }} />}
+      />
+    );
   }
 }
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyB376cyeRoqfXHQXE-Zhl45CP8sPSK4MV0'
-})(MapContainer);
-
+export default MapContainer;

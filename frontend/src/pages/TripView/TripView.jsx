@@ -2,12 +2,13 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import ReactLoading from "react-loading";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, TextField, Typography } from "@material-ui/core";
+import { Button, Grid, TextField, Typography } from "@material-ui/core";
+import { SaveAlt } from "@material-ui/icons";
+
 import { styles } from "./styles";
 import { AddLocationModal } from "../../components/forms";
 import { AlertMessage, CalendarGrid, DateTabs, NavBar, UsersRow, AddUserModal } from "../../components";
 import APIClient from "../../api/apiClient";
-import Grid from '@material-ui/core/Grid';
 import MapContainer from "../../components/MapContainer/MapContainer";
 import { UserContext } from "../../UserContext";
 import io from "socket.io-client";
@@ -76,10 +77,23 @@ export class PureTripView extends React.Component {
   };
 
   getCurrentDateItinerary = (path, index, period) => {
-    const nPlacesPerDate = Math.ceil(path.length / period);
-    return path.filter((place, i) => {
-      return i < nPlacesPerDate * (index + 1) && i >= nPlacesPerDate * index;
-    });
+    const nPlacesPerDate = Math.floor(path.length / period);
+    const remainder = path.length % period;
+    var totalPlaces;
+    var i = 0;
+    if (remainder > index) {
+      i += index * (nPlacesPerDate + 1)
+      totalPlaces = nPlacesPerDate + 1
+    } else {
+      i += remainder * (nPlacesPerDate + 1) + Math.abs(remainder - index) * nPlacesPerDate;
+      totalPlaces = nPlacesPerDate
+    }
+    var result = [];
+    for (var j = 0; j < totalPlaces; j++) {
+      result.push(path[i])
+      i++;      
+    }
+    return result
   };
 
   handleStartDateChange = e => {
@@ -205,6 +219,53 @@ export class PureTripView extends React.Component {
 
     });
   };
+  
+  addMinutes = (datetime, min) => {
+    datetime.setTime(datetime.getTime() + (min*60*1000));
+    return this;
+  }
+
+  handleExportTrip = () => {
+    const nPlacesPerDate = Math.floor(this.state.itinerary.length / this.state.dates.length);
+    const remainder = this.state.itinerary.length % this.state.dates.length;
+    var itinerary = []
+    var dateIndex = 0
+    var i = 0
+    while (i < this.state.itinerary.length && dateIndex < this.state.dates.length) {
+      var totalPlaces;
+      if (remainder > dateIndex) totalPlaces = nPlacesPerDate + 1;
+      else totalPlaces = nPlacesPerDate;
+      var datetime = new Date(this.state.dates[dateIndex])
+      this.addMinutes(datetime, 9 * 60);
+      for (var j = 0; j < totalPlaces; j++) {
+        if (i >= this.state.itinerary.length) break;
+        itinerary.push({
+          start: new Date(datetime),
+          name: this.state.itinerary[i].foursquare.venue_name,
+          duration: 60,
+        })
+        if (i !== this.state.itinerary.length - 1) {
+          const thisLocationID = this.state.itinerary[i].google.place_id
+          const nextLocationID = this.state.itinerary[i + 1].google.place_id
+          const indexA = this.state.placeToIndex[thisLocationID];
+          const indexB = this.state.placeToIndex[nextLocationID];
+          const travelTime = this.state.travelTimes[indexA][indexB];
+          this.addMinutes(datetime, 60 + parseInt(travelTime.split(" ")[0]));
+          i++;  
+        }
+      }
+      dateIndex++
+    }
+    this.apiClient = new APIClient();
+    this.apiClient.exportTrip(itinerary).then((result) => {
+      const element = document.createElement("a");
+      const file = new Blob([result.content], {type: 'text/calendar'});
+      element.href = URL.createObjectURL(file);
+      element.download = `${this.state.title}.ics`;
+      document.body.appendChild(element); // Required for this to work in FireFox
+      element.click();
+    })
+  }
 
   handleDeleteLocation = g_id => {
     const places = this.state.itinerary.filter(
@@ -323,7 +384,9 @@ export class PureTripView extends React.Component {
               whoSaved: user.name,
               uuid: result.uuid
             });
-          });
+            this.updateUsersOnTrip(result.uuid)
+            this.listenForChanges(uuid);
+          })
         });
     }
   };
@@ -331,8 +394,7 @@ export class PureTripView extends React.Component {
 
   // #region Multi-User Collaboration Functions
   handleAddUserToTrip = (user) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uuid = urlParams.get("uuid");
+    const uuid = this.state.uuid;
     const userToken = this.context.user.token;
     this.apiClient
       .addUserToTrip(userToken, user, uuid)
@@ -345,12 +407,9 @@ export class PureTripView extends React.Component {
   }
 
   handleRemoveUser = (email) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uuid = urlParams.get("uuid");
+    const uuid = this.state.uuid;
     const userToken = this.context.user.token;
     const userToDelete = this.getUserFromTrip(email);
-    console.log(email);
-    console.log(userToDelete);
 
     this.apiClient
       .deleteUserFromTrip(userToken, email, uuid)
@@ -577,6 +636,7 @@ export class PureTripView extends React.Component {
         )}
         <Grid className={classes.section}>
           <Grid container item xs={6} className={classes.subSection}>
+            <div className={classes.smallContainer}>
               {this.state.isEditableTitle ? (
               <TextField
                 InputProps={{
@@ -592,21 +652,14 @@ export class PureTripView extends React.Component {
               />
             ) : (
               <Typography
-                variant="h2"
+                variant="h3"
                 className={classes.title}
                 onMouseOver={this.handleEditableTitle}
               >
                 {this.state.title}
               </Typography>
             )}
-            {this.state.places && this.context.user && 
-              <UsersRow 
-                currentUser={this.getUserFromTrip(this.context.user.email)}
-                users={this.state.users} 
-                handleAdd={this.openAddUserModal}
-                handleRemove={this.handleRemoveUser}  
-              />
-            }
+            <div className={classes.flexDiv} />
             {this.context.user && this.state.places && (
               <div className={classes.buttonsContainer}>
                 <Button
@@ -629,9 +682,9 @@ export class PureTripView extends React.Component {
                 </Button>
               </div>
             )}
+            </div>
             {this.state.dates &&
-              <div className={classes.smallContainer}>
-                <div className={classes.datesContainer}>
+              <div className={classes.datesContainer}>
                 From
                 <TextField
                   type="date"
@@ -661,14 +714,35 @@ export class PureTripView extends React.Component {
                   onChange={this.handleEndDateChange}
                 />
               </div>
-              <div className={classes.flexDiv} />
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={this.handleOpenAddLocationModal}
-              >
-                New Location
-              </Button>
+            }
+            {this.state.places &&
+              <div className={classes.smallContainer}>
+                {this.context.user && this.state.uuid &&
+                  <UsersRow 
+                    currentUser={this.getUserFromTrip(this.context.user.email)}
+                    users={this.state.users} 
+                    handleAdd={this.openAddUserModal}
+                    handleRemove={this.handleRemoveUser}  
+                  />
+                }
+                <div className={classes.flexDiv} />
+                <div className={classes.secondRowButtons}>
+                  <Button
+                    color="primary"
+                    onClick={this.handleOpenAddLocationModal}
+                  >
+                    Add Location
+                  </Button>
+                  <Button
+                    color="primary"
+                    onClick={this.handleExportTrip}
+                  >
+                    <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                      <SaveAlt />
+                      Export
+                    </div>
+                  </Button>
+                </div>
               </div>
             }
             {this.state.dates && (

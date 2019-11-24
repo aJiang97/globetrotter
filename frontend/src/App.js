@@ -34,13 +34,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    let tempUser = {
-      email: "sebi@test.com",
-      name: "Sebastian Chua",
-      password: "ff156710984f143b",
-      token: "9e0075c49d434649f6c6e7e30acec862df9e5398e7f234a062fda6087fe3333e"
-    }
-
     this.state = {
       transparent: true,
       places: null,
@@ -63,7 +56,7 @@ class App extends React.Component {
     });
   };
 
-  setPlaces = (places) => {
+  setPlaces = places => {
     this.setState({ places: places });
   };
 
@@ -85,10 +78,7 @@ class App extends React.Component {
               <Route
                 path="/tripview"
                 render={props => (
-                  <TripView
-                    {...props}
-                    places={this.state.places}
-                  />
+                  <TripView {...props} places={this.state.places} />
                 )}
               />
               <Route path="/test" component={Test} />
