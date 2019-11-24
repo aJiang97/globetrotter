@@ -102,7 +102,7 @@ export class PureUserHome extends React.Component {
                 this.state.trips.map((trip, key) => (
                   <Card key={key} className={classes.card}>
                     <CardMedia className={classes.media} image={trip.url} />
-                    <CardContent style={classes.cardContent}>
+                    <CardContent className={classes.cardContent}>
                       <Typography variant="h5">
                         <Link
                           component="button"
@@ -117,6 +117,7 @@ export class PureUserHome extends React.Component {
                           }}
                           variant="h5"
                           color="inherit"
+                          className={classes.tripDescription}
                         >
                           {trip.description}
                         </Link>
