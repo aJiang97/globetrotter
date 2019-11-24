@@ -17,21 +17,16 @@ export const styles = createStyles(theme => ({
     flexDirection: "row",
     flexWrap: "wrap",
     boxSizing: "border-box",
-    height: "100vh",
+    height: "90vh",
     width: "100%",
-    // marginLeft: "15%",
-    // margin: "100px 10%"
+    paddingLeft: "2%"
   },
   subSection:{
     display: "block",
     flexGrow: 1,
     overflow: "auto",
     maxHeight: "100%",
-    paddingRight: "30px"
-  },
-  flexScroll: {
-    // paddingLeft: "30px",
-    // marginTop: "75px"
+    paddingRight: "2%"
   },
   title: {
     fontFamily: "Roboto",
@@ -39,8 +34,8 @@ export const styles = createStyles(theme => ({
     marginTop: "30px"
   },
   container: {
-    margin: "63px 5%",
-    width: "90%"
+    marginTop: "63px",
+    width: "100%"
   },
   dateTabs: {
     marginTop: "500px"
@@ -92,5 +87,5 @@ export const styles = createStyles(theme => ({
   },
   flexDiv: {
     flexGrow: 1
-  }
+  },
 }));
