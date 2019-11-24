@@ -384,7 +384,8 @@ export class PureTripView extends React.Component {
               whoSaved: user.name,
               uuid: result.uuid
             });
-          });
+            this.updateUsersOnTrip(result.uuid)
+          })
         });
     }
   };
