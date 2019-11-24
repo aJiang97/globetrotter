@@ -3,9 +3,7 @@ import { createStyles } from "@material-ui/core/styles";
 export const styles = createStyles(theme => ({
   card: {
     display: "flex",
-    // width: "65vw",
-    borderRadius: "15px",
-    marginBottom: "10px"
+    borderRadius: "15px"
   },
 
   // Time Section

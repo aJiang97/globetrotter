@@ -17,30 +17,23 @@ export const styles = createStyles(theme => ({
     flexDirection: "row",
     flexWrap: "wrap",
     boxSizing: "border-box",
-    height: "100vh",
+    height: "90vh",
     width: "100%",
-    // marginLeft: "15%",
-    // margin: "100px 10%"
+    paddingLeft: "2%"
   },
-  subSection:{
+  subSection: {
     display: "block",
     flexGrow: 1,
     overflow: "auto",
     maxHeight: "100%",
-    paddingRight: "30px"
-  },
-  flexScroll: {
-    // paddingLeft: "30px",
-    // marginTop: "75px"
+    paddingRight: "2%"
   },
   title: {
-    fontFamily: "Roboto",
-    marginBottom: "20px",
-    marginTop: "30px"
+    fontFamily: "Roboto"
   },
   container: {
-    margin: "63px 5%",
-    width: "90%"
+    marginTop: "63px",
+    width: "100%"
   },
   dateTabs: {
     marginTop: "500px"
@@ -49,22 +42,25 @@ export const styles = createStyles(theme => ({
     paddingTop: "30px"
   },
   buttonsContainer: {
-    position: "absolute",
-    top: 110,
-    right: "52%",
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    height: 49
   },
   SaveButton: {
-    ...baseButton,
+    ...baseButton
   },
   DeleteButton: {
     ...baseButton,
-    color: "white",
+    color: "white"
   },
   resize: {
-    fontSize: 57,
+    fontSize: 44,
     fontWeight: "bold"
+  },
+  secondRowButtons: {
+    display: "flex",
+    flexDirection: "row",
+    height: 40
   },
   green: {
     color: "green"
@@ -82,13 +78,16 @@ export const styles = createStyles(theme => ({
   },
   smallContainer: {
     display: "flex",
-    flexDirection: "row"
+    flexDirection: "row",
+    marginBottom: "10px",
+    marginTop: "20px"
   },
   datesContainer: {
     display: "grid",
-    gridTemplateColumns: "0.5fr 1fr 0.5fr 1fr",
-    width: "100%",
-    alignItems: "baseline"
+    gridTemplateColumns: "0.5fr 1.25fr 0.5fr 1.25fr",
+    alignItems: "baseline",
+    width: "80%",
+    marginBottom: 10
   },
   flexDiv: {
     flexGrow: 1
