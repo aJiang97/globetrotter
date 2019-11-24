@@ -30,7 +30,8 @@ export class PureUsersRow extends React.Component {
               </li>
             );
           })}
-          {(currentUser.permission === 0 || currentUser.permission === 1) && (
+		  {currentUser && 
+		   (currentUser.permission === 0 || currentUser.permission === 1) && (
             <li className={classes.listElem}>
               <Tooltip title="Add User to Trip">
                 <Fab
