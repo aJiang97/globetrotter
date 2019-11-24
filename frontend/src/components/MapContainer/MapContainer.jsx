@@ -101,7 +101,6 @@ class MapContainer extends React.Component {
 
   shouldComponentUpdate = (nextProps, nextState) => {
     if (!this.isEqual(this.props.locations, nextProps.locations)) {
-      this.apiIsLoaded();
       return true;
     } else if (
       JSON.stringify(this.state.directions) !==
