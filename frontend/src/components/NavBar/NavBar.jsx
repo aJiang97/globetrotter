@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   AppBar,
-  Fab,
+  Avatar,
   Menu,
   MenuItem,
   Toolbar,
@@ -111,9 +111,9 @@ class PureNavBar extends React.Component {
             <div className={classes.grow} />
             {this.context.user ? (
               <div className={classes.account}>
-                <Fab size="small" color="secondary">
+                <Avatar className={classes.avatar}>
                   {this.getInitial(this.context.user.name)}
-                </Fab>
+                </Avatar>
                 <Button
                   edge="end"
                   aria-haspopup="true"

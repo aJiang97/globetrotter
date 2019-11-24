@@ -1,4 +1,5 @@
 import { createStyles } from "@material-ui/core/styles";
+import { deepOrange } from "@material-ui/core/colors";
 
 const appBar = {
   zIndex: 5000,
@@ -41,6 +42,9 @@ export const styles = createStyles(theme => ({
     display: "flex",
     flexDirection: "row",
     alignItems: "center"
+  },
+  avatar: {
+    backgroundColor: deepOrange[500]
   },
   name: {
     paddingLeft: 10,
