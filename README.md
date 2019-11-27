@@ -1,8 +1,13 @@
-# Globetrotter
+<p align="center">
+  <img width="300" height="300" src="logo.png">
+</p>
 
-COMP4920 Group project
 
-Tutorial group Friday 1pm
+# GlobeTrotter
+
+COMP4920 Group Project
+
+Tutorial Group Friday 1pm
 
 Members:
 - Aldhytha Karina Sari  (z5097492)
